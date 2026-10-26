@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Flotix.Api.Iam.Domain;
 using Flotix.Api.Iam.Security;
+using Flotix.Api.Monitoring.Web;
 using Flotix.Api.Shared.Domain;
 using Flotix.Api.Shared.Persistence;
 using Flotix.Api.Shared.Web;
@@ -20,6 +21,7 @@ builder.Services
         options.JsonSerializerOptions.RespectRequiredConstructorParameters = true;
     });
 builder.Services.AddOpenApi();
+builder.Services.AddSignalR();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ProblemExceptionHandler>();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
@@ -52,5 +54,6 @@ app.UseCors();
 app.MapOpenApi().AllowAnonymous();
 app.MapScalarApiReference().AllowAnonymous();
 app.MapControllers();
+app.MapHub<MonitoringHub>("/hubs/monitoring");
 
 app.Run();

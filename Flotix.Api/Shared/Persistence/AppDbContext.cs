@@ -2,6 +2,7 @@ using System.Text.Json;
 using Flotix.Api.Fleet.Persistence;
 using Flotix.Api.Iam.Persistence;
 using Flotix.Api.Maintenance.Persistence;
+using Flotix.Api.Monitoring.Persistence;
 using Flotix.Api.Shared.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
         modelBuilder
             .ApplyIamModel()
             .ApplyFleetModel()
-            .ApplyMaintenanceModel();
+            .ApplyMaintenanceModel()
+            .ApplyMonitoringModel();
 
         // Conventions: schema = bounded context (Flotix.Api.<Context>.Domain), snake_case names, no cascading deletes.
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
