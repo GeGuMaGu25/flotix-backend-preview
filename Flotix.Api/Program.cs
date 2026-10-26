@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Flotix.Api.Iam.Domain;
 using Flotix.Api.Iam.Security;
 using Flotix.Api.Monitoring.Web;
+using Flotix.Api.Notifications.Web;
 using Flotix.Api.Shared.Domain;
 using Flotix.Api.Shared.Persistence;
 using Flotix.Api.Shared.Web;
@@ -55,5 +56,6 @@ app.MapOpenApi().AllowAnonymous();
 app.MapScalarApiReference().AllowAnonymous();
 app.MapControllers();
 app.MapHub<MonitoringHub>("/hubs/monitoring");
+app.MapHub<NotificationsHub>("/hubs/notifications");
 
 app.Run();
