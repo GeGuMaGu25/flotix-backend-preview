@@ -1,7 +1,10 @@
 using System.Text.Json.Serialization;
+using Flotix.Api.Iam.Domain;
+using Flotix.Api.Iam.Security;
 using Flotix.Api.Shared.Domain;
 using Flotix.Api.Shared.Persistence;
 using Flotix.Api.Shared.Web;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -32,13 +35,22 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(
 builder.Services.AddScoped<IUnitOfWork>(services => services.GetRequiredService<AppDbContext>());
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
+// IAM: password hashing and bearer tokens with ASP.NET Core built-ins (no third-party dependencies).
+builder.Services.AddDataProtection();
+builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddSingleton<ITokenService, DataProtectionTokenService>();
+
 var app = builder.Build();
 
 app.UseExceptionHandler();
 app.UseCors();
 
-app.MapOpenApi();
-app.MapScalarApiReference();
+// IAM (disconnected): uncomment to require a bearer token from POST /api/v1/authentication/sign-in on every
+// endpoint not marked [AllowAnonymous], and to enforce [AllowRoles]. SignalR hubs read it from ?access_token=.
+// app.UseMiddleware<IamMiddleware>();
+
+app.MapOpenApi().AllowAnonymous();
+app.MapScalarApiReference().AllowAnonymous();
 app.MapControllers();
 
 app.Run();
