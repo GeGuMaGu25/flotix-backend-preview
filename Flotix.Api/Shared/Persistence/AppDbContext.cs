@@ -5,6 +5,7 @@ using Flotix.Api.Maintenance.Persistence;
 using Flotix.Api.Monitoring.Persistence;
 using Flotix.Api.Notifications.Persistence;
 using Flotix.Api.Shared.Domain;
+using Flotix.Api.Store.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Flotix.Api.Shared.Persistence;
@@ -22,7 +23,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             .ApplyFleetModel()
             .ApplyMaintenanceModel()
             .ApplyMonitoringModel()
-            .ApplyNotificationsModel();
+            .ApplyNotificationsModel()
+            .ApplyStoreModel();
 
         // Conventions: schema = bounded context (Flotix.Api.<Context>.Domain), snake_case names, no cascading deletes.
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
