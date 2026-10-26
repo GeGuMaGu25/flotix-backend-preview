@@ -1,0 +1,1 @@
+json-server --port 6767 --watch db.json --routes routes.json
