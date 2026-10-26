@@ -45,6 +45,11 @@ builder.Services.AddSingleton<ITokenService, DataProtectionTokenService>();
 
 var app = builder.Build();
 
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
+}
+
 app.UseExceptionHandler();
 app.UseCors();
 
