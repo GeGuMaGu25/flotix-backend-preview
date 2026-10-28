@@ -387,4 +387,172 @@
     <data name="UnexpectedErrorDeletingFuelRecord" xml:space="preserve">
         <value>An unexpected error occurred while deleting the fuel record.</value>
     </data>
+    <data name="CreateWorkshopSummary" xml:space="preserve">
+        <value>Create a workshop</value>
+    </data>
+    <data name="CreateWorkshopDescription" xml:space="preserve">
+        <value>Registers a new workshop.</value>
+    </data>
+    <data name="GetAllWorkshopsSummary" xml:space="preserve">
+        <value>Get all workshops</value>
+    </data>
+    <data name="GetAllWorkshopsDescription" xml:space="preserve">
+        <value>Retrieves all workshops, optionally filtered by mechanic ID.</value>
+    </data>
+    <data name="GetWorkshopByIdSummary" xml:space="preserve">
+        <value>Get a workshop by ID</value>
+    </data>
+    <data name="GetWorkshopByIdDescription" xml:space="preserve">
+        <value>Retrieves a workshop using its identifier.</value>
+    </data>
+    <data name="UpdateWorkshopSummary" xml:space="preserve">
+        <value>Update a workshop</value>
+    </data>
+    <data name="UpdateWorkshopDescription" xml:space="preserve">
+        <value>Updates the data of a workshop.</value>
+    </data>
+    <data name="DeleteWorkshopSummary" xml:space="preserve">
+        <value>Delete a workshop</value>
+    </data>
+    <data name="DeleteWorkshopDescription" xml:space="preserve">
+        <value>Deletes a workshop using its identifier.</value>
+    </data>
+    <data name="CreateMaintenanceRequestSummary" xml:space="preserve">
+        <value>Create a maintenance request</value>
+    </data>
+    <data name="CreateMaintenanceRequestDescription" xml:space="preserve">
+        <value>Registers a new maintenance request.</value>
+    </data>
+    <data name="GetAllMaintenanceRequestsSummary" xml:space="preserve">
+        <value>Get all maintenance requests</value>
+    </data>
+    <data name="GetAllMaintenanceRequestsDescription" xml:space="preserve">
+        <value>Retrieves all maintenance requests, optionally filtered by vehicle ID or mechanic ID.</value>
+    </data>
+    <data name="GetMaintenanceRequestByIdSummary" xml:space="preserve">
+        <value>Get a maintenance request by ID</value>
+    </data>
+    <data name="GetMaintenanceRequestByIdDescription" xml:space="preserve">
+        <value>Retrieves a maintenance request using its identifier.</value>
+    </data>
+    <data name="UpdateMaintenanceRequestSummary" xml:space="preserve">
+        <value>Update a maintenance request</value>
+    </data>
+    <data name="UpdateMaintenanceRequestDescription" xml:space="preserve">
+        <value>Updates the data of a maintenance request.</value>
+    </data>
+    <data name="DeleteMaintenanceRequestSummary" xml:space="preserve">
+        <value>Delete a maintenance request</value>
+    </data>
+    <data name="DeleteMaintenanceRequestDescription" xml:space="preserve">
+        <value>Deletes a maintenance request using its identifier.</value>
+    </data>
+    <data name="CreateWorkshopSchema" xml:space="preserve">
+        <value>Request payload for creating a workshop.</value>
+    </data>
+    <data name="UpdateWorkshopSchema" xml:space="preserve">
+        <value>Request payload for updating a workshop.</value>
+    </data>
+    <data name="WorkshopSchema" xml:space="preserve">
+        <value>A workshop returned by the API.</value>
+    </data>
+    <data name="CreateMaintenanceRequestSchema" xml:space="preserve">
+        <value>Request payload for creating a maintenance request.</value>
+    </data>
+    <data name="UpdateMaintenanceRequestSchema" xml:space="preserve">
+        <value>Request payload for updating a maintenance request.</value>
+    </data>
+    <data name="MaintenanceRequestSchema" xml:space="preserve">
+        <value>A maintenance request returned by the API.</value>
+    </data>
+    <data name="MaintenanceRequestId" xml:space="preserve">
+        <value>The server-generated identifier of the maintenance request.</value>
+    </data>
+    <data name="MaintenanceRequestVehicleId" xml:space="preserve">
+        <value>The identifier of the vehicle.</value>
+    </data>
+    <data name="MaintenanceRequestMechanicId" xml:space="preserve">
+        <value>The identifier of the mechanic user.</value>
+    </data>
+    <data name="MaintenanceRequestFaultDescription" xml:space="preserve">
+        <value>The description of the fault to repair.</value>
+    </data>
+    <data name="MaintenanceRequestEstimatedCost" xml:space="preserve">
+        <value>The estimated cost of the repair.</value>
+    </data>
+    <data name="MaintenanceRequestStatus" xml:space="preserve">
+        <value>The current status of the maintenance request.</value>
+    </data>
+    <data name="WorkshopId" xml:space="preserve">
+        <value>The server-generated identifier of the workshop.</value>
+    </data>
+    <data name="WorkshopMechanicId" xml:space="preserve">
+        <value>The identifier of the mechanic user.</value>
+    </data>
+    <data name="WorkshopCity" xml:space="preserve">
+        <value>The city where the workshop is located.</value>
+    </data>
+    <data name="WorkshopDistrict" xml:space="preserve">
+        <value>The district where the workshop is located.</value>
+    </data>
+    <data name="WorkshopAddress" xml:space="preserve">
+        <value>The street address of the workshop.</value>
+    </data>
+    <data name="WorkshopPhone" xml:space="preserve">
+        <value>The contact phone number of the workshop.</value>
+    </data>
+    <data name="WorkshopRating" xml:space="preserve">
+        <value>The rating of the workshop, from 0 to 5.</value>
+    </data>
+    <data name="WorkshopTags" xml:space="preserve">
+        <value>The services offered by the workshop.</value>
+    </data>
+    <data name="InvalidWorkshopRequest" xml:space="preserve">
+        <value>The workshop request contains invalid values.</value>
+    </data>
+    <data name="WorkshopNotFound" xml:space="preserve">
+        <value>The workshop was not found.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingWorkshop" xml:space="preserve">
+        <value>An unexpected error occurred while creating the workshop.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingWorkshop" xml:space="preserve">
+        <value>An unexpected error occurred while updating the workshop.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingWorkshop" xml:space="preserve">
+        <value>An unexpected error occurred while deleting the workshop.</value>
+    </data>
+    <data name="RequiredCity" xml:space="preserve">
+        <value>City is required.</value>
+    </data>
+    <data name="RequiredDistrict" xml:space="preserve">
+        <value>District is required.</value>
+    </data>
+    <data name="RequiredAddress" xml:space="preserve">
+        <value>Address is required.</value>
+    </data>
+    <data name="RequiredPhone" xml:space="preserve">
+        <value>Phone is required.</value>
+    </data>
+    <data name="InvalidMaintenanceRequestRequest" xml:space="preserve">
+        <value>The maintenance request request contains invalid values.</value>
+    </data>
+    <data name="MaintenanceRequestNotFound" xml:space="preserve">
+        <value>The maintenance request was not found.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingMaintenanceRequest" xml:space="preserve">
+        <value>An unexpected error occurred while creating the maintenance request.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingMaintenanceRequest" xml:space="preserve">
+        <value>An unexpected error occurred while updating the maintenance request.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingMaintenanceRequest" xml:space="preserve">
+        <value>An unexpected error occurred while deleting the maintenance request.</value>
+    </data>
+    <data name="MaintenanceRequestAlreadyClosed" xml:space="preserve">
+        <value>A completed or rejected maintenance request cannot change its status.</value>
+    </data>
+    <data name="RequiredFaultDescription" xml:space="preserve">
+        <value>Fault description is required.</value>
+    </data>
 </root>

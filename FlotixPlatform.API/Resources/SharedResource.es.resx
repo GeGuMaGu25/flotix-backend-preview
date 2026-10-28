@@ -387,4 +387,172 @@
     <data name="UnexpectedErrorDeletingFuelRecord" xml:space="preserve">
         <value>Ocurrió un error inesperado al eliminar el registro de combustible.</value>
     </data>
+    <data name="CreateWorkshopSummary" xml:space="preserve">
+        <value>Crear un taller</value>
+    </data>
+    <data name="CreateWorkshopDescription" xml:space="preserve">
+        <value>Registra un nuevo taller.</value>
+    </data>
+    <data name="GetAllWorkshopsSummary" xml:space="preserve">
+        <value>Obtener todos los talleres</value>
+    </data>
+    <data name="GetAllWorkshopsDescription" xml:space="preserve">
+        <value>Obtiene todos los talleres, opcionalmente filtrados por ID del mecánico.</value>
+    </data>
+    <data name="GetWorkshopByIdSummary" xml:space="preserve">
+        <value>Obtener un taller por ID</value>
+    </data>
+    <data name="GetWorkshopByIdDescription" xml:space="preserve">
+        <value>Obtiene un taller mediante su identificador.</value>
+    </data>
+    <data name="UpdateWorkshopSummary" xml:space="preserve">
+        <value>Actualizar un taller</value>
+    </data>
+    <data name="UpdateWorkshopDescription" xml:space="preserve">
+        <value>Actualiza los datos de un taller.</value>
+    </data>
+    <data name="DeleteWorkshopSummary" xml:space="preserve">
+        <value>Eliminar un taller</value>
+    </data>
+    <data name="DeleteWorkshopDescription" xml:space="preserve">
+        <value>Elimina un taller mediante su identificador.</value>
+    </data>
+    <data name="CreateMaintenanceRequestSummary" xml:space="preserve">
+        <value>Crear una solicitud de mantenimiento</value>
+    </data>
+    <data name="CreateMaintenanceRequestDescription" xml:space="preserve">
+        <value>Registra una nueva solicitud de mantenimiento.</value>
+    </data>
+    <data name="GetAllMaintenanceRequestsSummary" xml:space="preserve">
+        <value>Obtener todas las solicitudes de mantenimiento</value>
+    </data>
+    <data name="GetAllMaintenanceRequestsDescription" xml:space="preserve">
+        <value>Obtiene todas las solicitudes de mantenimiento, opcionalmente filtradas por ID del vehículo o ID del mecánico.</value>
+    </data>
+    <data name="GetMaintenanceRequestByIdSummary" xml:space="preserve">
+        <value>Obtener una solicitud de mantenimiento por ID</value>
+    </data>
+    <data name="GetMaintenanceRequestByIdDescription" xml:space="preserve">
+        <value>Obtiene una solicitud de mantenimiento mediante su identificador.</value>
+    </data>
+    <data name="UpdateMaintenanceRequestSummary" xml:space="preserve">
+        <value>Actualizar una solicitud de mantenimiento</value>
+    </data>
+    <data name="UpdateMaintenanceRequestDescription" xml:space="preserve">
+        <value>Actualiza los datos de una solicitud de mantenimiento.</value>
+    </data>
+    <data name="DeleteMaintenanceRequestSummary" xml:space="preserve">
+        <value>Eliminar una solicitud de mantenimiento</value>
+    </data>
+    <data name="DeleteMaintenanceRequestDescription" xml:space="preserve">
+        <value>Elimina una solicitud de mantenimiento mediante su identificador.</value>
+    </data>
+    <data name="CreateWorkshopSchema" xml:space="preserve">
+        <value>Datos de la solicitud para crear un taller.</value>
+    </data>
+    <data name="UpdateWorkshopSchema" xml:space="preserve">
+        <value>Datos de la solicitud para actualizar un taller.</value>
+    </data>
+    <data name="WorkshopSchema" xml:space="preserve">
+        <value>Un taller devuelto por la API.</value>
+    </data>
+    <data name="CreateMaintenanceRequestSchema" xml:space="preserve">
+        <value>Datos de la solicitud para crear una solicitud de mantenimiento.</value>
+    </data>
+    <data name="UpdateMaintenanceRequestSchema" xml:space="preserve">
+        <value>Datos de la solicitud para actualizar una solicitud de mantenimiento.</value>
+    </data>
+    <data name="MaintenanceRequestSchema" xml:space="preserve">
+        <value>Una solicitud de mantenimiento devuelta por la API.</value>
+    </data>
+    <data name="MaintenanceRequestId" xml:space="preserve">
+        <value>El identificador de la solicitud de mantenimiento generado por el servidor.</value>
+    </data>
+    <data name="MaintenanceRequestVehicleId" xml:space="preserve">
+        <value>El identificador del vehículo.</value>
+    </data>
+    <data name="MaintenanceRequestMechanicId" xml:space="preserve">
+        <value>El identificador del usuario mecánico.</value>
+    </data>
+    <data name="MaintenanceRequestFaultDescription" xml:space="preserve">
+        <value>La descripción de la falla a reparar.</value>
+    </data>
+    <data name="MaintenanceRequestEstimatedCost" xml:space="preserve">
+        <value>El costo estimado de la reparación.</value>
+    </data>
+    <data name="MaintenanceRequestStatus" xml:space="preserve">
+        <value>El estado actual de la solicitud de mantenimiento.</value>
+    </data>
+    <data name="WorkshopId" xml:space="preserve">
+        <value>El identificador del taller generado por el servidor.</value>
+    </data>
+    <data name="WorkshopMechanicId" xml:space="preserve">
+        <value>El identificador del usuario mecánico.</value>
+    </data>
+    <data name="WorkshopCity" xml:space="preserve">
+        <value>La ciudad donde se ubica el taller.</value>
+    </data>
+    <data name="WorkshopDistrict" xml:space="preserve">
+        <value>El distrito donde se ubica el taller.</value>
+    </data>
+    <data name="WorkshopAddress" xml:space="preserve">
+        <value>La dirección del taller.</value>
+    </data>
+    <data name="WorkshopPhone" xml:space="preserve">
+        <value>El teléfono de contacto del taller.</value>
+    </data>
+    <data name="WorkshopRating" xml:space="preserve">
+        <value>La calificación del taller, de 0 a 5.</value>
+    </data>
+    <data name="WorkshopTags" xml:space="preserve">
+        <value>Los servicios que ofrece el taller.</value>
+    </data>
+    <data name="InvalidWorkshopRequest" xml:space="preserve">
+        <value>La solicitud de taller contiene valores no válidos.</value>
+    </data>
+    <data name="WorkshopNotFound" xml:space="preserve">
+        <value>No se encontró el taller.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingWorkshop" xml:space="preserve">
+        <value>Ocurrió un error inesperado al crear el taller.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingWorkshop" xml:space="preserve">
+        <value>Ocurrió un error inesperado al actualizar el taller.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingWorkshop" xml:space="preserve">
+        <value>Ocurrió un error inesperado al eliminar el taller.</value>
+    </data>
+    <data name="RequiredCity" xml:space="preserve">
+        <value>El campo ciudad es obligatorio.</value>
+    </data>
+    <data name="RequiredDistrict" xml:space="preserve">
+        <value>El campo distrito es obligatorio.</value>
+    </data>
+    <data name="RequiredAddress" xml:space="preserve">
+        <value>El campo dirección es obligatorio.</value>
+    </data>
+    <data name="RequiredPhone" xml:space="preserve">
+        <value>El campo teléfono es obligatorio.</value>
+    </data>
+    <data name="InvalidMaintenanceRequestRequest" xml:space="preserve">
+        <value>La solicitud de solicitud de mantenimiento contiene valores no válidos.</value>
+    </data>
+    <data name="MaintenanceRequestNotFound" xml:space="preserve">
+        <value>No se encontró la solicitud de mantenimiento.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingMaintenanceRequest" xml:space="preserve">
+        <value>Ocurrió un error inesperado al crear la solicitud de mantenimiento.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingMaintenanceRequest" xml:space="preserve">
+        <value>Ocurrió un error inesperado al actualizar la solicitud de mantenimiento.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingMaintenanceRequest" xml:space="preserve">
+        <value>Ocurrió un error inesperado al eliminar la solicitud de mantenimiento.</value>
+    </data>
+    <data name="MaintenanceRequestAlreadyClosed" xml:space="preserve">
+        <value>Una solicitud de mantenimiento completada o rechazada no puede cambiar de estado.</value>
+    </data>
+    <data name="RequiredFaultDescription" xml:space="preserve">
+        <value>El campo descripción de la falla es obligatorio.</value>
+    </data>
 </root>
