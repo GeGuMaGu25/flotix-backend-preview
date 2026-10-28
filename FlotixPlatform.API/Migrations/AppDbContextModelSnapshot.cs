@@ -23,6 +23,51 @@ namespace FlotixPlatform.API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FlotixPlatform.API.Analytics.Domain.Model.Aggregates.Report", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Dictionary<string, string>>("FilterParams")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("filter_params");
+
+                    b.Property<DateTimeOffset>("GeneratedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("generated_at");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("integer")
+                        .HasColumnName("owner_id");
+
+                    b.Property<string>("ReportType")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("report_type");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_reports");
+
+                    b.HasIndex("OwnerId")
+                        .HasDatabaseName("i_x_reports_owner_id");
+
+                    b.ToTable("reports");
+                });
+
             modelBuilder.Entity("FlotixPlatform.API.Commerce.Domain.Model.Aggregates.IotCatalogItem", b =>
                 {
                     b.Property<int>("Id")
