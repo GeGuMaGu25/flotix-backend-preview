@@ -28,6 +28,12 @@ using FlotixPlatform.API.Maintenance.Application.Internal.QueryServices;
 using FlotixPlatform.API.Maintenance.Application.Services;
 using FlotixPlatform.API.Maintenance.Domain.Repositories;
 using FlotixPlatform.API.Maintenance.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using FlotixPlatform.API.Monitoring.Application.Internal.CommandServices;
+using FlotixPlatform.API.Monitoring.Application.Internal.QueryServices;
+using FlotixPlatform.API.Monitoring.Application.Services;
+using FlotixPlatform.API.Monitoring.Domain.Repositories;
+using FlotixPlatform.API.Monitoring.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using FlotixPlatform.API.Monitoring.Interfaces.Hubs;
 using FlotixPlatform.API.Resources;
 using FlotixPlatform.API.Shared.Domain.Repositories;
 using FlotixPlatform.API.Shared.Infrastructure.Interfaces.Asp.Configuration;
@@ -43,6 +49,7 @@ using FleetLocalizedOpenApiAssembler = FlotixPlatform.API.Fleet.Interfaces.Rest.
 using FuelLocalizedOpenApiAssembler = FlotixPlatform.API.Fuel.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 using MaintenanceLocalizedOpenApiAssembler = FlotixPlatform.API.Maintenance.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 using IncidentsLocalizedOpenApiAssembler = FlotixPlatform.API.Incidents.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
+using MonitoringLocalizedOpenApiAssembler = FlotixPlatform.API.Monitoring.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -109,6 +116,8 @@ builder.Services.AddOpenApi(options =>
     options.AddSchemaTransformer(MaintenanceLocalizedOpenApiAssembler.TransformSchemaAsync);
     options.AddOperationTransformer(IncidentsLocalizedOpenApiAssembler.TransformOperationAsync);
     options.AddSchemaTransformer(IncidentsLocalizedOpenApiAssembler.TransformSchemaAsync);
+    options.AddOperationTransformer(MonitoringLocalizedOpenApiAssembler.TransformOperationAsync);
+    options.AddSchemaTransformer(MonitoringLocalizedOpenApiAssembler.TransformSchemaAsync);
 });
 
 // Real-time communication with SignalR.
@@ -181,6 +190,14 @@ builder.Services.AddScoped<IIncidentRepository, IncidentRepository>();
 builder.Services.AddScoped<IIncidentCommandService, IncidentCommandService>();
 builder.Services.AddScoped<IIncidentQueryService, IncidentQueryService>();
 
+// Real-Time Monitoring / Fleet Tracking Bounded Context Injection Configuration
+builder.Services.AddScoped<IIotDeviceRepository, IotDeviceRepository>();
+builder.Services.AddScoped<IIotDeviceCommandService, IotDeviceCommandService>();
+builder.Services.AddScoped<IIotDeviceQueryService, IotDeviceQueryService>();
+builder.Services.AddScoped<ITelemetryRecordRepository, TelemetryRecordRepository>();
+builder.Services.AddScoped<ITelemetryRecordCommandService, TelemetryRecordCommandService>();
+builder.Services.AddScoped<ITelemetryRecordQueryService, TelemetryRecordQueryService>();
+
 // IAM token protection keys (persist the key ring in production, e.g. PersistKeysToFileSystem).
 builder.Services.AddDataProtection();
 
@@ -221,5 +238,6 @@ app.UseAuthorization();
 app.MapOpenApi().AllowAnonymous();
 app.MapScalarApiReference().AllowAnonymous();
 app.MapControllers();
+app.MapHub<MonitoringHub>("/hubs/monitoring");
 
 app.Run();
