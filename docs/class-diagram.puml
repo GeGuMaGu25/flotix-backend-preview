@@ -1,222 +1,2913 @@
 @startuml
-' Flotix Platform Class Diagram
-' Mirrors figure 4.7.1 of the project report (classes grouped by bounded context)
-' with the members implemented in this repository.
+' Flotix Platform Class Diagram (synced with current codebase)
 
 skinparam classAttributeIconSize 0
-skinparam packageStyle rectangle
-left to right direction
-hide empty members
 
-package "Identity, Profiles & Security Context" {
-  abstract class User <<aggregate>> {
-    +Id : Guid
-    +Name : string
-    +Email : EmailAddress
-    +PasswordHash : string
-    +RoleType : Role
-    +{static} Create(SignUpCommand, string) : User
-    +UpdateProfile(UpdateUserProfileCommand) : void
+package "Identity, Profiles & Security (IAM)" as IAMContext {
+
+  package "Interfaces.REST" {
+    class AuthenticationController {
+      +SignUp(SignUpResource, CancellationToken) : Task<ActionResult>
+      +SignIn(SignInResource, CancellationToken) : Task<ActionResult>
+    }
+
+    class UsersController {
+      +GetAllUsers(Role?, CancellationToken) : Task<ActionResult>
+      +GetUserById(Guid, CancellationToken) : Task<ActionResult>
+      +UpdateUserProfile(Guid, UpdateUserProfileResource, CancellationToken) : Task<ActionResult>
+      +DeleteUser(Guid, CancellationToken) : Task<ActionResult>
+    }
+
+    package "Resources" {
+      class AuthenticatedUserResource <<resource>> {
+        +Guid Id
+        +string Email
+        +Role RoleType
+        +string Name
+        +string Token
+      }
+
+      class SignInResource <<resource>> {
+        +string Email
+        +string Password
+      }
+
+      class SignUpResource <<resource>> {
+        +string Email
+        +string Password
+        +Role RoleType
+        +string Name
+        +string? LicenseNumber
+        +DateOnly? LicenseExpiration
+        +string? CompanyName
+        +string? WorkshopName
+      }
+
+      class UpdateUserProfileResource <<resource>> {
+        +string Name
+        +string? LicenseNumber
+        +DateOnly? LicenseExpiration
+        +string? CompanyName
+        +string? WorkshopName
+      }
+
+      class UserResource <<resource>> {
+        +Guid Id
+        +string Email
+        +Role RoleType
+        +string Name
+        +string? LicenseNumber
+        +DateOnly? LicenseExpiration
+        +string? CompanyName
+        +string? WorkshopName
+      }
+
+    }
+
+    package "Transform" {
+      class ActionResultFromDeleteUserResultAssembler <<assembler>> {
+        +{static} ToActionResultFromDeleteUserResult(Result<User, DeleteUserError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class ActionResultFromSignInResultAssembler <<assembler>> {
+        +{static} ToActionResultFromSignInResult(Result<(User User, string Token), SignInError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class ActionResultFromSignUpResultAssembler <<assembler>> {
+        +{static} ToActionResultFromSignUpResult(Result<User, SignUpError>, ControllerBase, IStringLocalizer<SharedResource>, string, string) : ActionResult
+      }
+
+      class ActionResultFromUpdateUserProfileResultAssembler <<assembler>> {
+        +{static} ToActionResultFromUpdateUserProfileResult(Result<User, UpdateUserProfileError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class AuthenticatedUserResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(User, string) : AuthenticatedUserResource
+      }
+
+      class "LocalizedOpenApiAssembler" as IAM_LocalizedOpenApiAssembler <<assembler>> {
+        +{static} TransformOperationAsync(OpenApiOperation, OpenApiOperationTransformerContext, CancellationToken) : Task
+        +{static} TransformSchemaAsync(OpenApiSchema, OpenApiSchemaTransformerContext, CancellationToken) : Task
+      }
+
+      class SignInCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(SignInResource) : SignInCommand
+      }
+
+      class SignUpCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(SignUpResource) : SignUpCommand
+      }
+
+      class UpdateUserProfileCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(Guid, UpdateUserProfileResource) : UpdateUserProfileCommand
+      }
+
+      class UserResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(User) : UserResource
+      }
+
+    }
+
   }
-  class Owner {
-    +CompanyName : string?
+
+  package "Domain.Model" {
+    package "ValueObjects" {
+      class EmailAddress <<value-object>> {
+        +string Value
+        +EmailAddress(string)
+      }
+
+      enum Role {
+        Owner
+        Driver
+        Mechanic
+      }
+
+    }
+
+    package "Commands" {
+      class DeleteUserCommand <<command>> {
+        +Guid UserId
+      }
+
+      class SignInCommand <<command>> {
+        +EmailAddress Email
+        +string Password
+      }
+
+      class SignUpCommand <<command>> {
+        +EmailAddress Email
+        +string Password
+        +Role RoleType
+        +string Name
+        +string? LicenseNumber
+        +DateOnly? LicenseExpiration
+        +string? CompanyName
+        +string? WorkshopName
+      }
+
+      class UpdateUserProfileCommand <<command>> {
+        +Guid UserId
+        +string Name
+        +string? LicenseNumber
+        +DateOnly? LicenseExpiration
+        +string? CompanyName
+        +string? WorkshopName
+      }
+
+    }
+
+    package "Queries" {
+      class GetAllUsersByRoleQuery <<query>> {
+        +Role RoleType
+      }
+
+      class GetAllUsersQuery <<query>>
+
+      class GetUserByEmailQuery <<query>> {
+        +EmailAddress Email
+      }
+
+      class GetUserByIdQuery <<query>> {
+        +Guid Id
+      }
+
+    }
+
+    package "Aggregates" {
+      class Driver <<aggregate>> {
+        +string? LicenseNumber
+        +DateOnly? LicenseExpiration
+        +Driver(SignUpCommand, string)
+      }
+
+      class Mechanic <<aggregate>> {
+        +string? WorkshopName
+        +Mechanic(SignUpCommand, string)
+      }
+
+      class Owner <<aggregate>> {
+        +string? CompanyName
+        +Owner(SignUpCommand, string)
+      }
+
+      abstract class User <<aggregate>> {
+        +Guid Id
+        +string Name
+        +EmailAddress Email
+        +string PasswordHash
+        +Role RoleType
+        +{static} Create(SignUpCommand, string) : User
+        +UpdateProfile(UpdateUserProfileCommand) : void
+      }
+
+    }
+
   }
-  class Driver {
-    +LicenseNumber : string?
-    +LicenseExpiration : DateOnly?
+
+  package "Domain.Repositories" {
+    interface IUserRepository <<repository>> {
+      +FindByEmailAsync(EmailAddress, CancellationToken) : Task<User?>
+      +ExistsByEmailAsync(EmailAddress, CancellationToken) : Task<bool>
+      +FindByRoleTypeAsync(Role, CancellationToken) : Task<IEnumerable<User>>
+    }
+
   }
-  class Mechanic {
-    +WorkshopName : string?
+
+  package "Application" {
+    package "Errors" {
+      enum DeleteUserError <<error>> {
+        UserNotFound
+        UserHasDependents
+        UnexpectedError
+      }
+
+      enum SignInError <<error>> {
+        InvalidCredentials
+        UnexpectedError
+      }
+
+      enum SignUpError <<error>> {
+        InvalidUser
+        DuplicateUserEmail
+        DriverLicenseRequired
+        UnexpectedError
+      }
+
+      enum UpdateUserProfileError <<error>> {
+        UserNotFound
+        InvalidUser
+        DriverLicenseRequired
+        UnexpectedError
+      }
+
+    }
+
+    package "Services" {
+      interface IUserCommandService <<application-service>> {
+        +Handle(SignUpCommand, CancellationToken) : Task<Result<User, SignUpError>>
+        +Task(User, string)
+        +Handle(UpdateUserProfileCommand, CancellationToken) : Task<Result<User, UpdateUserProfileError>>
+        +Handle(DeleteUserCommand, CancellationToken) : Task<Result<User, DeleteUserError>>
+      }
+
+      interface IUserQueryService <<application-service>> {
+        +Handle(GetAllUsersQuery, CancellationToken) : Task<IEnumerable<User>>
+        +Handle(GetAllUsersByRoleQuery, CancellationToken) : Task<IEnumerable<User>>
+        +Handle(GetUserByIdQuery, CancellationToken) : Task<User?>
+        +Handle(GetUserByEmailQuery, CancellationToken) : Task<User?>
+      }
+
+    }
+
+    package "Internal.CommandServices" {
+      class UserCommandService <<service>> {
+        +Handle(SignUpCommand, CancellationToken) : Task<Result<User, SignUpError>>
+        +Task(User, string)
+        +Handle(UpdateUserProfileCommand, CancellationToken) : Task<Result<User, UpdateUserProfileError>>
+        +Handle(DeleteUserCommand, CancellationToken) : Task<Result<User, DeleteUserError>>
+      }
+
+    }
+
+    package "Internal.QueryServices" {
+      class UserQueryService <<service>> {
+        +Handle(GetAllUsersQuery, CancellationToken) : Task<IEnumerable<User>>
+        +Handle(GetAllUsersByRoleQuery, CancellationToken) : Task<IEnumerable<User>>
+        +Handle(GetUserByIdQuery, CancellationToken) : Task<User?>
+        +Handle(GetUserByEmailQuery, CancellationToken) : Task<User?>
+      }
+
+    }
+
+    package "Internal.OutboundServices" {
+      interface IHashingService <<outbound-service>> {
+        +HashPassword(string) : string
+        +VerifyPassword(string, string) : bool
+      }
+
+      interface ITokenService <<outbound-service>> {
+        +GenerateToken(User) : string
+        +ValidateTokenAsync(string) : Task<Guid?>
+      }
+
+    }
+
   }
-  enum Role {
-    Owner
-    Driver
-    Mechanic
+
+  package "Infrastructure.Hashing.AspNetCore.Services" {
+    class HashingService <<service>> {
+      +HashPassword(string) : string
+      +VerifyPassword(string, string) : bool
+    }
+
   }
-  class EmailAddress <<value object>> {
-    +Value : string
+
+  package "Infrastructure.Persistence.EFC.Configuration.Extensions" {
+    class "ModelBuilderExtensions" as IAM_ModelBuilderExtensions <<configuration>> {
+      +{static} ApplyIAMConfiguration(ModelBuilder) : void
+    }
+
   }
-  User <|-- Owner
-  User <|-- Driver
-  User <|-- Mechanic
+
+  package "Infrastructure.Persistence.EFC.Repositories" {
+    class UserRepository <<repository>> {
+      +FindByEmailAsync(EmailAddress, CancellationToken) : Task<User?>
+      +ExistsByEmailAsync(EmailAddress, CancellationToken) : Task<bool>
+      +FindByRoleTypeAsync(Role, CancellationToken) : Task<IEnumerable<User>>
+    }
+
+  }
+
+  package "Infrastructure.Pipeline.Middleware.Attributes" {
+    class AllowAnonymousAttribute <<attribute>>
+
+    class AuthorizeAttribute <<attribute>> {
+      +IReadOnlyList<Role> Roles
+    }
+
+  }
+
+  package "Infrastructure.Pipeline.Middleware.Components" {
+    class RequestAuthorizationMiddleware <<middleware>> {
+      +InvokeAsync(HttpContext, IUserQueryService, ITokenService) : Task
+    }
+
+  }
+
+  package "Infrastructure.Pipeline.Middleware.Extensions" {
+    class ApplicationBuilderExtensions <<extension>> {
+      +{static} UseRequestAuthorization(IApplicationBuilder) : IApplicationBuilder
+    }
+
+  }
+
+  package "Infrastructure.Tokens.JWT.Configuration" {
+    class TokenSettings <<settings>> {
+      +string Secret
+      +string Issuer
+      +string Audience
+      +int ExpirationHours
+    }
+
+  }
+
+  package "Infrastructure.Tokens.JWT.Services" {
+    class TokenService <<service>> {
+      +GenerateToken(User) : string
+      +ValidateTokenAsync(string) : Task<Guid?>
+    }
+
+  }
+
 }
 
-package "Vehicle & Fleet Management Context" {
-  class Vehicle <<aggregate>> {
-    +Id : Guid
-    +OwnerId : Guid
-    +DriverId : Guid?
-    +LicensePlate : LicensePlate
-    +VehicleType : string
-    +CurrentMileage : decimal
-    +Status : VehicleStatus
-    +UpdateInformation(UpdateVehicleCommand) : void
+package "Vehicle & Fleet Management (Fleet)" as FleetContext {
+
+  package "Interfaces.REST" {
+    class VehiclesController {
+      +CreateVehicle(CreateVehicleResource, CancellationToken) : Task<ActionResult>
+      +GetAllVehicles(Guid?, Guid?, CancellationToken) : Task<ActionResult>
+      +GetVehicleById(Guid, CancellationToken) : Task<ActionResult>
+      +UpdateVehicle(Guid, UpdateVehicleResource, CancellationToken) : Task<ActionResult>
+      +DeleteVehicle(Guid, CancellationToken) : Task<ActionResult>
+    }
+
+    package "Resources" {
+      class CreateVehicleResource <<resource>> {
+        +Guid OwnerId
+        +Guid? DriverId
+        +string LicensePlate
+        +string VehicleType
+        +decimal CurrentMileage
+        +VehicleStatus Status
+      }
+
+      class UpdateVehicleResource <<resource>> {
+        +Guid? DriverId
+        +string LicensePlate
+        +string VehicleType
+        +decimal CurrentMileage
+        +VehicleStatus Status
+      }
+
+      class VehicleResource <<resource>> {
+        +Guid Id
+        +Guid OwnerId
+        +Guid? DriverId
+        +string LicensePlate
+        +string VehicleType
+        +decimal CurrentMileage
+        +VehicleStatus Status
+      }
+
+    }
+
+    package "Transform" {
+      class ActionResultFromCreateVehicleResultAssembler <<assembler>> {
+        +{static} ToActionResultFromCreateVehicleResult(Result<Vehicle, CreateVehicleError>, ControllerBase, IStringLocalizer<SharedResource>, string) : ActionResult
+      }
+
+      class ActionResultFromDeleteVehicleResultAssembler <<assembler>> {
+        +{static} ToActionResultFromDeleteVehicleResult(Result<Vehicle, DeleteVehicleError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class ActionResultFromUpdateVehicleResultAssembler <<assembler>> {
+        +{static} ToActionResultFromUpdateVehicleResult(Result<Vehicle, UpdateVehicleError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class CreateVehicleCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(CreateVehicleResource) : CreateVehicleCommand
+      }
+
+      class "LocalizedOpenApiAssembler" as Fleet_LocalizedOpenApiAssembler <<assembler>> {
+        +{static} TransformOperationAsync(OpenApiOperation, OpenApiOperationTransformerContext, CancellationToken) : Task
+        +{static} TransformSchemaAsync(OpenApiSchema, OpenApiSchemaTransformerContext, CancellationToken) : Task
+      }
+
+      class UpdateVehicleCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(Guid, UpdateVehicleResource) : UpdateVehicleCommand
+      }
+
+      class VehicleResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(Vehicle) : VehicleResource
+      }
+
+    }
+
   }
-  class LicensePlate <<value object>> {
-    +Value : string
+
+  package "Interfaces.ACL" {
+    interface IFleetContextFacade <<facade>> {
+      +FetchLicensePlatesByOwnerIdAsync(Guid, CancellationToken) : Task<IReadOnlyDictionary<Guid, string>>
+    }
+
   }
-  enum VehicleStatus {
-    Available : "Disponible"
-    InMaintenance : "En mantenimiento"
-    Inactive : "Inactivo"
+
+  package "Domain.Model" {
+    package "ValueObjects" {
+      class LicensePlate <<value-object>> {
+        +string Value
+        +LicensePlate(string)
+      }
+
+      enum VehicleStatus {
+        Available
+        InMaintenance
+        Inactive
+      }
+
+    }
+
+    package "Commands" {
+      class CreateVehicleCommand <<command>> {
+        +Guid OwnerId
+        +Guid? DriverId
+        +LicensePlate LicensePlate
+        +string VehicleType
+        +decimal CurrentMileage
+        +VehicleStatus Status
+      }
+
+      class DeleteVehicleCommand <<command>> {
+        +Guid VehicleId
+      }
+
+      class UpdateVehicleCommand <<command>> {
+        +Guid VehicleId
+        +Guid? DriverId
+        +LicensePlate LicensePlate
+        +string VehicleType
+        +decimal CurrentMileage
+        +VehicleStatus Status
+      }
+
+    }
+
+    package "Queries" {
+      class GetAllVehiclesByDriverIdQuery <<query>> {
+        +Guid DriverId
+      }
+
+      class GetAllVehiclesByOwnerIdQuery <<query>> {
+        +Guid OwnerId
+      }
+
+      class GetAllVehiclesQuery <<query>>
+
+      class GetVehicleByIdQuery <<query>> {
+        +Guid Id
+      }
+
+    }
+
+    package "Aggregates" {
+      class Vehicle <<aggregate>> {
+        +Guid Id
+        +Guid OwnerId
+        +Guid? DriverId
+        +LicensePlate LicensePlate
+        +string VehicleType
+        +decimal CurrentMileage
+        +VehicleStatus Status
+        +Vehicle(CreateVehicleCommand)
+        +UpdateInformation(UpdateVehicleCommand) : void
+      }
+
+    }
+
   }
+
+  package "Domain.Repositories" {
+    interface IVehicleRepository <<repository>> {
+      +FindByOwnerIdAsync(Guid, CancellationToken) : Task<IEnumerable<Vehicle>>
+      +FindByDriverIdAsync(Guid, CancellationToken) : Task<IEnumerable<Vehicle>>
+      +ExistsByLicensePlateAsync(LicensePlate, CancellationToken) : Task<bool>
+      +FindByLicensePlateAsync(LicensePlate, CancellationToken) : Task<Vehicle?>
+    }
+
+  }
+
+  package "Application" {
+    package "Errors" {
+      enum CreateVehicleError <<error>> {
+        InvalidVehicle
+        DuplicateVehicleLicensePlate
+        ReferencedResourceNotFound
+        UnexpectedError
+      }
+
+      enum DeleteVehicleError <<error>> {
+        VehicleNotFound
+        VehicleHasDependents
+        UnexpectedError
+      }
+
+      enum UpdateVehicleError <<error>> {
+        VehicleNotFound
+        InvalidVehicle
+        DuplicateVehicleLicensePlate
+        ReferencedResourceNotFound
+        MileageCannotDecrease
+        UnexpectedError
+      }
+
+    }
+
+    package "Services" {
+      interface IVehicleCommandService <<application-service>> {
+        +Handle(CreateVehicleCommand, CancellationToken) : Task<Result<Vehicle, CreateVehicleError>>
+        +Handle(UpdateVehicleCommand, CancellationToken) : Task<Result<Vehicle, UpdateVehicleError>>
+        +Handle(DeleteVehicleCommand, CancellationToken) : Task<Result<Vehicle, DeleteVehicleError>>
+      }
+
+      interface IVehicleQueryService <<application-service>> {
+        +Handle(GetAllVehiclesQuery, CancellationToken) : Task<IEnumerable<Vehicle>>
+        +Handle(GetVehicleByIdQuery, CancellationToken) : Task<Vehicle?>
+        +Handle(GetAllVehiclesByOwnerIdQuery, CancellationToken) : Task<IEnumerable<Vehicle>>
+        +Handle(GetAllVehiclesByDriverIdQuery, CancellationToken) : Task<IEnumerable<Vehicle>>
+      }
+
+    }
+
+    package "Internal.CommandServices" {
+      class VehicleCommandService <<service>> {
+        +Handle(CreateVehicleCommand, CancellationToken) : Task<Result<Vehicle, CreateVehicleError>>
+        +Handle(UpdateVehicleCommand, CancellationToken) : Task<Result<Vehicle, UpdateVehicleError>>
+        +Handle(DeleteVehicleCommand, CancellationToken) : Task<Result<Vehicle, DeleteVehicleError>>
+      }
+
+    }
+
+    package "Internal.QueryServices" {
+      class VehicleQueryService <<service>> {
+        +Handle(GetAllVehiclesQuery, CancellationToken) : Task<IEnumerable<Vehicle>>
+        +Handle(GetVehicleByIdQuery, CancellationToken) : Task<Vehicle?>
+        +Handle(GetAllVehiclesByOwnerIdQuery, CancellationToken) : Task<IEnumerable<Vehicle>>
+        +Handle(GetAllVehiclesByDriverIdQuery, CancellationToken) : Task<IEnumerable<Vehicle>>
+      }
+
+    }
+
+    package "ACL" {
+      class FleetContextFacade <<facade>> {
+        +FetchLicensePlatesByOwnerIdAsync(Guid, CancellationToken) : Task<IReadOnlyDictionary<Guid, string>>
+      }
+
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Configuration.Extensions" {
+    class "ModelBuilderExtensions" as Fleet_ModelBuilderExtensions <<configuration>> {
+      +{static} ApplyFleetConfiguration(ModelBuilder) : void
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Repositories" {
+    class VehicleRepository <<repository>> {
+      +FindByOwnerIdAsync(Guid, CancellationToken) : Task<IEnumerable<Vehicle>>
+      +FindByDriverIdAsync(Guid, CancellationToken) : Task<IEnumerable<Vehicle>>
+      +ExistsByLicensePlateAsync(LicensePlate, CancellationToken) : Task<bool>
+      +FindByLicensePlateAsync(LicensePlate, CancellationToken) : Task<Vehicle?>
+    }
+
+  }
+
 }
 
-package "Fuel Control Context" {
-  class FuelRecord <<aggregate>> {
-    +Id : Guid
-    +VehicleId : Guid
-    +DriverId : Guid
-    +Liters : decimal
-    +Cost : decimal
-    +MileageAtRefill : decimal
-    +RecordedDate : DateTimeOffset
-    +UpdateInformation(UpdateFuelRecordCommand) : void
+package "Fuel Control (Fuel)" as FuelContext {
+
+  package "Interfaces.REST" {
+    class FuelRecordsController {
+      +CreateFuelRecord(CreateFuelRecordResource, CancellationToken) : Task<ActionResult>
+      +GetAllFuelRecords(Guid?, Guid?, CancellationToken) : Task<ActionResult>
+      +GetFuelRecordById(Guid, CancellationToken) : Task<ActionResult>
+      +UpdateFuelRecord(Guid, UpdateFuelRecordResource, CancellationToken) : Task<ActionResult>
+      +DeleteFuelRecord(Guid, CancellationToken) : Task<ActionResult>
+    }
+
+    package "Resources" {
+      class CreateFuelRecordResource <<resource>> {
+        +Guid VehicleId
+        +Guid DriverId
+        +decimal Liters
+        +decimal Cost
+        +decimal MileageAtRefill
+        +DateTimeOffset RecordedDate
+      }
+
+      class FuelRecordResource <<resource>> {
+        +Guid Id
+        +Guid VehicleId
+        +Guid DriverId
+        +decimal Liters
+        +decimal Cost
+        +decimal MileageAtRefill
+        +DateTimeOffset RecordedDate
+      }
+
+      class UpdateFuelRecordResource <<resource>> {
+        +decimal Liters
+        +decimal Cost
+        +decimal MileageAtRefill
+        +DateTimeOffset RecordedDate
+      }
+
+    }
+
+    package "Transform" {
+      class ActionResultFromCreateFuelRecordResultAssembler <<assembler>> {
+        +{static} ToActionResultFromCreateFuelRecordResult(Result<FuelRecord, CreateFuelRecordError>, ControllerBase, IStringLocalizer<SharedResource>, string) : ActionResult
+      }
+
+      class ActionResultFromDeleteFuelRecordResultAssembler <<assembler>> {
+        +{static} ToActionResultFromDeleteFuelRecordResult(Result<FuelRecord, DeleteFuelRecordError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class ActionResultFromUpdateFuelRecordResultAssembler <<assembler>> {
+        +{static} ToActionResultFromUpdateFuelRecordResult(Result<FuelRecord, UpdateFuelRecordError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class CreateFuelRecordCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(CreateFuelRecordResource) : CreateFuelRecordCommand
+      }
+
+      class FuelRecordResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(FuelRecord) : FuelRecordResource
+      }
+
+      class "LocalizedOpenApiAssembler" as Fuel_LocalizedOpenApiAssembler <<assembler>> {
+        +{static} TransformOperationAsync(OpenApiOperation, OpenApiOperationTransformerContext, CancellationToken) : Task
+        +{static} TransformSchemaAsync(OpenApiSchema, OpenApiSchemaTransformerContext, CancellationToken) : Task
+      }
+
+      class UpdateFuelRecordCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(Guid, UpdateFuelRecordResource) : UpdateFuelRecordCommand
+      }
+
+    }
+
   }
+
+  package "Interfaces.ACL" {
+    interface IFuelContextFacade <<facade>> {
+      +Task(Guid, decimal, decimal)
+    }
+
+  }
+
+  package "Domain.Model" {
+    package "Commands" {
+      class CreateFuelRecordCommand <<command>> {
+        +Guid VehicleId
+        +Guid DriverId
+        +decimal Liters
+        +decimal Cost
+        +decimal MileageAtRefill
+        +DateTimeOffset RecordedDate
+      }
+
+      class DeleteFuelRecordCommand <<command>> {
+        +Guid FuelRecordId
+      }
+
+      class UpdateFuelRecordCommand <<command>> {
+        +Guid FuelRecordId
+        +decimal Liters
+        +decimal Cost
+        +decimal MileageAtRefill
+        +DateTimeOffset RecordedDate
+      }
+
+    }
+
+    package "Queries" {
+      class GetAllFuelRecordsByDriverIdQuery <<query>> {
+        +Guid DriverId
+      }
+
+      class GetAllFuelRecordsByVehicleIdQuery <<query>> {
+        +Guid VehicleId
+      }
+
+      class GetAllFuelRecordsQuery <<query>>
+
+      class GetFuelRecordByIdQuery <<query>> {
+        +Guid Id
+      }
+
+    }
+
+    package "Aggregates" {
+      class FuelRecord <<aggregate>> {
+        +Guid Id
+        +Guid VehicleId
+        +Guid DriverId
+        +decimal Liters
+        +decimal Cost
+        +decimal MileageAtRefill
+        +DateTimeOffset RecordedDate
+        +FuelRecord(CreateFuelRecordCommand)
+        +UpdateInformation(UpdateFuelRecordCommand) : void
+      }
+
+    }
+
+  }
+
+  package "Domain.Repositories" {
+    interface IFuelRecordRepository <<repository>> {
+      +FindByVehicleIdAsync(Guid, CancellationToken) : Task<IEnumerable<FuelRecord>>
+      +FindByDriverIdAsync(Guid, CancellationToken) : Task<IEnumerable<FuelRecord>>
+      +FindByVehicleIdsAndRecordedDateRangeAsync(IReadOnlyCollection<Guid>, DateTimeOffset, DateTimeOffset, CancellationToken) : Task<IEnumerable<FuelRecord>>
+    }
+
+  }
+
+  package "Application" {
+    package "Errors" {
+      enum CreateFuelRecordError <<error>> {
+        InvalidFuelRecord
+        ReferencedResourceNotFound
+        UnexpectedError
+      }
+
+      enum DeleteFuelRecordError <<error>> {
+        FuelRecordNotFound
+        UnexpectedError
+      }
+
+      enum UpdateFuelRecordError <<error>> {
+        FuelRecordNotFound
+        InvalidFuelRecord
+        UnexpectedError
+      }
+
+    }
+
+    package "Services" {
+      interface IFuelRecordCommandService <<application-service>> {
+        +Handle(CreateFuelRecordCommand, CancellationToken) : Task<Result<FuelRecord, CreateFuelRecordError>>
+        +Handle(UpdateFuelRecordCommand, CancellationToken) : Task<Result<FuelRecord, UpdateFuelRecordError>>
+        +Handle(DeleteFuelRecordCommand, CancellationToken) : Task<Result<FuelRecord, DeleteFuelRecordError>>
+      }
+
+      interface IFuelRecordQueryService <<application-service>> {
+        +Handle(GetAllFuelRecordsQuery, CancellationToken) : Task<IEnumerable<FuelRecord>>
+        +Handle(GetFuelRecordByIdQuery, CancellationToken) : Task<FuelRecord?>
+        +Handle(GetAllFuelRecordsByVehicleIdQuery, CancellationToken) : Task<IEnumerable<FuelRecord>>
+        +Handle(GetAllFuelRecordsByDriverIdQuery, CancellationToken) : Task<IEnumerable<FuelRecord>>
+      }
+
+    }
+
+    package "Internal.CommandServices" {
+      class FuelRecordCommandService <<service>> {
+        +Handle(CreateFuelRecordCommand, CancellationToken) : Task<Result<FuelRecord, CreateFuelRecordError>>
+        +Handle(UpdateFuelRecordCommand, CancellationToken) : Task<Result<FuelRecord, UpdateFuelRecordError>>
+        +Handle(DeleteFuelRecordCommand, CancellationToken) : Task<Result<FuelRecord, DeleteFuelRecordError>>
+      }
+
+    }
+
+    package "Internal.QueryServices" {
+      class FuelRecordQueryService <<service>> {
+        +Handle(GetAllFuelRecordsQuery, CancellationToken) : Task<IEnumerable<FuelRecord>>
+        +Handle(GetFuelRecordByIdQuery, CancellationToken) : Task<FuelRecord?>
+        +Handle(GetAllFuelRecordsByVehicleIdQuery, CancellationToken) : Task<IEnumerable<FuelRecord>>
+        +Handle(GetAllFuelRecordsByDriverIdQuery, CancellationToken) : Task<IEnumerable<FuelRecord>>
+      }
+
+    }
+
+    package "ACL" {
+      class FuelContextFacade <<facade>> {
+        +Task(Guid, decimal, decimal)
+      }
+
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Configuration.Extensions" {
+    class "ModelBuilderExtensions" as Fuel_ModelBuilderExtensions <<configuration>> {
+      +{static} ApplyFuelConfiguration(ModelBuilder) : void
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Repositories" {
+    class FuelRecordRepository <<repository>> {
+      +FindByVehicleIdAsync(Guid, CancellationToken) : Task<IEnumerable<FuelRecord>>
+      +FindByDriverIdAsync(Guid, CancellationToken) : Task<IEnumerable<FuelRecord>>
+      +FindByVehicleIdsAndRecordedDateRangeAsync(IReadOnlyCollection<Guid>, DateTimeOffset, DateTimeOffset, CancellationToken) : Task<IEnumerable<FuelRecord>>
+    }
+
+  }
+
 }
 
-package "Maintenance Management Context" {
-  class MaintenanceRequest <<aggregate>> {
-    +Id : Guid
-    +VehicleId : Guid
-    +MechanicId : Guid
-    +Description : string
-    +EstimatedCost : decimal
-    +Status : MaintenanceRequestStatus
-    +RequestDate : DateTimeOffset
-    +IsBudgetApproved : bool
-    +IsCompleted : bool
-    +SubmitQuote(decimal) : void
-    +Approve() : void
-    +Reject() : void
-    +StartRepair() : void
-    +Finish() : void
+package "Maintenance Management (Maintenance)" as MaintenanceContext {
+
+  package "Interfaces.REST" {
+    class MaintenanceRequestsController {
+      +SubmitMaintenanceRequest(SubmitMaintenanceRequestResource, CancellationToken) : Task<ActionResult>
+      +GetAllMaintenanceRequests(Guid?, Guid?, CancellationToken) : Task<ActionResult>
+      +GetMaintenanceRequestById(Guid, CancellationToken) : Task<ActionResult>
+      +RegisterDiagnosticAndQuote(Guid, RegisterDiagnosticAndQuoteResource, CancellationToken) : Task<ActionResult>
+      +ApproveOrRejectBudget(Guid, ApproveOrRejectBudgetResource, CancellationToken) : Task<ActionResult>
+      +UpdateRepairStatus(Guid, CancellationToken) : Task<ActionResult>
+      +CompleteMaintenance(Guid, CancellationToken) : Task<ActionResult>
+      +DeleteMaintenanceRequest(Guid, CancellationToken) : Task<ActionResult>
+    }
+
+    package "Resources" {
+      class ApproveOrRejectBudgetResource <<resource>> {
+        +bool IsApproved
+      }
+
+      class MaintenanceRequestResource <<resource>> {
+        +Guid Id
+        +Guid VehicleId
+        +Guid MechanicId
+        +string Description
+        +decimal EstimatedCost
+        +MaintenanceRequestStatus Status
+        +DateTimeOffset RequestDate
+      }
+
+      class RegisterDiagnosticAndQuoteResource <<resource>> {
+        +decimal EstimatedCost
+      }
+
+      class SubmitMaintenanceRequestResource <<resource>> {
+        +Guid VehicleId
+        +Guid MechanicId
+        +string Description
+      }
+
+    }
+
+    package "Transform" {
+      class ActionResultFromChangeMaintenanceRequestStatusResultAssembler <<assembler>> {
+        +{static} ToActionResultFromChangeMaintenanceRequestStatusResult(Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class ActionResultFromDeleteMaintenanceRequestResultAssembler <<assembler>> {
+        +{static} ToActionResultFromDeleteMaintenanceRequestResult(Result<MaintenanceRequest, DeleteMaintenanceRequestError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class ActionResultFromSubmitMaintenanceRequestResultAssembler <<assembler>> {
+        +{static} ToActionResultFromSubmitMaintenanceRequestResult(Result<MaintenanceRequest, SubmitMaintenanceRequestError>, ControllerBase, IStringLocalizer<SharedResource>, string) : ActionResult
+      }
+
+      class ApproveOrRejectBudgetCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(Guid, ApproveOrRejectBudgetResource) : ApproveOrRejectBudgetCommand
+      }
+
+      class "LocalizedOpenApiAssembler" as Maintenance_LocalizedOpenApiAssembler <<assembler>> {
+        +{static} TransformOperationAsync(OpenApiOperation, OpenApiOperationTransformerContext, CancellationToken) : Task
+        +{static} TransformSchemaAsync(OpenApiSchema, OpenApiSchemaTransformerContext, CancellationToken) : Task
+      }
+
+      class MaintenanceRequestResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(MaintenanceRequest) : MaintenanceRequestResource
+      }
+
+      class RegisterDiagnosticAndQuoteCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(Guid, RegisterDiagnosticAndQuoteResource) : RegisterDiagnosticAndQuoteCommand
+      }
+
+      class SubmitMaintenanceRequestCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(SubmitMaintenanceRequestResource) : SubmitMaintenanceRequestCommand
+      }
+
+    }
+
   }
-  enum MaintenanceRequestStatus {
-    Pending : "Pendiente"
-    Quoted : "Presupuestado"
-    Approved : "Aprobado"
-    Rejected : "Rechazado"
-    InRepair : "En reparación"
-    Completed : "Completado"
+
+  package "Interfaces.ACL" {
+    interface IMaintenanceContextFacade <<facade>> {
+      +Task(Guid, decimal, bool, bool)
+    }
+
   }
+
+  package "Domain.Model" {
+    package "ValueObjects" {
+      enum MaintenanceRequestStatus {
+        Pending
+        Quoted
+        Approved
+        Rejected
+        InRepair
+        Completed
+      }
+
+    }
+
+    package "Commands" {
+      class ApproveOrRejectBudgetCommand <<command>> {
+        +Guid MaintenanceRequestId
+        +bool IsApproved
+      }
+
+      class CompleteMaintenanceCommand <<command>> {
+        +Guid MaintenanceRequestId
+      }
+
+      class DeleteMaintenanceRequestCommand <<command>> {
+        +Guid MaintenanceRequestId
+      }
+
+      class RegisterDiagnosticAndQuoteCommand <<command>> {
+        +Guid MaintenanceRequestId
+        +decimal EstimatedCost
+      }
+
+      class SubmitMaintenanceRequestCommand <<command>> {
+        +Guid VehicleId
+        +Guid MechanicId
+        +string Description
+      }
+
+      class UpdateRepairStatusCommand <<command>> {
+        +Guid MaintenanceRequestId
+      }
+
+    }
+
+    package "Queries" {
+      class GetAllMaintenanceRequestsByMechanicIdQuery <<query>> {
+        +Guid MechanicId
+      }
+
+      class GetAllMaintenanceRequestsByVehicleIdQuery <<query>> {
+        +Guid VehicleId
+      }
+
+      class GetAllMaintenanceRequestsQuery <<query>>
+
+      class GetMaintenanceRequestByIdQuery <<query>> {
+        +Guid Id
+      }
+
+    }
+
+    package "Aggregates" {
+      class MaintenanceRequest <<aggregate>> {
+        +Guid Id
+        +Guid VehicleId
+        +Guid MechanicId
+        +string Description
+        +decimal EstimatedCost
+        +MaintenanceRequestStatus Status
+        +DateTimeOffset RequestDate
+        +bool IsBudgetApproved
+        +bool IsCompleted
+        +MaintenanceRequest(SubmitMaintenanceRequestCommand)
+        +SubmitQuote(decimal) : void
+        +Approve() : void
+        +Reject() : void
+        +StartRepair() : void
+        +Finish() : void
+      }
+
+    }
+
+  }
+
+  package "Domain.Repositories" {
+    interface IMaintenanceRequestRepository <<repository>> {
+      +FindByVehicleIdAsync(Guid, CancellationToken) : Task<IEnumerable<MaintenanceRequest>>
+      +FindByMechanicIdAsync(Guid, CancellationToken) : Task<IEnumerable<MaintenanceRequest>>
+      +FindByVehicleIdsAndRequestDateRangeAsync(IReadOnlyCollection<Guid>, DateTimeOffset, DateTimeOffset, CancellationToken) : Task<IEnumerable<MaintenanceRequest>>
+    }
+
+  }
+
+  package "Application" {
+    package "Errors" {
+      enum ChangeMaintenanceRequestStatusError <<error>> {
+        MaintenanceRequestNotFound
+        InvalidMaintenanceRequest
+        InvalidStatusTransition
+        UnexpectedError
+      }
+
+      enum DeleteMaintenanceRequestError <<error>> {
+        MaintenanceRequestNotFound
+        UnexpectedError
+      }
+
+      enum SubmitMaintenanceRequestError <<error>> {
+        InvalidMaintenanceRequest
+        ReferencedResourceNotFound
+        UnexpectedError
+      }
+
+    }
+
+    package "Services" {
+      interface IMaintenanceRequestCommandService <<application-service>> {
+        +Handle(SubmitMaintenanceRequestCommand, CancellationToken) : Task<Result<MaintenanceRequest, SubmitMaintenanceRequestError>>
+        +Handle(RegisterDiagnosticAndQuoteCommand, CancellationToken) : Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>>
+        +Handle(ApproveOrRejectBudgetCommand, CancellationToken) : Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>>
+        +Handle(UpdateRepairStatusCommand, CancellationToken) : Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>>
+        +Handle(CompleteMaintenanceCommand, CancellationToken) : Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>>
+        +Handle(DeleteMaintenanceRequestCommand, CancellationToken) : Task<Result<MaintenanceRequest, DeleteMaintenanceRequestError>>
+      }
+
+      interface IMaintenanceRequestQueryService <<application-service>> {
+        +Handle(GetAllMaintenanceRequestsQuery, CancellationToken) : Task<IEnumerable<MaintenanceRequest>>
+        +Handle(GetMaintenanceRequestByIdQuery, CancellationToken) : Task<MaintenanceRequest?>
+        +Handle(GetAllMaintenanceRequestsByVehicleIdQuery, CancellationToken) : Task<IEnumerable<MaintenanceRequest>>
+        +Handle(GetAllMaintenanceRequestsByMechanicIdQuery, CancellationToken) : Task<IEnumerable<MaintenanceRequest>>
+      }
+
+    }
+
+    package "Internal.CommandServices" {
+      class MaintenanceRequestCommandService <<service>> {
+        +Handle(SubmitMaintenanceRequestCommand, CancellationToken) : Task<Result<MaintenanceRequest, SubmitMaintenanceRequestError>>
+        +Handle(RegisterDiagnosticAndQuoteCommand, CancellationToken) : Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>>
+        +Handle(ApproveOrRejectBudgetCommand, CancellationToken) : Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>>
+        +Handle(UpdateRepairStatusCommand, CancellationToken) : Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>>
+        +Handle(CompleteMaintenanceCommand, CancellationToken) : Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>>
+        +Handle(DeleteMaintenanceRequestCommand, CancellationToken) : Task<Result<MaintenanceRequest, DeleteMaintenanceRequestError>>
+      }
+
+    }
+
+    package "Internal.QueryServices" {
+      class MaintenanceRequestQueryService <<service>> {
+        +Handle(GetAllMaintenanceRequestsQuery, CancellationToken) : Task<IEnumerable<MaintenanceRequest>>
+        +Handle(GetMaintenanceRequestByIdQuery, CancellationToken) : Task<MaintenanceRequest?>
+        +Handle(GetAllMaintenanceRequestsByVehicleIdQuery, CancellationToken) : Task<IEnumerable<MaintenanceRequest>>
+        +Handle(GetAllMaintenanceRequestsByMechanicIdQuery, CancellationToken) : Task<IEnumerable<MaintenanceRequest>>
+      }
+
+    }
+
+    package "ACL" {
+      class MaintenanceContextFacade <<facade>> {
+        +Task(Guid, decimal, bool, bool)
+      }
+
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Configuration.Extensions" {
+    class "ModelBuilderExtensions" as Maintenance_ModelBuilderExtensions <<configuration>> {
+      +{static} ApplyMaintenanceConfiguration(ModelBuilder) : void
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Repositories" {
+    class MaintenanceRequestRepository <<repository>> {
+      +FindByVehicleIdAsync(Guid, CancellationToken) : Task<IEnumerable<MaintenanceRequest>>
+      +FindByMechanicIdAsync(Guid, CancellationToken) : Task<IEnumerable<MaintenanceRequest>>
+      +FindByVehicleIdsAndRequestDateRangeAsync(IReadOnlyCollection<Guid>, DateTimeOffset, DateTimeOffset, CancellationToken) : Task<IEnumerable<MaintenanceRequest>>
+    }
+
+  }
+
 }
 
-package "Incident Management Context" {
-  class Incident <<aggregate>> {
-    +Id : Guid
-    +VehicleId : Guid
-    +DriverId : Guid
-    +Description : string
-    +Status : IncidentStatus
-    +ReportedDate : DateTimeOffset
-    +UpdateInformation(UpdateIncidentCommand) : void
+package "Incident Management (Incidents)" as IncidentsContext {
+
+  package "Interfaces.REST" {
+    class IncidentsController {
+      +CreateIncident(CreateIncidentResource, CancellationToken) : Task<ActionResult>
+      +GetAllIncidents(Guid?, Guid?, CancellationToken) : Task<ActionResult>
+      +GetIncidentById(Guid, CancellationToken) : Task<ActionResult>
+      +UpdateIncident(Guid, UpdateIncidentResource, CancellationToken) : Task<ActionResult>
+      +DeleteIncident(Guid, CancellationToken) : Task<ActionResult>
+    }
+
+    package "Resources" {
+      class CreateIncidentResource <<resource>> {
+        +Guid VehicleId
+        +Guid DriverId
+        +string Description
+        +IncidentStatus Status
+      }
+
+      class IncidentResource <<resource>> {
+        +Guid Id
+        +Guid VehicleId
+        +Guid DriverId
+        +string Description
+        +IncidentStatus Status
+        +DateTimeOffset ReportedDate
+      }
+
+      class UpdateIncidentResource <<resource>> {
+        +string Description
+        +IncidentStatus Status
+      }
+
+    }
+
+    package "Transform" {
+      class ActionResultFromCreateIncidentResultAssembler <<assembler>> {
+        +{static} ToActionResultFromCreateIncidentResult(Result<Incident, CreateIncidentError>, ControllerBase, IStringLocalizer<SharedResource>, string) : ActionResult
+      }
+
+      class ActionResultFromDeleteIncidentResultAssembler <<assembler>> {
+        +{static} ToActionResultFromDeleteIncidentResult(Result<Incident, DeleteIncidentError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class ActionResultFromUpdateIncidentResultAssembler <<assembler>> {
+        +{static} ToActionResultFromUpdateIncidentResult(Result<Incident, UpdateIncidentError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class CreateIncidentCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(CreateIncidentResource) : CreateIncidentCommand
+      }
+
+      class IncidentResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(Incident) : IncidentResource
+      }
+
+      class "LocalizedOpenApiAssembler" as Incidents_LocalizedOpenApiAssembler <<assembler>> {
+        +{static} TransformOperationAsync(OpenApiOperation, OpenApiOperationTransformerContext, CancellationToken) : Task
+        +{static} TransformSchemaAsync(OpenApiSchema, OpenApiSchemaTransformerContext, CancellationToken) : Task
+      }
+
+      class UpdateIncidentCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(Guid, UpdateIncidentResource) : UpdateIncidentCommand
+      }
+
+    }
+
   }
-  enum IncidentStatus {
-    Open : "Abierto"
-    InReview : "En revisión"
-    Resolved : "Resuelto"
+
+  package "Domain.Model" {
+    package "ValueObjects" {
+      enum IncidentStatus {
+        Open
+        InReview
+        Resolved
+      }
+
+    }
+
+    package "Commands" {
+      class CreateIncidentCommand <<command>> {
+        +Guid VehicleId
+        +Guid DriverId
+        +string Description
+        +IncidentStatus Status
+      }
+
+      class DeleteIncidentCommand <<command>> {
+        +Guid IncidentId
+      }
+
+      class UpdateIncidentCommand <<command>> {
+        +Guid IncidentId
+        +string Description
+        +IncidentStatus Status
+      }
+
+    }
+
+    package "Queries" {
+      class GetAllIncidentsByDriverIdQuery <<query>> {
+        +Guid DriverId
+      }
+
+      class GetAllIncidentsByVehicleIdQuery <<query>> {
+        +Guid VehicleId
+      }
+
+      class GetAllIncidentsQuery <<query>>
+
+      class GetIncidentByIdQuery <<query>> {
+        +Guid Id
+      }
+
+    }
+
+    package "Aggregates" {
+      class Incident <<aggregate>> {
+        +Guid Id
+        +Guid VehicleId
+        +Guid DriverId
+        +string Description
+        +IncidentStatus Status
+        +DateTimeOffset ReportedDate
+        +Incident(CreateIncidentCommand)
+        +UpdateInformation(UpdateIncidentCommand) : void
+      }
+
+    }
+
   }
+
+  package "Domain.Repositories" {
+    interface IIncidentRepository <<repository>> {
+      +FindByVehicleIdAsync(Guid, CancellationToken) : Task<IEnumerable<Incident>>
+      +FindByDriverIdAsync(Guid, CancellationToken) : Task<IEnumerable<Incident>>
+    }
+
+  }
+
+  package "Application" {
+    package "Errors" {
+      enum CreateIncidentError <<error>> {
+        InvalidIncident
+        ReferencedResourceNotFound
+        UnexpectedError
+      }
+
+      enum DeleteIncidentError <<error>> {
+        IncidentNotFound
+        UnexpectedError
+      }
+
+      enum UpdateIncidentError <<error>> {
+        IncidentNotFound
+        InvalidIncident
+        UnexpectedError
+      }
+
+    }
+
+    package "Services" {
+      interface IIncidentCommandService <<application-service>> {
+        +Handle(CreateIncidentCommand, CancellationToken) : Task<Result<Incident, CreateIncidentError>>
+        +Handle(UpdateIncidentCommand, CancellationToken) : Task<Result<Incident, UpdateIncidentError>>
+        +Handle(DeleteIncidentCommand, CancellationToken) : Task<Result<Incident, DeleteIncidentError>>
+      }
+
+      interface IIncidentQueryService <<application-service>> {
+        +Handle(GetAllIncidentsQuery, CancellationToken) : Task<IEnumerable<Incident>>
+        +Handle(GetIncidentByIdQuery, CancellationToken) : Task<Incident?>
+        +Handle(GetAllIncidentsByVehicleIdQuery, CancellationToken) : Task<IEnumerable<Incident>>
+        +Handle(GetAllIncidentsByDriverIdQuery, CancellationToken) : Task<IEnumerable<Incident>>
+      }
+
+    }
+
+    package "Internal.CommandServices" {
+      class IncidentCommandService <<service>> {
+        +Handle(CreateIncidentCommand, CancellationToken) : Task<Result<Incident, CreateIncidentError>>
+        +Handle(UpdateIncidentCommand, CancellationToken) : Task<Result<Incident, UpdateIncidentError>>
+        +Handle(DeleteIncidentCommand, CancellationToken) : Task<Result<Incident, DeleteIncidentError>>
+      }
+
+    }
+
+    package "Internal.QueryServices" {
+      class IncidentQueryService <<service>> {
+        +Handle(GetAllIncidentsQuery, CancellationToken) : Task<IEnumerable<Incident>>
+        +Handle(GetIncidentByIdQuery, CancellationToken) : Task<Incident?>
+        +Handle(GetAllIncidentsByVehicleIdQuery, CancellationToken) : Task<IEnumerable<Incident>>
+        +Handle(GetAllIncidentsByDriverIdQuery, CancellationToken) : Task<IEnumerable<Incident>>
+      }
+
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Configuration.Extensions" {
+    class "ModelBuilderExtensions" as Incidents_ModelBuilderExtensions <<configuration>> {
+      +{static} ApplyIncidentsConfiguration(ModelBuilder) : void
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Repositories" {
+    class IncidentRepository <<repository>> {
+      +FindByVehicleIdAsync(Guid, CancellationToken) : Task<IEnumerable<Incident>>
+      +FindByDriverIdAsync(Guid, CancellationToken) : Task<IEnumerable<Incident>>
+    }
+
+  }
+
 }
 
-package "Real-Time Monitoring Context" {
-  class IotDevice <<aggregate>> {
-    +Id : Guid
-    +VehicleId : Guid
-    +SerialNumber : SerialNumber
-    +IsConnected : bool
-    +Connect() : void
-    +UpdateInformation(UpdateIotDeviceCommand) : void
+package "Real-Time Monitoring / Fleet Tracking (Monitoring)" as MonitoringContext {
+
+  package "Interfaces.REST" {
+    class IotDevicesController {
+      +CreateIotDevice(CreateIotDeviceResource, CancellationToken) : Task<ActionResult>
+      +GetAllIotDevices(Guid?, CancellationToken) : Task<ActionResult>
+      +GetIotDeviceById(Guid, CancellationToken) : Task<ActionResult>
+      +UpdateIotDevice(Guid, UpdateIotDeviceResource, CancellationToken) : Task<ActionResult>
+      +DeleteIotDevice(Guid, CancellationToken) : Task<ActionResult>
+    }
+
+    class TelemetryDataController {
+      +ReceiveTelemetryData(ReceiveTelemetryDataResource, CancellationToken) : Task<ActionResult>
+      +GetAllTelemetryData(Guid?, CancellationToken) : Task<ActionResult>
+      +GetTelemetryDataById(Guid, CancellationToken) : Task<ActionResult>
+    }
+
+    package "Resources" {
+      class CreateIotDeviceResource <<resource>> {
+        +Guid VehicleId
+        +string SerialNumber
+        +bool IsConnected
+      }
+
+      class IotDeviceResource <<resource>> {
+        +Guid Id
+        +Guid VehicleId
+        +string SerialNumber
+        +bool IsConnected
+      }
+
+      class ReceiveTelemetryDataResource <<resource>> {
+        +Guid? DeviceId
+        +decimal? Latitude
+        +decimal? Longitude
+        +decimal? Speed
+        +DateTimeOffset? RecordedAt
+      }
+
+      class TelemetryDataResource <<resource>> {
+        +Guid Id
+        +Guid DeviceId
+        +decimal Latitude
+        +decimal Longitude
+        +decimal Speed
+        +DateTimeOffset RecordedAt
+      }
+
+      class UpdateIotDeviceResource <<resource>> {
+        +Guid VehicleId
+        +bool IsConnected
+      }
+
+      class VehicleLocationResource <<resource>> {
+        +Guid VehicleId
+        +Guid DeviceId
+        +decimal Latitude
+        +decimal Longitude
+        +decimal Speed
+        +DateTimeOffset RecordedAt
+      }
+
+    }
+
+    package "Transform" {
+      class ActionResultFromCreateIotDeviceResultAssembler <<assembler>> {
+        +{static} ToActionResultFromCreateIotDeviceResult(Result<IotDevice, CreateIotDeviceError>, ControllerBase, IStringLocalizer<SharedResource>, string) : ActionResult
+      }
+
+      class ActionResultFromDeleteIotDeviceResultAssembler <<assembler>> {
+        +{static} ToActionResultFromDeleteIotDeviceResult(Result<IotDevice, DeleteIotDeviceError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class ActionResultFromReceiveTelemetryDataResultAssembler <<assembler>> {
+        +{static} ToActionResultFromReceiveTelemetryDataResult(Result<ReceiveTelemetryDataCommand, ReceiveTelemetryDataError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class ActionResultFromUpdateIotDeviceResultAssembler <<assembler>> {
+        +{static} ToActionResultFromUpdateIotDeviceResult(Result<IotDevice, UpdateIotDeviceError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class CreateIotDeviceCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(CreateIotDeviceResource) : CreateIotDeviceCommand
+      }
+
+      class IotDeviceResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(IotDevice) : IotDeviceResource
+      }
+
+      class "LocalizedOpenApiAssembler" as Monitoring_LocalizedOpenApiAssembler <<assembler>> {
+        +{static} TransformOperationAsync(OpenApiOperation, OpenApiOperationTransformerContext, CancellationToken) : Task
+        +{static} TransformSchemaAsync(OpenApiSchema, OpenApiSchemaTransformerContext, CancellationToken) : Task
+      }
+
+      class ReceiveTelemetryDataCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(ReceiveTelemetryDataResource) : ReceiveTelemetryDataCommand
+      }
+
+      class TelemetryDataResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(TelemetryData) : TelemetryDataResource
+      }
+
+      class UpdateIotDeviceCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(Guid, UpdateIotDeviceResource) : UpdateIotDeviceCommand
+      }
+
+      class VehicleLocationResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(Guid, TelemetryData) : VehicleLocationResource
+      }
+
+    }
+
   }
-  class TelemetryData <<aggregate>> {
-    +Id : Guid
-    +DeviceId : Guid
-    +Latitude : decimal
-    +Longitude : decimal
-    +Speed : decimal
-    +RecordedAt : DateTimeOffset
-    +{static} Validate(ReceiveTelemetryDataCommand) : void
+
+  package "Interfaces.Hubs" {
+    interface IMonitoringClient <<hub>> {
+      +VehicleLocationUpdated(VehicleLocationResource) : Task
+    }
+
+    class MonitoringHub <<hub>>
+
   }
-  class SerialNumber <<value object>> {
-    +Value : string
+
+  package "Domain.Model" {
+    package "ValueObjects" {
+      class SerialNumber <<value-object>> {
+        +string Value
+        +SerialNumber(string)
+      }
+
+    }
+
+    package "Commands" {
+      class CreateIotDeviceCommand <<command>> {
+        +Guid VehicleId
+        +SerialNumber SerialNumber
+        +bool IsConnected
+      }
+
+      class DeleteIotDeviceCommand <<command>> {
+        +Guid IotDeviceId
+      }
+
+      class ReceiveTelemetryDataCommand <<command>> {
+        +Guid DeviceId
+        +decimal Latitude
+        +decimal Longitude
+        +decimal Speed
+        +DateTimeOffset RecordedAt
+      }
+
+      class UpdateIotDeviceCommand <<command>> {
+        +Guid IotDeviceId
+        +Guid VehicleId
+        +bool IsConnected
+      }
+
+    }
+
+    package "Queries" {
+      class GetAllIotDevicesByVehicleIdQuery <<query>> {
+        +Guid VehicleId
+      }
+
+      class GetAllIotDevicesQuery <<query>>
+
+      class GetAllTelemetryDataByDeviceIdQuery <<query>> {
+        +Guid DeviceId
+      }
+
+      class GetAllTelemetryDataQuery <<query>>
+
+      class GetIotDeviceByIdQuery <<query>> {
+        +Guid Id
+      }
+
+      class GetTelemetryDataByIdQuery <<query>> {
+        +Guid Id
+      }
+
+    }
+
+    package "Aggregates" {
+      class IotDevice <<aggregate>> {
+        +Guid Id
+        +Guid VehicleId
+        +SerialNumber SerialNumber
+        +bool IsConnected
+        +IotDevice(CreateIotDeviceCommand)
+        +Connect() : void
+        +UpdateInformation(UpdateIotDeviceCommand) : void
+      }
+
+      class TelemetryData <<aggregate>> {
+        +Guid Id
+        +Guid DeviceId
+        +decimal Latitude
+        +decimal Longitude
+        +decimal Speed
+        +DateTimeOffset RecordedAt
+        +TelemetryData(ReceiveTelemetryDataCommand)
+        +{static} Validate(ReceiveTelemetryDataCommand) : void
+      }
+
+    }
+
   }
-  class TelemetryDataProcessor <<IoT Telemetry Processor>>
+
+  package "Domain.Repositories" {
+    interface IIotDeviceRepository <<repository>> {
+      +FindByVehicleIdAsync(Guid, CancellationToken) : Task<IEnumerable<IotDevice>>
+      +ExistsByVehicleIdAsync(Guid, CancellationToken) : Task<bool>
+      +ExistsBySerialNumberAsync(SerialNumber, CancellationToken) : Task<bool>
+      +FindBySerialNumberAsync(SerialNumber, CancellationToken) : Task<IotDevice?>
+    }
+
+    interface ITelemetryDataRepository <<repository>> {
+      +FindByDeviceIdAsync(Guid, CancellationToken) : Task<IEnumerable<TelemetryData>>
+    }
+
+  }
+
+  package "Application" {
+    package "Errors" {
+      enum CreateIotDeviceError <<error>> {
+        InvalidIotDevice
+        DuplicateIotDeviceVehicleId
+        DuplicateIotDeviceSerialNumber
+        ReferencedResourceNotFound
+        UnexpectedError
+      }
+
+      enum DeleteIotDeviceError <<error>> {
+        IotDeviceNotFound
+        IotDeviceHasDependents
+        UnexpectedError
+      }
+
+      enum ProcessTelemetryDataError <<error>> {
+        IotDeviceNotFound
+        InvalidTelemetryData
+        UnexpectedError
+      }
+
+      enum ReceiveTelemetryDataError <<error>> {
+        InvalidTelemetryData
+        UnexpectedError
+      }
+
+      enum UpdateIotDeviceError <<error>> {
+        IotDeviceNotFound
+        InvalidIotDevice
+        DuplicateIotDeviceVehicleId
+        ReferencedResourceNotFound
+        UnexpectedError
+      }
+
+    }
+
+    package "Services" {
+      interface IIotDeviceCommandService <<application-service>> {
+        +Handle(CreateIotDeviceCommand, CancellationToken) : Task<Result<IotDevice, CreateIotDeviceError>>
+        +Handle(UpdateIotDeviceCommand, CancellationToken) : Task<Result<IotDevice, UpdateIotDeviceError>>
+        +Handle(DeleteIotDeviceCommand, CancellationToken) : Task<Result<IotDevice, DeleteIotDeviceError>>
+      }
+
+      interface IIotDeviceQueryService <<application-service>> {
+        +Handle(GetAllIotDevicesQuery, CancellationToken) : Task<IEnumerable<IotDevice>>
+        +Handle(GetIotDeviceByIdQuery, CancellationToken) : Task<IotDevice?>
+        +Handle(GetAllIotDevicesByVehicleIdQuery, CancellationToken) : Task<IEnumerable<IotDevice>>
+      }
+
+      interface ITelemetryDataCommandService <<application-service>> {
+        +Handle(ReceiveTelemetryDataCommand, CancellationToken) : Task<Result<ReceiveTelemetryDataCommand, ReceiveTelemetryDataError>>
+        +Process(ReceiveTelemetryDataCommand, CancellationToken) : Task<Result<TelemetryData, ProcessTelemetryDataError>>
+      }
+
+      interface ITelemetryDataQueryService <<application-service>> {
+        +Handle(GetAllTelemetryDataQuery, CancellationToken) : Task<IEnumerable<TelemetryData>>
+        +Handle(GetTelemetryDataByIdQuery, CancellationToken) : Task<TelemetryData?>
+        +Handle(GetAllTelemetryDataByDeviceIdQuery, CancellationToken) : Task<IEnumerable<TelemetryData>>
+      }
+
+    }
+
+    package "Internal.CommandServices" {
+      class IotDeviceCommandService <<service>> {
+        +Handle(CreateIotDeviceCommand, CancellationToken) : Task<Result<IotDevice, CreateIotDeviceError>>
+        +Handle(UpdateIotDeviceCommand, CancellationToken) : Task<Result<IotDevice, UpdateIotDeviceError>>
+        +Handle(DeleteIotDeviceCommand, CancellationToken) : Task<Result<IotDevice, DeleteIotDeviceError>>
+      }
+
+      class TelemetryDataCommandService <<service>> {
+        +Handle(ReceiveTelemetryDataCommand, CancellationToken) : Task<Result<ReceiveTelemetryDataCommand, ReceiveTelemetryDataError>>
+        +Process(ReceiveTelemetryDataCommand, CancellationToken) : Task<Result<TelemetryData, ProcessTelemetryDataError>>
+      }
+
+    }
+
+    package "Internal.QueryServices" {
+      class IotDeviceQueryService <<service>> {
+        +Handle(GetAllIotDevicesQuery, CancellationToken) : Task<IEnumerable<IotDevice>>
+        +Handle(GetIotDeviceByIdQuery, CancellationToken) : Task<IotDevice?>
+        +Handle(GetAllIotDevicesByVehicleIdQuery, CancellationToken) : Task<IEnumerable<IotDevice>>
+      }
+
+      class TelemetryDataQueryService <<service>> {
+        +Handle(GetAllTelemetryDataQuery, CancellationToken) : Task<IEnumerable<TelemetryData>>
+        +Handle(GetTelemetryDataByIdQuery, CancellationToken) : Task<TelemetryData?>
+        +Handle(GetAllTelemetryDataByDeviceIdQuery, CancellationToken) : Task<IEnumerable<TelemetryData>>
+      }
+
+    }
+
+    package "Internal.OutboundServices" {
+      interface ITelemetryDataQueue <<outbound-service>> {
+        +EnqueueAsync(ReceiveTelemetryDataCommand, CancellationToken) : ValueTask
+        +DequeueAllAsync(CancellationToken) : IAsyncEnumerable<ReceiveTelemetryDataCommand>
+      }
+
+      interface IVehicleLocationNotifier <<outbound-service>> {
+        +NotifyAsync(Guid, TelemetryData, CancellationToken) : Task
+      }
+
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Configuration.Extensions" {
+    class "ModelBuilderExtensions" as Monitoring_ModelBuilderExtensions <<configuration>> {
+      +{static} ApplyMonitoringConfiguration(ModelBuilder) : void
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Repositories" {
+    class IotDeviceRepository <<repository>> {
+      +FindByVehicleIdAsync(Guid, CancellationToken) : Task<IEnumerable<IotDevice>>
+      +ExistsByVehicleIdAsync(Guid, CancellationToken) : Task<bool>
+      +ExistsBySerialNumberAsync(SerialNumber, CancellationToken) : Task<bool>
+      +FindBySerialNumberAsync(SerialNumber, CancellationToken) : Task<IotDevice?>
+    }
+
+    class TelemetryDataRepository <<repository>> {
+      +FindByDeviceIdAsync(Guid, CancellationToken) : Task<IEnumerable<TelemetryData>>
+    }
+
+  }
+
+  package "Infrastructure.Processing" {
+    class TelemetryDataProcessor <<background-service>>
+
+  }
+
+  package "Infrastructure.Queues.Channels" {
+    class TelemetryDataQueue <<queue>> {
+      +EnqueueAsync(ReceiveTelemetryDataCommand, CancellationToken) : ValueTask
+      +DequeueAllAsync(CancellationToken) : IAsyncEnumerable<ReceiveTelemetryDataCommand>
+    }
+
+  }
+
+  package "Infrastructure.Realtime.SignalR.Services" {
+    class VehicleLocationNotifier <<notifier>> {
+      +NotifyAsync(Guid, TelemetryData, CancellationToken) : Task
+    }
+
+  }
+
 }
 
-package "Alerts & Notifications Context" {
-  class Alert <<aggregate>> {
-    +Id : Guid
-    +VehicleId : Guid
-    +AlertType : string
-    +TriggerDate : DateTimeOffset
+package "Alerts & Notifications (Notifications)" as NotificationsContext {
+
+  package "Interfaces.REST" {
+    class AlertsController {
+      +CreateAlert(CreateAlertResource, CancellationToken) : Task<ActionResult>
+      +GetAllAlerts(Guid?, CancellationToken) : Task<ActionResult>
+      +GetAlertById(Guid, CancellationToken) : Task<ActionResult>
+    }
+
+    class NotificationsController {
+      +CreateNotification(CreateNotificationResource, CancellationToken) : Task<ActionResult>
+      +GetAllNotifications(Guid?, CancellationToken) : Task<ActionResult>
+      +GetNotificationById(Guid, CancellationToken) : Task<ActionResult>
+      +UpdateNotification(Guid, UpdateNotificationResource, CancellationToken) : Task<ActionResult>
+      +DeleteNotification(Guid, CancellationToken) : Task<ActionResult>
+    }
+
+    package "Resources" {
+      class AlertResource <<resource>> {
+        +Guid Id
+        +Guid VehicleId
+        +string AlertType
+        +DateTimeOffset TriggerDate
+      }
+
+      class CreateAlertResource <<resource>> {
+        +Guid VehicleId
+        +string AlertType
+      }
+
+      class CreateNotificationResource <<resource>> {
+        +Guid UserId
+        +Guid? AlertId
+        +string Message
+      }
+
+      class NotificationResource <<resource>> {
+        +Guid Id
+        +Guid UserId
+        +Guid? AlertId
+        +string Message
+        +bool IsRead
+        +DateTimeOffset SentDate
+      }
+
+      class UpdateNotificationResource <<resource>> {
+        +bool IsRead
+      }
+
+    }
+
+    package "Transform" {
+      class ActionResultFromCreateAlertResultAssembler <<assembler>> {
+        +{static} ToActionResultFromCreateAlertResult(Result<Alert, CreateAlertError>, ControllerBase, IStringLocalizer<SharedResource>, string) : ActionResult
+      }
+
+      class ActionResultFromCreateNotificationResultAssembler <<assembler>> {
+        +{static} ToActionResultFromCreateNotificationResult(Result<Notification, CreateNotificationError>, ControllerBase, IStringLocalizer<SharedResource>, string) : ActionResult
+      }
+
+      class ActionResultFromDeleteNotificationResultAssembler <<assembler>> {
+        +{static} ToActionResultFromDeleteNotificationResult(Result<Notification, DeleteNotificationError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class ActionResultFromUpdateNotificationResultAssembler <<assembler>> {
+        +{static} ToActionResultFromUpdateNotificationResult(Result<Notification, UpdateNotificationError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class AlertResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(Alert) : AlertResource
+      }
+
+      class CreateAlertCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(CreateAlertResource) : CreateAlertCommand
+      }
+
+      class CreateNotificationCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(CreateNotificationResource) : CreateNotificationCommand
+      }
+
+      class "LocalizedOpenApiAssembler" as Notifications_LocalizedOpenApiAssembler <<assembler>> {
+        +{static} TransformOperationAsync(OpenApiOperation, OpenApiOperationTransformerContext, CancellationToken) : Task
+        +{static} TransformSchemaAsync(OpenApiSchema, OpenApiSchemaTransformerContext, CancellationToken) : Task
+      }
+
+      class NotificationResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(Notification) : NotificationResource
+      }
+
+      class UpdateNotificationCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(Guid, UpdateNotificationResource) : UpdateNotificationCommand
+      }
+
+    }
+
   }
-  class Notification <<aggregate>> {
-    +Id : Guid
-    +UserId : Guid
-    +AlertId : Guid?
-    +Message : string
-    +IsRead : bool
-    +SentDate : DateTimeOffset
-    +UpdateInformation(UpdateNotificationCommand) : void
+
+  package "Interfaces.Hubs" {
+    interface INotificationsClient <<hub>> {
+      +AlertActivated(AlertResource) : Task
+      +NotificationReceived(NotificationResource) : Task
+    }
+
+    class NotificationsHub <<hub>>
+
   }
+
+  package "Domain.Model" {
+    package "Commands" {
+      class CreateAlertCommand <<command>> {
+        +Guid VehicleId
+        +string AlertType
+      }
+
+      class CreateNotificationCommand <<command>> {
+        +Guid UserId
+        +Guid? AlertId
+        +string Message
+      }
+
+      class DeleteNotificationCommand <<command>> {
+        +Guid NotificationId
+      }
+
+      class UpdateNotificationCommand <<command>> {
+        +Guid NotificationId
+        +bool IsRead
+      }
+
+    }
+
+    package "Queries" {
+      class GetAlertByIdQuery <<query>> {
+        +Guid Id
+      }
+
+      class GetAllAlertsByVehicleIdQuery <<query>> {
+        +Guid VehicleId
+      }
+
+      class GetAllAlertsQuery <<query>>
+
+      class GetAllNotificationsByUserIdQuery <<query>> {
+        +Guid UserId
+      }
+
+      class GetAllNotificationsQuery <<query>>
+
+      class GetNotificationByIdQuery <<query>> {
+        +Guid Id
+      }
+
+    }
+
+    package "Aggregates" {
+      class Alert <<aggregate>> {
+        +Guid Id
+        +Guid VehicleId
+        +string AlertType
+        +DateTimeOffset TriggerDate
+        +Alert(CreateAlertCommand)
+      }
+
+      class Notification <<aggregate>> {
+        +Guid Id
+        +Guid UserId
+        +Guid? AlertId
+        +string Message
+        +bool IsRead
+        +DateTimeOffset SentDate
+        +Notification(CreateNotificationCommand)
+        +UpdateInformation(UpdateNotificationCommand) : void
+      }
+
+    }
+
+  }
+
+  package "Domain.Repositories" {
+    interface IAlertRepository <<repository>> {
+      +FindByVehicleIdAsync(Guid, CancellationToken) : Task<IEnumerable<Alert>>
+    }
+
+    interface INotificationRepository <<repository>> {
+      +FindByUserIdAsync(Guid, CancellationToken) : Task<IEnumerable<Notification>>
+    }
+
+  }
+
+  package "Application" {
+    package "Errors" {
+      enum CreateAlertError <<error>> {
+        InvalidAlert
+        ReferencedResourceNotFound
+        UnexpectedError
+      }
+
+      enum CreateNotificationError <<error>> {
+        InvalidNotification
+        ReferencedResourceNotFound
+        UnexpectedError
+      }
+
+      enum DeleteNotificationError <<error>> {
+        NotificationNotFound
+        UnexpectedError
+      }
+
+      enum UpdateNotificationError <<error>> {
+        NotificationNotFound
+        InvalidNotification
+        UnexpectedError
+      }
+
+    }
+
+    package "Services" {
+      interface IAlertCommandService <<application-service>> {
+        +Handle(CreateAlertCommand, CancellationToken) : Task<Result<Alert, CreateAlertError>>
+      }
+
+      interface IAlertQueryService <<application-service>> {
+        +Handle(GetAllAlertsQuery, CancellationToken) : Task<IEnumerable<Alert>>
+        +Handle(GetAlertByIdQuery, CancellationToken) : Task<Alert?>
+        +Handle(GetAllAlertsByVehicleIdQuery, CancellationToken) : Task<IEnumerable<Alert>>
+      }
+
+      interface INotificationCommandService <<application-service>> {
+        +Handle(CreateNotificationCommand, CancellationToken) : Task<Result<Notification, CreateNotificationError>>
+        +Handle(UpdateNotificationCommand, CancellationToken) : Task<Result<Notification, UpdateNotificationError>>
+        +Handle(DeleteNotificationCommand, CancellationToken) : Task<Result<Notification, DeleteNotificationError>>
+      }
+
+      interface INotificationQueryService <<application-service>> {
+        +Handle(GetAllNotificationsQuery, CancellationToken) : Task<IEnumerable<Notification>>
+        +Handle(GetNotificationByIdQuery, CancellationToken) : Task<Notification?>
+        +Handle(GetAllNotificationsByUserIdQuery, CancellationToken) : Task<IEnumerable<Notification>>
+      }
+
+    }
+
+    package "Internal.CommandServices" {
+      class AlertCommandService <<service>> {
+        +Handle(CreateAlertCommand, CancellationToken) : Task<Result<Alert, CreateAlertError>>
+      }
+
+      class NotificationCommandService <<service>> {
+        +Handle(CreateNotificationCommand, CancellationToken) : Task<Result<Notification, CreateNotificationError>>
+        +Handle(UpdateNotificationCommand, CancellationToken) : Task<Result<Notification, UpdateNotificationError>>
+        +Handle(DeleteNotificationCommand, CancellationToken) : Task<Result<Notification, DeleteNotificationError>>
+      }
+
+    }
+
+    package "Internal.QueryServices" {
+      class AlertQueryService <<service>> {
+        +Handle(GetAllAlertsQuery, CancellationToken) : Task<IEnumerable<Alert>>
+        +Handle(GetAlertByIdQuery, CancellationToken) : Task<Alert?>
+        +Handle(GetAllAlertsByVehicleIdQuery, CancellationToken) : Task<IEnumerable<Alert>>
+      }
+
+      class NotificationQueryService <<service>> {
+        +Handle(GetAllNotificationsQuery, CancellationToken) : Task<IEnumerable<Notification>>
+        +Handle(GetNotificationByIdQuery, CancellationToken) : Task<Notification?>
+        +Handle(GetAllNotificationsByUserIdQuery, CancellationToken) : Task<IEnumerable<Notification>>
+      }
+
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Configuration.Extensions" {
+    class "ModelBuilderExtensions" as Notifications_ModelBuilderExtensions <<configuration>> {
+      +{static} ApplyNotificationsConfiguration(ModelBuilder) : void
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Repositories" {
+    class AlertRepository <<repository>> {
+      +FindByVehicleIdAsync(Guid, CancellationToken) : Task<IEnumerable<Alert>>
+    }
+
+    class NotificationRepository <<repository>> {
+      +FindByUserIdAsync(Guid, CancellationToken) : Task<IEnumerable<Notification>>
+    }
+
+  }
+
 }
 
-package "Digital Experience / IoT Commerce Context" {
-  class IotOrder <<aggregate>> {
-    +Id : Guid
-    +OwnerId : Guid
-    +Quantity : int
-    +TotalAmount : decimal
-    +Status : OrderStatus
-    +OrderDate : DateTimeOffset
-    +UpdateInformation(UpdateIotOrderCommand) : void
+package "Digital Experience / IoT Commerce (Commerce)" as CommerceContext {
+
+  package "Interfaces.REST" {
+    class IotOrdersController {
+      +CreateIotOrder(CreateIotOrderResource, CancellationToken) : Task<ActionResult>
+      +GetAllIotOrders(Guid?, CancellationToken) : Task<ActionResult>
+      +GetIotOrderById(Guid, CancellationToken) : Task<ActionResult>
+      +UpdateIotOrder(Guid, UpdateIotOrderResource, CancellationToken) : Task<ActionResult>
+    }
+
+    package "Resources" {
+      class CreateIotOrderResource <<resource>> {
+        +Guid OwnerId
+        +int Quantity
+        +decimal TotalAmount
+      }
+
+      class IotOrderResource <<resource>> {
+        +Guid Id
+        +Guid OwnerId
+        +int Quantity
+        +decimal TotalAmount
+        +OrderStatus Status
+        +DateTimeOffset OrderDate
+      }
+
+      class UpdateIotOrderResource <<resource>> {
+        +OrderStatus Status
+      }
+
+    }
+
+    package "Transform" {
+      class ActionResultFromCreateIotOrderResultAssembler <<assembler>> {
+        +{static} ToActionResultFromCreateIotOrderResult(Result<IotOrder, CreateIotOrderError>, ControllerBase, IStringLocalizer<SharedResource>, string) : ActionResult
+      }
+
+      class ActionResultFromUpdateIotOrderResultAssembler <<assembler>> {
+        +{static} ToActionResultFromUpdateIotOrderResult(Result<IotOrder, UpdateIotOrderError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class CreateIotOrderCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(CreateIotOrderResource) : CreateIotOrderCommand
+      }
+
+      class IotOrderResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(IotOrder) : IotOrderResource
+      }
+
+      class "LocalizedOpenApiAssembler" as Commerce_LocalizedOpenApiAssembler <<assembler>> {
+        +{static} TransformOperationAsync(OpenApiOperation, OpenApiOperationTransformerContext, CancellationToken) : Task
+        +{static} TransformSchemaAsync(OpenApiSchema, OpenApiSchemaTransformerContext, CancellationToken) : Task
+      }
+
+      class UpdateIotOrderCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(Guid, UpdateIotOrderResource) : UpdateIotOrderCommand
+      }
+
+    }
+
   }
-  enum OrderStatus {
-    PendingPayment : "Pendiente de pago"
-    Preparing : "En preparación"
-    Delivered : "Entregado"
-    Cancelled : "Cancelado"
+
+  package "Domain.Model" {
+    package "ValueObjects" {
+      enum OrderStatus {
+        PendingPayment
+        Preparing
+        Delivered
+        Cancelled
+      }
+
+    }
+
+    package "Commands" {
+      class CreateIotOrderCommand <<command>> {
+        +Guid OwnerId
+        +int Quantity
+        +decimal TotalAmount
+      }
+
+      class UpdateIotOrderCommand <<command>> {
+        +Guid IotOrderId
+        +OrderStatus Status
+      }
+
+    }
+
+    package "Queries" {
+      class GetAllIotOrdersByOwnerIdQuery <<query>> {
+        +Guid OwnerId
+      }
+
+      class GetAllIotOrdersQuery <<query>>
+
+      class GetIotOrderByIdQuery <<query>> {
+        +Guid Id
+      }
+
+    }
+
+    package "Aggregates" {
+      class IotOrder <<aggregate>> {
+        +Guid Id
+        +Guid OwnerId
+        +int Quantity
+        +decimal TotalAmount
+        +OrderStatus Status
+        +DateTimeOffset OrderDate
+        +IotOrder(CreateIotOrderCommand)
+        +UpdateInformation(UpdateIotOrderCommand) : void
+      }
+
+    }
+
   }
+
+  package "Domain.Repositories" {
+    interface IIotOrderRepository <<repository>> {
+      +FindByOwnerIdAsync(Guid, CancellationToken) : Task<IEnumerable<IotOrder>>
+    }
+
+  }
+
+  package "Application" {
+    package "Errors" {
+      enum CreateIotOrderError <<error>> {
+        InvalidIotOrder
+        ReferencedResourceNotFound
+        UnexpectedError
+      }
+
+      enum UpdateIotOrderError <<error>> {
+        IotOrderNotFound
+        InvalidIotOrder
+        IotOrderAlreadyClosed
+        UnexpectedError
+      }
+
+    }
+
+    package "Services" {
+      interface IIotOrderCommandService <<application-service>> {
+        +Handle(CreateIotOrderCommand, CancellationToken) : Task<Result<IotOrder, CreateIotOrderError>>
+        +Handle(UpdateIotOrderCommand, CancellationToken) : Task<Result<IotOrder, UpdateIotOrderError>>
+      }
+
+      interface IIotOrderQueryService <<application-service>> {
+        +Handle(GetAllIotOrdersQuery, CancellationToken) : Task<IEnumerable<IotOrder>>
+        +Handle(GetIotOrderByIdQuery, CancellationToken) : Task<IotOrder?>
+        +Handle(GetAllIotOrdersByOwnerIdQuery, CancellationToken) : Task<IEnumerable<IotOrder>>
+      }
+
+    }
+
+    package "Internal.CommandServices" {
+      class IotOrderCommandService <<service>> {
+        +Handle(CreateIotOrderCommand, CancellationToken) : Task<Result<IotOrder, CreateIotOrderError>>
+        +Handle(UpdateIotOrderCommand, CancellationToken) : Task<Result<IotOrder, UpdateIotOrderError>>
+      }
+
+    }
+
+    package "Internal.QueryServices" {
+      class IotOrderQueryService <<service>> {
+        +Handle(GetAllIotOrdersQuery, CancellationToken) : Task<IEnumerable<IotOrder>>
+        +Handle(GetIotOrderByIdQuery, CancellationToken) : Task<IotOrder?>
+        +Handle(GetAllIotOrdersByOwnerIdQuery, CancellationToken) : Task<IEnumerable<IotOrder>>
+      }
+
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Configuration.Extensions" {
+    class "ModelBuilderExtensions" as Commerce_ModelBuilderExtensions <<configuration>> {
+      +{static} ApplyCommerceConfiguration(ModelBuilder) : void
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Repositories" {
+    class IotOrderRepository <<repository>> {
+      +FindByOwnerIdAsync(Guid, CancellationToken) : Task<IEnumerable<IotOrder>>
+    }
+
+  }
+
 }
 
-package "Reporting & Analytics Context" {
-  class Report <<aggregate>> {
-    +Id : Guid
-    +OwnerId : Guid
-    +ReportType : ReportType
-    +GeneratedDate : DateTimeOffset
-    +FilterParams : string
+package "Reporting & Analytics (Analytics)" as AnalyticsContext {
+
+  package "Interfaces.REST" {
+    class ReportsController {
+      +GenerateReport(GenerateReportResource, CancellationToken) : Task<ActionResult>
+      +GetAllReports(Guid?, CancellationToken) : Task<ActionResult>
+      +GetReportById(Guid, CancellationToken) : Task<ActionResult>
+      +DeleteReport(Guid, CancellationToken) : Task<ActionResult>
+    }
+
+    package "Resources" {
+      class GenerateReportResource <<resource>> {
+        +Guid OwnerId
+        +ReportType ReportType
+        +DateOnly From
+        +DateOnly To
+      }
+
+      class GeneratedReportResource <<resource>> {
+        +Guid Id
+        +Guid OwnerId
+        +ReportType ReportType
+        +DateTimeOffset GeneratedDate
+        +string FilterParams
+        +IEnumerable<ReportLineResource> Lines
+        +int TotalRecords
+        +decimal TotalQuantity
+        +decimal TotalCost
+        +string? Message
+      }
+
+      class ReportLineResource <<resource>> {
+        +Guid VehicleId
+        +string LicensePlate
+        +int Records
+        +decimal Quantity
+        +decimal TotalCost
+      }
+
+      class ReportResource <<resource>> {
+        +Guid Id
+        +Guid OwnerId
+        +ReportType ReportType
+        +DateTimeOffset GeneratedDate
+        +string FilterParams
+      }
+
+    }
+
+    package "Transform" {
+      class ActionResultFromDeleteReportResultAssembler <<assembler>> {
+        +{static} ToActionResultFromDeleteReportResult(Result<Report, DeleteReportError>, ControllerBase, IStringLocalizer<SharedResource>) : ActionResult
+      }
+
+      class ActionResultFromGenerateReportResultAssembler <<assembler>> {
+        +{static} ToActionResultFromGenerateReportResult(Result<(Report Report, IReadOnlyList<ReportLine> Lines), GenerateReportError>, ControllerBase, IStringLocalizer<SharedResource>, string) : ActionResult
+      }
+
+      class GenerateReportCommandFromResourceAssembler <<assembler>> {
+        +{static} ToCommandFromResource(GenerateReportResource) : GenerateReportCommand
+      }
+
+      class GeneratedReportResourceFromResultAssembler <<assembler>> {
+        +{static} ToResourceFromResult(Report, IReadOnlyList<ReportLine>, string) : GeneratedReportResource
+      }
+
+      class "LocalizedOpenApiAssembler" as Analytics_LocalizedOpenApiAssembler <<assembler>> {
+        +{static} TransformOperationAsync(OpenApiOperation, OpenApiOperationTransformerContext, CancellationToken) : Task
+        +{static} TransformSchemaAsync(OpenApiSchema, OpenApiSchemaTransformerContext, CancellationToken) : Task
+      }
+
+      class ReportResourceFromEntityAssembler <<assembler>> {
+        +{static} ToResourceFromEntity(Report) : ReportResource
+      }
+
+    }
+
   }
-  class ReportLine <<value object>> {
-    +VehicleId : Guid
-    +LicensePlate : string
-    +Records : int
-    +Quantity : decimal
-    +TotalCost : decimal
+
+  package "Domain.Model" {
+    package "ValueObjects" {
+      class ReportLine <<value-object>> {
+        +Guid VehicleId
+        +string LicensePlate
+        +int Records
+        +decimal Quantity
+        +decimal TotalCost
+      }
+
+      enum ReportType {
+        FuelConsumption
+        MaintenanceCost
+      }
+
+    }
+
+    package "Commands" {
+      class DeleteReportCommand <<command>> {
+        +Guid ReportId
+      }
+
+      class GenerateReportCommand <<command>> {
+        +Guid OwnerId
+        +ReportType ReportType
+        +DateOnly From
+        +DateOnly To
+      }
+
+    }
+
+    package "Queries" {
+      class GetAllReportsByOwnerIdQuery <<query>> {
+        +Guid OwnerId
+      }
+
+      class GetAllReportsQuery <<query>>
+
+      class GetReportByIdQuery <<query>> {
+        +Guid Id
+      }
+
+    }
+
+    package "Aggregates" {
+      class Report <<aggregate>> {
+        +Guid Id
+        +Guid OwnerId
+        +ReportType ReportType
+        +DateTimeOffset GeneratedDate
+        +string FilterParams
+        +Report(GenerateReportCommand)
+      }
+
+    }
+
   }
-  enum ReportType {
-    FuelConsumption : "Reporte de consumo de combustible"
-    MaintenanceCost : "Reporte de costos de mantenimiento"
+
+  package "Domain.Repositories" {
+    interface IReportRepository <<repository>> {
+      +FindByOwnerIdAsync(Guid, CancellationToken) : Task<IEnumerable<Report>>
+    }
+
   }
+
+  package "Application" {
+    package "Errors" {
+      enum DeleteReportError <<error>> {
+        ReportNotFound
+        UnexpectedError
+      }
+
+      enum GenerateReportError <<error>> {
+        InvalidReport
+        ReferencedResourceNotFound
+        UnexpectedError
+      }
+
+    }
+
+    package "Services" {
+      interface IReportCommandService <<application-service>> {
+        +Task(Report, IReadOnlyList<ReportLine>)
+        +Handle(DeleteReportCommand, CancellationToken) : Task<Result<Report, DeleteReportError>>
+      }
+
+      interface IReportQueryService <<application-service>> {
+        +Handle(GetAllReportsQuery, CancellationToken) : Task<IEnumerable<Report>>
+        +Handle(GetReportByIdQuery, CancellationToken) : Task<Report?>
+        +Handle(GetAllReportsByOwnerIdQuery, CancellationToken) : Task<IEnumerable<Report>>
+      }
+
+    }
+
+    package "Internal.CommandServices" {
+      class ReportCommandService <<service>> {
+        +Task(Report, IReadOnlyList<ReportLine>)
+        +Handle(DeleteReportCommand, CancellationToken) : Task<Result<Report, DeleteReportError>>
+      }
+
+    }
+
+    package "Internal.QueryServices" {
+      class ReportQueryService <<service>> {
+        +Handle(GetAllReportsQuery, CancellationToken) : Task<IEnumerable<Report>>
+        +Handle(GetReportByIdQuery, CancellationToken) : Task<Report?>
+        +Handle(GetAllReportsByOwnerIdQuery, CancellationToken) : Task<IEnumerable<Report>>
+      }
+
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Configuration.Extensions" {
+    class "ModelBuilderExtensions" as Analytics_ModelBuilderExtensions <<configuration>> {
+      +{static} ApplyAnalyticsConfiguration(ModelBuilder) : void
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Repositories" {
+    class ReportRepository <<repository>> {
+      +FindByOwnerIdAsync(Guid, CancellationToken) : Task<IEnumerable<Report>>
+    }
+
+  }
+
 }
 
-' Relations of the report diagram (foreign keys with ON DELETE RESTRICT)
-Owner "1" --> "0..*" Vehicle : manages >
-Driver "0..1" --> "0..*" Vehicle : assigned to >
-Driver "1" --> "0..*" FuelRecord : registers >
-Driver "1" --> "0..*" Incident : reports >
-Mechanic "1" --> "0..*" MaintenanceRequest : attends >
-Owner "1" --> "0..*" IotOrder : places >
-Owner "1" --> "0..*" Report : views >
-User "1" --> "0..*" Notification : receives >
-Vehicle "1" --> "0..*" FuelRecord : requires >
-Vehicle "1" --> "0..*" MaintenanceRequest : requires >
-Vehicle "1" --> "0..*" Incident : has >
-Vehicle "1" --> "0..1" IotDevice : equipped with >
-Vehicle "1" --> "0..*" Alert : triggers >
-IotDevice "1" --> "0..*" TelemetryData : transmits >
-Alert "1" --> "0..*" Notification : generates >
-Report ..> ReportLine : consolidates >
-TelemetryDataProcessor ..> TelemetryData : stores >
-TelemetryDataProcessor ..> IotDevice : connects >
+package "Shared" {
+
+  package "Application.Patterns" {
+    abstract class "Result<TValue,TError>" as ResultT <<result>> {
+      +bool IsSuccess
+      +bool IsFailure
+      +Map(Func<TValue, TNext>) : Result<TNext, TError>
+      +Fold(Func<TValue, TResult>, Func<TError, TResult>) : TResult
+      +Match(Action<TValue>, Action<TError>) : void
+    }
+
+  }
+
+  package "Domain.Model" {
+    interface IAuditableEntity <<auditable>> {
+      +DateTimeOffset? CreatedAt
+      +DateTimeOffset? UpdatedAt
+    }
+
+  }
+
+  package "Domain.Repositories" {
+    interface "IBaseRepository<TEntity>" as IBaseRepository <<repository>> {
+      +AddAsync(TEntity, CancellationToken) : Task
+      +FindByIdAsync(Guid, CancellationToken) : Task<TEntity?>
+      +Update(TEntity) : void
+      +Remove(TEntity) : void
+      +ListAsync(CancellationToken) : Task<IEnumerable<TEntity>>
+    }
+
+    interface IUnitOfWork <<unit-of-work>> {
+      +CompleteAsync(CancellationToken) : Task
+    }
+
+  }
+
+  package "Infrastructure.Interfaces.Asp.Configuration" {
+    class KebabCaseRouteNamingConvention <<convention>> {
+      +Apply(ControllerModel) : void
+    }
+
+  }
+
+  package "Infrastructure.Interfaces.Asp.Configuration.Extensions" {
+    class "StringExtensions" as Infrastructure_Interfaces_Asp_Configuration_Extensions_StringExtensions <<extension>> {
+      +{static} ToKebabCase(string) : string
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Configuration" {
+    class AppDbContext <<db-context>> {
+      +OnConfiguring(DbContextOptionsBuilder) : void
+      +OnModelCreating(ModelBuilder) : void
+      --
+      +iam, fleet, fuel, maintenance, incidents schemas
+      +monitoring, notifications, commerce, analytics schemas
+      +foreign keys with ON DELETE RESTRICT
+      +value converters for value objects
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Configuration.Extensions" {
+    class "ModelBuilderExtensions" as Infrastructure_Persistence_EFC_Configuration_Extensions_ModelBuilderExtensions <<configuration>> {
+      +{static} UseSnakeCaseNamingConvention(ModelBuilder) : void
+    }
+
+    class "StringExtensions" as Infrastructure_Persistence_EFC_Configuration_Extensions_StringExtensions <<extension>> {
+      +{static} ToSnakeCase(string) : string
+      +{static} ToPlural(string) : string
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Interceptors" {
+    class AuditableEntityInterceptor <<interceptor>> {
+      +SavingChanges(DbContextEventData, InterceptionResult<int>) : InterceptionResult<int>
+      +SavingChangesAsync(DbContextEventData, InterceptionResult<int>, CancellationToken) : ValueTask<InterceptionResult<int>>
+    }
+
+  }
+
+  package "Infrastructure.Persistence.EFC.Repositories" {
+    class "BaseRepository<TEntity>" as BaseRepository <<repository>> {
+      +AddAsync(TEntity, CancellationToken) : Task
+      +FindByIdAsync(Guid, CancellationToken) : Task<TEntity?>
+      +Update(TEntity) : void
+      +Remove(TEntity) : void
+      +ListAsync(CancellationToken) : Task<IEnumerable<TEntity>>
+    }
+
+    class UnitOfWork <<repository>> {
+      +CompleteAsync(CancellationToken) : Task
+    }
+
+  }
+
+}
+
+' Relationships
+Driver --|> User : extends
+Driver ..> SignUpCommand : created from
+Mechanic --|> User : extends
+Mechanic ..> SignUpCommand : created from
+Owner --|> User : extends
+Owner ..> SignUpCommand : created from
+User --> EmailAddress : owns
+SignInCommand --> EmailAddress : contains
+SignUpCommand --> EmailAddress : contains
+GetUserByEmailQuery --> EmailAddress : contains
+IUserRepository ..|> IBaseRepository : extends
+TokenService ..|> ITokenService : implements
+TokenService --> TokenSettings : uses
+AuthorizeAttribute --> Role : uses
+UserRepository --|> BaseRepository : extends
+UserRepository ..|> IUserRepository : implements
+UserRepository --> AppDbContext : uses
+HashingService ..|> IHashingService : implements
+AuthenticationController --> IUserCommandService : uses
+AuthenticationController --> ActionResultFromSignInResultAssembler : uses
+AuthenticationController --> ActionResultFromSignUpResultAssembler : uses
+AuthenticationController --> SignInCommandFromResourceAssembler : uses
+AuthenticationController --> SignUpCommandFromResourceAssembler : uses
+UsersController --> IUserCommandService : uses
+UsersController --> IUserQueryService : uses
+UsersController --> ActionResultFromDeleteUserResultAssembler : uses
+UsersController --> ActionResultFromUpdateUserProfileResultAssembler : uses
+UsersController --> UpdateUserProfileCommandFromResourceAssembler : uses
+UsersController --> UserResourceFromEntityAssembler : uses
+ActionResultFromDeleteUserResultAssembler ..> ResultT : reads
+ActionResultFromDeleteUserResultAssembler ..> User : reads
+ActionResultFromDeleteUserResultAssembler ..> DeleteUserError : reads
+ActionResultFromSignInResultAssembler ..> ResultT : reads
+ActionResultFromSignInResultAssembler ..> User : reads
+ActionResultFromSignInResultAssembler ..> SignInError : reads
+ActionResultFromSignUpResultAssembler ..> ResultT : reads
+ActionResultFromSignUpResultAssembler ..> User : reads
+ActionResultFromSignUpResultAssembler ..> SignUpError : reads
+ActionResultFromUpdateUserProfileResultAssembler ..> ResultT : reads
+ActionResultFromUpdateUserProfileResultAssembler ..> User : reads
+ActionResultFromUpdateUserProfileResultAssembler ..> UpdateUserProfileError : reads
+AuthenticatedUserResourceFromEntityAssembler ..> User : reads
+AuthenticatedUserResourceFromEntityAssembler ..> AuthenticatedUserResource : produces
+SignInCommandFromResourceAssembler ..> SignInResource : reads
+SignInCommandFromResourceAssembler ..> SignInCommand : produces
+SignUpCommandFromResourceAssembler ..> SignUpResource : reads
+SignUpCommandFromResourceAssembler ..> SignUpCommand : produces
+UpdateUserProfileCommandFromResourceAssembler ..> UpdateUserProfileResource : reads
+UpdateUserProfileCommandFromResourceAssembler ..> UpdateUserProfileCommand : produces
+UserResourceFromEntityAssembler ..> User : reads
+UserResourceFromEntityAssembler ..> UserResource : produces
+UserCommandService ..|> IUserCommandService : implements
+UserCommandService --> IUserRepository : uses
+UserCommandService --> IHashingService : uses
+UserCommandService --> ITokenService : uses
+UserCommandService --> IUnitOfWork : uses
+UserQueryService ..|> IUserQueryService : implements
+UserQueryService --> IUserRepository : uses
+Vehicle --> LicensePlate : owns
+Vehicle ..> CreateVehicleCommand : created from
+CreateVehicleCommand --> LicensePlate : contains
+UpdateVehicleCommand --> LicensePlate : contains
+IVehicleRepository ..|> IBaseRepository : extends
+VehicleRepository --|> BaseRepository : extends
+VehicleRepository ..|> IVehicleRepository : implements
+VehicleRepository --> AppDbContext : uses
+VehiclesController --> IVehicleCommandService : uses
+VehiclesController --> IVehicleQueryService : uses
+VehiclesController --> ActionResultFromCreateVehicleResultAssembler : uses
+VehiclesController --> ActionResultFromDeleteVehicleResultAssembler : uses
+VehiclesController --> ActionResultFromUpdateVehicleResultAssembler : uses
+VehiclesController --> CreateVehicleCommandFromResourceAssembler : uses
+VehiclesController --> UpdateVehicleCommandFromResourceAssembler : uses
+VehiclesController --> VehicleResourceFromEntityAssembler : uses
+ActionResultFromCreateVehicleResultAssembler ..> ResultT : reads
+ActionResultFromCreateVehicleResultAssembler ..> Vehicle : reads
+ActionResultFromCreateVehicleResultAssembler ..> CreateVehicleError : reads
+ActionResultFromDeleteVehicleResultAssembler ..> ResultT : reads
+ActionResultFromDeleteVehicleResultAssembler ..> Vehicle : reads
+ActionResultFromDeleteVehicleResultAssembler ..> DeleteVehicleError : reads
+ActionResultFromUpdateVehicleResultAssembler ..> ResultT : reads
+ActionResultFromUpdateVehicleResultAssembler ..> Vehicle : reads
+ActionResultFromUpdateVehicleResultAssembler ..> UpdateVehicleError : reads
+CreateVehicleCommandFromResourceAssembler ..> CreateVehicleResource : reads
+CreateVehicleCommandFromResourceAssembler ..> CreateVehicleCommand : produces
+UpdateVehicleCommandFromResourceAssembler ..> UpdateVehicleResource : reads
+UpdateVehicleCommandFromResourceAssembler ..> UpdateVehicleCommand : produces
+VehicleResourceFromEntityAssembler ..> Vehicle : reads
+VehicleResourceFromEntityAssembler ..> VehicleResource : produces
+FleetContextFacade ..|> IFleetContextFacade : implements
+FleetContextFacade --> IVehicleRepository : uses
+VehicleCommandService ..|> IVehicleCommandService : implements
+VehicleCommandService --> IVehicleRepository : uses
+VehicleCommandService --> IUnitOfWork : uses
+VehicleQueryService ..|> IVehicleQueryService : implements
+VehicleQueryService --> IVehicleRepository : uses
+FuelRecord ..> CreateFuelRecordCommand : created from
+IFuelRecordRepository ..|> IBaseRepository : extends
+FuelRecordRepository --|> BaseRepository : extends
+FuelRecordRepository ..|> IFuelRecordRepository : implements
+FuelRecordRepository --> AppDbContext : uses
+FuelRecordsController --> IFuelRecordCommandService : uses
+FuelRecordsController --> IFuelRecordQueryService : uses
+FuelRecordsController --> ActionResultFromCreateFuelRecordResultAssembler : uses
+FuelRecordsController --> ActionResultFromDeleteFuelRecordResultAssembler : uses
+FuelRecordsController --> ActionResultFromUpdateFuelRecordResultAssembler : uses
+FuelRecordsController --> CreateFuelRecordCommandFromResourceAssembler : uses
+FuelRecordsController --> FuelRecordResourceFromEntityAssembler : uses
+FuelRecordsController --> UpdateFuelRecordCommandFromResourceAssembler : uses
+ActionResultFromCreateFuelRecordResultAssembler ..> ResultT : reads
+ActionResultFromCreateFuelRecordResultAssembler ..> FuelRecord : reads
+ActionResultFromCreateFuelRecordResultAssembler ..> CreateFuelRecordError : reads
+ActionResultFromDeleteFuelRecordResultAssembler ..> ResultT : reads
+ActionResultFromDeleteFuelRecordResultAssembler ..> FuelRecord : reads
+ActionResultFromDeleteFuelRecordResultAssembler ..> DeleteFuelRecordError : reads
+ActionResultFromUpdateFuelRecordResultAssembler ..> ResultT : reads
+ActionResultFromUpdateFuelRecordResultAssembler ..> FuelRecord : reads
+ActionResultFromUpdateFuelRecordResultAssembler ..> UpdateFuelRecordError : reads
+CreateFuelRecordCommandFromResourceAssembler ..> CreateFuelRecordResource : reads
+CreateFuelRecordCommandFromResourceAssembler ..> CreateFuelRecordCommand : produces
+FuelRecordResourceFromEntityAssembler ..> FuelRecord : reads
+FuelRecordResourceFromEntityAssembler ..> FuelRecordResource : produces
+UpdateFuelRecordCommandFromResourceAssembler ..> UpdateFuelRecordResource : reads
+UpdateFuelRecordCommandFromResourceAssembler ..> UpdateFuelRecordCommand : produces
+FuelContextFacade ..|> IFuelContextFacade : implements
+FuelContextFacade --> IFuelRecordRepository : uses
+FuelRecordCommandService ..|> IFuelRecordCommandService : implements
+FuelRecordCommandService --> IFuelRecordRepository : uses
+FuelRecordCommandService --> IUnitOfWork : uses
+FuelRecordQueryService ..|> IFuelRecordQueryService : implements
+FuelRecordQueryService --> IFuelRecordRepository : uses
+MaintenanceRequest ..> SubmitMaintenanceRequestCommand : created from
+IMaintenanceRequestRepository ..|> IBaseRepository : extends
+MaintenanceRequestRepository --|> BaseRepository : extends
+MaintenanceRequestRepository ..|> IMaintenanceRequestRepository : implements
+MaintenanceRequestRepository --> AppDbContext : uses
+MaintenanceRequestsController --> IMaintenanceRequestCommandService : uses
+MaintenanceRequestsController --> IMaintenanceRequestQueryService : uses
+MaintenanceRequestsController --> ActionResultFromChangeMaintenanceRequestStatusResultAssembler : uses
+MaintenanceRequestsController --> ActionResultFromDeleteMaintenanceRequestResultAssembler : uses
+MaintenanceRequestsController --> ActionResultFromSubmitMaintenanceRequestResultAssembler : uses
+MaintenanceRequestsController --> ApproveOrRejectBudgetCommandFromResourceAssembler : uses
+MaintenanceRequestsController --> MaintenanceRequestResourceFromEntityAssembler : uses
+MaintenanceRequestsController --> RegisterDiagnosticAndQuoteCommandFromResourceAssembler : uses
+MaintenanceRequestsController --> SubmitMaintenanceRequestCommandFromResourceAssembler : uses
+ActionResultFromChangeMaintenanceRequestStatusResultAssembler ..> ResultT : reads
+ActionResultFromChangeMaintenanceRequestStatusResultAssembler ..> MaintenanceRequest : reads
+ActionResultFromChangeMaintenanceRequestStatusResultAssembler ..> ChangeMaintenanceRequestStatusError : reads
+ActionResultFromDeleteMaintenanceRequestResultAssembler ..> ResultT : reads
+ActionResultFromDeleteMaintenanceRequestResultAssembler ..> MaintenanceRequest : reads
+ActionResultFromDeleteMaintenanceRequestResultAssembler ..> DeleteMaintenanceRequestError : reads
+ActionResultFromSubmitMaintenanceRequestResultAssembler ..> ResultT : reads
+ActionResultFromSubmitMaintenanceRequestResultAssembler ..> MaintenanceRequest : reads
+ActionResultFromSubmitMaintenanceRequestResultAssembler ..> SubmitMaintenanceRequestError : reads
+ApproveOrRejectBudgetCommandFromResourceAssembler ..> ApproveOrRejectBudgetResource : reads
+ApproveOrRejectBudgetCommandFromResourceAssembler ..> ApproveOrRejectBudgetCommand : produces
+MaintenanceRequestResourceFromEntityAssembler ..> MaintenanceRequest : reads
+MaintenanceRequestResourceFromEntityAssembler ..> MaintenanceRequestResource : produces
+RegisterDiagnosticAndQuoteCommandFromResourceAssembler ..> RegisterDiagnosticAndQuoteResource : reads
+RegisterDiagnosticAndQuoteCommandFromResourceAssembler ..> RegisterDiagnosticAndQuoteCommand : produces
+SubmitMaintenanceRequestCommandFromResourceAssembler ..> SubmitMaintenanceRequestResource : reads
+SubmitMaintenanceRequestCommandFromResourceAssembler ..> SubmitMaintenanceRequestCommand : produces
+MaintenanceContextFacade ..|> IMaintenanceContextFacade : implements
+MaintenanceContextFacade --> IMaintenanceRequestRepository : uses
+MaintenanceRequestCommandService ..|> IMaintenanceRequestCommandService : implements
+MaintenanceRequestCommandService --> IMaintenanceRequestRepository : uses
+MaintenanceRequestCommandService --> IUnitOfWork : uses
+MaintenanceRequestQueryService ..|> IMaintenanceRequestQueryService : implements
+MaintenanceRequestQueryService --> IMaintenanceRequestRepository : uses
+Incident ..> CreateIncidentCommand : created from
+IIncidentRepository ..|> IBaseRepository : extends
+IncidentRepository --|> BaseRepository : extends
+IncidentRepository ..|> IIncidentRepository : implements
+IncidentRepository --> AppDbContext : uses
+IncidentsController --> IIncidentCommandService : uses
+IncidentsController --> IIncidentQueryService : uses
+IncidentsController --> ActionResultFromCreateIncidentResultAssembler : uses
+IncidentsController --> ActionResultFromDeleteIncidentResultAssembler : uses
+IncidentsController --> ActionResultFromUpdateIncidentResultAssembler : uses
+IncidentsController --> CreateIncidentCommandFromResourceAssembler : uses
+IncidentsController --> IncidentResourceFromEntityAssembler : uses
+IncidentsController --> UpdateIncidentCommandFromResourceAssembler : uses
+ActionResultFromCreateIncidentResultAssembler ..> ResultT : reads
+ActionResultFromCreateIncidentResultAssembler ..> Incident : reads
+ActionResultFromCreateIncidentResultAssembler ..> CreateIncidentError : reads
+ActionResultFromDeleteIncidentResultAssembler ..> ResultT : reads
+ActionResultFromDeleteIncidentResultAssembler ..> Incident : reads
+ActionResultFromDeleteIncidentResultAssembler ..> DeleteIncidentError : reads
+ActionResultFromUpdateIncidentResultAssembler ..> ResultT : reads
+ActionResultFromUpdateIncidentResultAssembler ..> Incident : reads
+ActionResultFromUpdateIncidentResultAssembler ..> UpdateIncidentError : reads
+CreateIncidentCommandFromResourceAssembler ..> CreateIncidentResource : reads
+CreateIncidentCommandFromResourceAssembler ..> CreateIncidentCommand : produces
+IncidentResourceFromEntityAssembler ..> Incident : reads
+IncidentResourceFromEntityAssembler ..> IncidentResource : produces
+UpdateIncidentCommandFromResourceAssembler ..> UpdateIncidentResource : reads
+UpdateIncidentCommandFromResourceAssembler ..> UpdateIncidentCommand : produces
+IncidentCommandService ..|> IIncidentCommandService : implements
+IncidentCommandService --> IIncidentRepository : uses
+IncidentCommandService --> IUnitOfWork : uses
+IncidentQueryService ..|> IIncidentQueryService : implements
+IncidentQueryService --> IIncidentRepository : uses
+IotDevice --> SerialNumber : owns
+IotDevice ..> CreateIotDeviceCommand : created from
+TelemetryData ..> ReceiveTelemetryDataCommand : created from
+CreateIotDeviceCommand --> SerialNumber : contains
+IIotDeviceRepository ..|> IBaseRepository : extends
+ITelemetryDataRepository ..|> IBaseRepository : extends
+TelemetryDataQueue ..|> ITelemetryDataQueue : implements
+VehicleLocationNotifier ..|> IVehicleLocationNotifier : implements
+VehicleLocationNotifier --> MonitoringHub : uses
+VehicleLocationNotifier --> IMonitoringClient : uses
+TelemetryDataProcessor --> ITelemetryDataQueue : uses
+IotDeviceRepository --|> BaseRepository : extends
+IotDeviceRepository ..|> IIotDeviceRepository : implements
+IotDeviceRepository --> AppDbContext : uses
+TelemetryDataRepository --|> BaseRepository : extends
+TelemetryDataRepository ..|> ITelemetryDataRepository : implements
+TelemetryDataRepository --> AppDbContext : uses
+IotDevicesController --> IIotDeviceCommandService : uses
+IotDevicesController --> IIotDeviceQueryService : uses
+IotDevicesController --> ActionResultFromCreateIotDeviceResultAssembler : uses
+IotDevicesController --> ActionResultFromDeleteIotDeviceResultAssembler : uses
+IotDevicesController --> ActionResultFromUpdateIotDeviceResultAssembler : uses
+IotDevicesController --> CreateIotDeviceCommandFromResourceAssembler : uses
+IotDevicesController --> IotDeviceResourceFromEntityAssembler : uses
+IotDevicesController --> UpdateIotDeviceCommandFromResourceAssembler : uses
+TelemetryDataController --> ITelemetryDataCommandService : uses
+TelemetryDataController --> ITelemetryDataQueryService : uses
+TelemetryDataController --> ActionResultFromReceiveTelemetryDataResultAssembler : uses
+TelemetryDataController --> ReceiveTelemetryDataCommandFromResourceAssembler : uses
+TelemetryDataController --> TelemetryDataResourceFromEntityAssembler : uses
+ActionResultFromCreateIotDeviceResultAssembler ..> ResultT : reads
+ActionResultFromCreateIotDeviceResultAssembler ..> IotDevice : reads
+ActionResultFromCreateIotDeviceResultAssembler ..> CreateIotDeviceError : reads
+ActionResultFromDeleteIotDeviceResultAssembler ..> ResultT : reads
+ActionResultFromDeleteIotDeviceResultAssembler ..> IotDevice : reads
+ActionResultFromDeleteIotDeviceResultAssembler ..> DeleteIotDeviceError : reads
+ActionResultFromReceiveTelemetryDataResultAssembler ..> ResultT : reads
+ActionResultFromReceiveTelemetryDataResultAssembler ..> ReceiveTelemetryDataCommand : reads
+ActionResultFromReceiveTelemetryDataResultAssembler ..> ReceiveTelemetryDataError : reads
+ActionResultFromUpdateIotDeviceResultAssembler ..> ResultT : reads
+ActionResultFromUpdateIotDeviceResultAssembler ..> IotDevice : reads
+ActionResultFromUpdateIotDeviceResultAssembler ..> UpdateIotDeviceError : reads
+CreateIotDeviceCommandFromResourceAssembler ..> CreateIotDeviceResource : reads
+CreateIotDeviceCommandFromResourceAssembler ..> CreateIotDeviceCommand : produces
+IotDeviceResourceFromEntityAssembler ..> IotDevice : reads
+IotDeviceResourceFromEntityAssembler ..> IotDeviceResource : produces
+ReceiveTelemetryDataCommandFromResourceAssembler ..> ReceiveTelemetryDataResource : reads
+ReceiveTelemetryDataCommandFromResourceAssembler ..> ReceiveTelemetryDataCommand : produces
+TelemetryDataResourceFromEntityAssembler ..> TelemetryData : reads
+TelemetryDataResourceFromEntityAssembler ..> TelemetryDataResource : produces
+UpdateIotDeviceCommandFromResourceAssembler ..> UpdateIotDeviceResource : reads
+UpdateIotDeviceCommandFromResourceAssembler ..> UpdateIotDeviceCommand : produces
+VehicleLocationResourceFromEntityAssembler ..> TelemetryData : reads
+VehicleLocationResourceFromEntityAssembler ..> VehicleLocationResource : produces
+IotDeviceCommandService ..|> IIotDeviceCommandService : implements
+IotDeviceCommandService --> IIotDeviceRepository : uses
+IotDeviceCommandService --> IUnitOfWork : uses
+TelemetryDataCommandService ..|> ITelemetryDataCommandService : implements
+TelemetryDataCommandService --> ITelemetryDataRepository : uses
+TelemetryDataCommandService --> IIotDeviceRepository : uses
+TelemetryDataCommandService --> ITelemetryDataQueue : uses
+TelemetryDataCommandService --> IVehicleLocationNotifier : uses
+TelemetryDataCommandService --> IUnitOfWork : uses
+IotDeviceQueryService ..|> IIotDeviceQueryService : implements
+IotDeviceQueryService --> IIotDeviceRepository : uses
+TelemetryDataQueryService ..|> ITelemetryDataQueryService : implements
+TelemetryDataQueryService --> ITelemetryDataRepository : uses
+Alert ..> CreateAlertCommand : created from
+Notification ..> CreateNotificationCommand : created from
+IAlertRepository ..|> IBaseRepository : extends
+INotificationRepository ..|> IBaseRepository : extends
+AlertRepository --|> BaseRepository : extends
+AlertRepository ..|> IAlertRepository : implements
+AlertRepository --> AppDbContext : uses
+NotificationRepository --|> BaseRepository : extends
+NotificationRepository ..|> INotificationRepository : implements
+NotificationRepository --> AppDbContext : uses
+AlertsController --> IAlertCommandService : uses
+AlertsController --> IAlertQueryService : uses
+AlertsController --> NotificationsHub : uses
+AlertsController --> INotificationsClient : uses
+AlertsController --> ActionResultFromCreateAlertResultAssembler : uses
+AlertsController --> AlertResourceFromEntityAssembler : uses
+AlertsController --> CreateAlertCommandFromResourceAssembler : uses
+NotificationsController --> INotificationCommandService : uses
+NotificationsController --> INotificationQueryService : uses
+NotificationsController --> NotificationsHub : uses
+NotificationsController --> INotificationsClient : uses
+NotificationsController --> ActionResultFromCreateNotificationResultAssembler : uses
+NotificationsController --> ActionResultFromDeleteNotificationResultAssembler : uses
+NotificationsController --> ActionResultFromUpdateNotificationResultAssembler : uses
+NotificationsController --> CreateNotificationCommandFromResourceAssembler : uses
+NotificationsController --> NotificationResourceFromEntityAssembler : uses
+NotificationsController --> UpdateNotificationCommandFromResourceAssembler : uses
+ActionResultFromCreateAlertResultAssembler ..> ResultT : reads
+ActionResultFromCreateAlertResultAssembler ..> Alert : reads
+ActionResultFromCreateAlertResultAssembler ..> CreateAlertError : reads
+ActionResultFromCreateNotificationResultAssembler ..> ResultT : reads
+ActionResultFromCreateNotificationResultAssembler ..> Notification : reads
+ActionResultFromCreateNotificationResultAssembler ..> CreateNotificationError : reads
+ActionResultFromDeleteNotificationResultAssembler ..> ResultT : reads
+ActionResultFromDeleteNotificationResultAssembler ..> Notification : reads
+ActionResultFromDeleteNotificationResultAssembler ..> DeleteNotificationError : reads
+ActionResultFromUpdateNotificationResultAssembler ..> ResultT : reads
+ActionResultFromUpdateNotificationResultAssembler ..> Notification : reads
+ActionResultFromUpdateNotificationResultAssembler ..> UpdateNotificationError : reads
+AlertResourceFromEntityAssembler ..> Alert : reads
+AlertResourceFromEntityAssembler ..> AlertResource : produces
+CreateAlertCommandFromResourceAssembler ..> CreateAlertResource : reads
+CreateAlertCommandFromResourceAssembler ..> CreateAlertCommand : produces
+CreateNotificationCommandFromResourceAssembler ..> CreateNotificationResource : reads
+CreateNotificationCommandFromResourceAssembler ..> CreateNotificationCommand : produces
+NotificationResourceFromEntityAssembler ..> Notification : reads
+NotificationResourceFromEntityAssembler ..> NotificationResource : produces
+UpdateNotificationCommandFromResourceAssembler ..> UpdateNotificationResource : reads
+UpdateNotificationCommandFromResourceAssembler ..> UpdateNotificationCommand : produces
+AlertCommandService ..|> IAlertCommandService : implements
+AlertCommandService --> IAlertRepository : uses
+AlertCommandService --> IUnitOfWork : uses
+NotificationCommandService ..|> INotificationCommandService : implements
+NotificationCommandService --> INotificationRepository : uses
+NotificationCommandService --> IUnitOfWork : uses
+AlertQueryService ..|> IAlertQueryService : implements
+AlertQueryService --> IAlertRepository : uses
+NotificationQueryService ..|> INotificationQueryService : implements
+NotificationQueryService --> INotificationRepository : uses
+IotOrder ..> CreateIotOrderCommand : created from
+IIotOrderRepository ..|> IBaseRepository : extends
+IotOrderRepository --|> BaseRepository : extends
+IotOrderRepository ..|> IIotOrderRepository : implements
+IotOrderRepository --> AppDbContext : uses
+IotOrdersController --> IIotOrderCommandService : uses
+IotOrdersController --> IIotOrderQueryService : uses
+IotOrdersController --> ActionResultFromCreateIotOrderResultAssembler : uses
+IotOrdersController --> ActionResultFromUpdateIotOrderResultAssembler : uses
+IotOrdersController --> CreateIotOrderCommandFromResourceAssembler : uses
+IotOrdersController --> IotOrderResourceFromEntityAssembler : uses
+IotOrdersController --> UpdateIotOrderCommandFromResourceAssembler : uses
+ActionResultFromCreateIotOrderResultAssembler ..> ResultT : reads
+ActionResultFromCreateIotOrderResultAssembler ..> IotOrder : reads
+ActionResultFromCreateIotOrderResultAssembler ..> CreateIotOrderError : reads
+ActionResultFromUpdateIotOrderResultAssembler ..> ResultT : reads
+ActionResultFromUpdateIotOrderResultAssembler ..> IotOrder : reads
+ActionResultFromUpdateIotOrderResultAssembler ..> UpdateIotOrderError : reads
+CreateIotOrderCommandFromResourceAssembler ..> CreateIotOrderResource : reads
+CreateIotOrderCommandFromResourceAssembler ..> CreateIotOrderCommand : produces
+IotOrderResourceFromEntityAssembler ..> IotOrder : reads
+IotOrderResourceFromEntityAssembler ..> IotOrderResource : produces
+UpdateIotOrderCommandFromResourceAssembler ..> UpdateIotOrderResource : reads
+UpdateIotOrderCommandFromResourceAssembler ..> UpdateIotOrderCommand : produces
+IotOrderCommandService ..|> IIotOrderCommandService : implements
+IotOrderCommandService --> IIotOrderRepository : uses
+IotOrderCommandService --> IUnitOfWork : uses
+IotOrderQueryService ..|> IIotOrderQueryService : implements
+IotOrderQueryService --> IIotOrderRepository : uses
+Report ..> GenerateReportCommand : created from
+IReportRepository ..|> IBaseRepository : extends
+ReportRepository --|> BaseRepository : extends
+ReportRepository ..|> IReportRepository : implements
+ReportRepository --> AppDbContext : uses
+ReportsController --> IReportCommandService : uses
+ReportsController --> IReportQueryService : uses
+ReportsController --> ActionResultFromDeleteReportResultAssembler : uses
+ReportsController --> ActionResultFromGenerateReportResultAssembler : uses
+ReportsController --> GenerateReportCommandFromResourceAssembler : uses
+ReportsController --> ReportResourceFromEntityAssembler : uses
+ActionResultFromDeleteReportResultAssembler ..> ResultT : reads
+ActionResultFromDeleteReportResultAssembler ..> Report : reads
+ActionResultFromDeleteReportResultAssembler ..> DeleteReportError : reads
+ActionResultFromGenerateReportResultAssembler ..> ResultT : reads
+ActionResultFromGenerateReportResultAssembler ..> Report : reads
+ActionResultFromGenerateReportResultAssembler ..> ReportLine : reads
+ActionResultFromGenerateReportResultAssembler ..> GenerateReportError : reads
+GenerateReportCommandFromResourceAssembler ..> GenerateReportResource : reads
+GenerateReportCommandFromResourceAssembler ..> GenerateReportCommand : produces
+GeneratedReportResourceFromResultAssembler ..> Report : reads
+GeneratedReportResourceFromResultAssembler ..> ReportLine : reads
+GeneratedReportResourceFromResultAssembler ..> GeneratedReportResource : produces
+ReportResourceFromEntityAssembler ..> Report : reads
+ReportResourceFromEntityAssembler ..> ReportResource : produces
+GeneratedReportResource --> ReportLineResource : contains
+ReportCommandService ..|> IReportCommandService : implements
+ReportCommandService --> IReportRepository : uses
+ReportCommandService --> IFleetContextFacade : uses
+ReportCommandService --> IFuelContextFacade : uses
+ReportCommandService --> IMaintenanceContextFacade : uses
+ReportCommandService --> IUnitOfWork : uses
+ReportQueryService ..|> IReportQueryService : implements
+ReportQueryService --> IReportRepository : uses
+BaseRepository ..|> IBaseRepository : implements
+BaseRepository --> AppDbContext : uses
+UnitOfWork ..|> IUnitOfWork : implements
+UnitOfWork --> AppDbContext : uses
+
+note right of AppDbContext
+  EF Core mappings:
+  - one schema per bounded context
+  - foreign keys with ON DELETE RESTRICT
+  - value conversions for value objects
+  - table-per-hierarchy users (role_type)
+end note
+
+note right of TelemetryDataProcessor
+  IoT Telemetry Processor:
+  - dequeues packets from ITelemetryDataQueue
+  - stores TelemetryData and connects the IoT device
+  - notifies VehicleLocationUpdated
+end note
+
+note right of MaintenanceRequestsController
+  Maintenance flow:
+  Pendiente -> Presupuestado -> Aprobado | Rechazado
+  Aprobado -> En reparación -> Completado
+end note
+
 @enduml
