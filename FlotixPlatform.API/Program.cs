@@ -4,6 +4,11 @@ using FlotixPlatform.API.Fleet.Application.Internal.QueryServices;
 using FlotixPlatform.API.Fleet.Application.Services;
 using FlotixPlatform.API.Fleet.Domain.Repositories;
 using FlotixPlatform.API.Fleet.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using FlotixPlatform.API.Fuel.Application.Internal.CommandServices;
+using FlotixPlatform.API.Fuel.Application.Internal.QueryServices;
+using FlotixPlatform.API.Fuel.Application.Services;
+using FlotixPlatform.API.Fuel.Domain.Repositories;
+using FlotixPlatform.API.Fuel.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using FlotixPlatform.API.IAM.Application.Internal.CommandServices;
 using FlotixPlatform.API.IAM.Application.Internal.OutboundServices;
 using FlotixPlatform.API.IAM.Application.Internal.QueryServices;
@@ -25,6 +30,7 @@ using Microsoft.Extensions.Localization;
 using Scalar.AspNetCore;
 using IAMLocalizedOpenApiAssembler = FlotixPlatform.API.IAM.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 using FleetLocalizedOpenApiAssembler = FlotixPlatform.API.Fleet.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
+using FuelLocalizedOpenApiAssembler = FlotixPlatform.API.Fuel.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,6 +91,8 @@ builder.Services.AddOpenApi(options =>
     options.AddSchemaTransformer(IAMLocalizedOpenApiAssembler.TransformSchemaAsync);
     options.AddOperationTransformer(FleetLocalizedOpenApiAssembler.TransformOperationAsync);
     options.AddSchemaTransformer(FleetLocalizedOpenApiAssembler.TransformSchemaAsync);
+    options.AddOperationTransformer(FuelLocalizedOpenApiAssembler.TransformOperationAsync);
+    options.AddSchemaTransformer(FuelLocalizedOpenApiAssembler.TransformSchemaAsync);
 });
 
 // Real-time communication with SignalR.
@@ -138,6 +146,11 @@ builder.Services.AddScoped<IVehicleQueryService, VehicleQueryService>();
 builder.Services.AddScoped<IFleetPreferencesRepository, FleetPreferencesRepository>();
 builder.Services.AddScoped<IFleetPreferencesCommandService, FleetPreferencesCommandService>();
 builder.Services.AddScoped<IFleetPreferencesQueryService, FleetPreferencesQueryService>();
+
+// Fuel Control Bounded Context Injection Configuration
+builder.Services.AddScoped<IFuelRecordRepository, FuelRecordRepository>();
+builder.Services.AddScoped<IFuelRecordCommandService, FuelRecordCommandService>();
+builder.Services.AddScoped<IFuelRecordQueryService, FuelRecordQueryService>();
 
 // IAM token protection keys (persist the key ring in production, e.g. PersistKeysToFileSystem).
 builder.Services.AddDataProtection();
