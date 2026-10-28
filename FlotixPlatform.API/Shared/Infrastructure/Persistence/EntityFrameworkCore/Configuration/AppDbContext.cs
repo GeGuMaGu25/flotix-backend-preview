@@ -5,6 +5,7 @@ using FlotixPlatform.API.Maintenance.Infrastructure.Persistence.EntityFrameworkC
 using FlotixPlatform.API.Incidents.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using FlotixPlatform.API.Monitoring.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using FlotixPlatform.API.Notifications.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
+using FlotixPlatform.API.Commerce.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using FlotixPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using FlotixPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Interceptors;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         builder.ApplyIncidentsConfiguration();
         builder.ApplyMonitoringConfiguration();
         builder.ApplyNotificationsConfiguration();
+        builder.ApplyCommerceConfiguration();
 
         builder.UseSnakeCaseNamingConvention();
     }
