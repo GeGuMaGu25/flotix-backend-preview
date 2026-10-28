@@ -555,4 +555,79 @@
     <data name="RequiredFaultDescription" xml:space="preserve">
         <value>El campo descripción de la falla es obligatorio.</value>
     </data>
+    <data name="CreateIncidentSummary" xml:space="preserve">
+        <value>Crear una incidencia</value>
+    </data>
+    <data name="CreateIncidentDescription" xml:space="preserve">
+        <value>Registra una nueva incidencia.</value>
+    </data>
+    <data name="GetAllIncidentsSummary" xml:space="preserve">
+        <value>Obtener todas las incidencias</value>
+    </data>
+    <data name="GetAllIncidentsDescription" xml:space="preserve">
+        <value>Obtiene todas las incidencias, opcionalmente filtradas por ID del vehículo o ID del conductor.</value>
+    </data>
+    <data name="GetIncidentByIdSummary" xml:space="preserve">
+        <value>Obtener una incidencia por ID</value>
+    </data>
+    <data name="GetIncidentByIdDescription" xml:space="preserve">
+        <value>Obtiene una incidencia mediante su identificador.</value>
+    </data>
+    <data name="UpdateIncidentSummary" xml:space="preserve">
+        <value>Actualizar una incidencia</value>
+    </data>
+    <data name="UpdateIncidentDescription" xml:space="preserve">
+        <value>Actualiza los datos de una incidencia.</value>
+    </data>
+    <data name="DeleteIncidentSummary" xml:space="preserve">
+        <value>Eliminar una incidencia</value>
+    </data>
+    <data name="DeleteIncidentDescription" xml:space="preserve">
+        <value>Elimina una incidencia mediante su identificador.</value>
+    </data>
+    <data name="CreateIncidentSchema" xml:space="preserve">
+        <value>Datos de la solicitud para crear una incidencia.</value>
+    </data>
+    <data name="UpdateIncidentSchema" xml:space="preserve">
+        <value>Datos de la solicitud para actualizar una incidencia.</value>
+    </data>
+    <data name="IncidentSchema" xml:space="preserve">
+        <value>Una incidencia devuelta por la API.</value>
+    </data>
+    <data name="IncidentId" xml:space="preserve">
+        <value>El identificador de la incidencia generado por el servidor.</value>
+    </data>
+    <data name="IncidentVehicleId" xml:space="preserve">
+        <value>El identificador del vehículo.</value>
+    </data>
+    <data name="IncidentDriverId" xml:space="preserve">
+        <value>El identificador del usuario conductor.</value>
+    </data>
+    <data name="IncidentDescription" xml:space="preserve">
+        <value>La descripción de la incidencia.</value>
+    </data>
+    <data name="IncidentStatus" xml:space="preserve">
+        <value>El estado actual de la incidencia.</value>
+    </data>
+    <data name="IncidentReportedAt" xml:space="preserve">
+        <value>El momento en que se reportó la incidencia.</value>
+    </data>
+    <data name="InvalidIncidentRequest" xml:space="preserve">
+        <value>La solicitud de incidencia contiene valores no válidos.</value>
+    </data>
+    <data name="IncidentNotFound" xml:space="preserve">
+        <value>No se encontró la incidencia.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingIncident" xml:space="preserve">
+        <value>Ocurrió un error inesperado al crear la incidencia.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingIncident" xml:space="preserve">
+        <value>Ocurrió un error inesperado al actualizar la incidencia.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingIncident" xml:space="preserve">
+        <value>Ocurrió un error inesperado al eliminar la incidencia.</value>
+    </data>
+    <data name="RequiredDescription" xml:space="preserve">
+        <value>El campo descripción es obligatorio.</value>
+    </data>
 </root>

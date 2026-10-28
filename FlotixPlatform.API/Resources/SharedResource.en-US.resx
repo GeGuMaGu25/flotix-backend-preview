@@ -555,4 +555,79 @@
     <data name="RequiredFaultDescription" xml:space="preserve">
         <value>Fault description is required.</value>
     </data>
+    <data name="CreateIncidentSummary" xml:space="preserve">
+        <value>Create an incident</value>
+    </data>
+    <data name="CreateIncidentDescription" xml:space="preserve">
+        <value>Registers a new incident.</value>
+    </data>
+    <data name="GetAllIncidentsSummary" xml:space="preserve">
+        <value>Get all incidents</value>
+    </data>
+    <data name="GetAllIncidentsDescription" xml:space="preserve">
+        <value>Retrieves all incidents, optionally filtered by vehicle ID or driver ID.</value>
+    </data>
+    <data name="GetIncidentByIdSummary" xml:space="preserve">
+        <value>Get an incident by ID</value>
+    </data>
+    <data name="GetIncidentByIdDescription" xml:space="preserve">
+        <value>Retrieves an incident using its identifier.</value>
+    </data>
+    <data name="UpdateIncidentSummary" xml:space="preserve">
+        <value>Update an incident</value>
+    </data>
+    <data name="UpdateIncidentDescription" xml:space="preserve">
+        <value>Updates the data of an incident.</value>
+    </data>
+    <data name="DeleteIncidentSummary" xml:space="preserve">
+        <value>Delete an incident</value>
+    </data>
+    <data name="DeleteIncidentDescription" xml:space="preserve">
+        <value>Deletes an incident using its identifier.</value>
+    </data>
+    <data name="CreateIncidentSchema" xml:space="preserve">
+        <value>Request payload for creating an incident.</value>
+    </data>
+    <data name="UpdateIncidentSchema" xml:space="preserve">
+        <value>Request payload for updating an incident.</value>
+    </data>
+    <data name="IncidentSchema" xml:space="preserve">
+        <value>An incident returned by the API.</value>
+    </data>
+    <data name="IncidentId" xml:space="preserve">
+        <value>The server-generated identifier of the incident.</value>
+    </data>
+    <data name="IncidentVehicleId" xml:space="preserve">
+        <value>The identifier of the vehicle.</value>
+    </data>
+    <data name="IncidentDriverId" xml:space="preserve">
+        <value>The identifier of the driver user.</value>
+    </data>
+    <data name="IncidentDescription" xml:space="preserve">
+        <value>The description of the incident.</value>
+    </data>
+    <data name="IncidentStatus" xml:space="preserve">
+        <value>The current status of the incident.</value>
+    </data>
+    <data name="IncidentReportedAt" xml:space="preserve">
+        <value>The moment the incident was reported.</value>
+    </data>
+    <data name="InvalidIncidentRequest" xml:space="preserve">
+        <value>The incident request contains invalid values.</value>
+    </data>
+    <data name="IncidentNotFound" xml:space="preserve">
+        <value>The incident was not found.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingIncident" xml:space="preserve">
+        <value>An unexpected error occurred while creating the incident.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingIncident" xml:space="preserve">
+        <value>An unexpected error occurred while updating the incident.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingIncident" xml:space="preserve">
+        <value>An unexpected error occurred while deleting the incident.</value>
+    </data>
+    <data name="RequiredDescription" xml:space="preserve">
+        <value>Description is required.</value>
+    </data>
 </root>
