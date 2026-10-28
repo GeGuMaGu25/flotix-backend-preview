@@ -31,4 +31,13 @@ public class MaintenanceRequestRepository(AppDbContext context)
             .Where(m => m.MechanicId == mechanicId)
             .ToListAsync(cancellationToken);
     }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<MaintenanceRequest>> FindByVehicleIdsAndRequestDateRangeAsync(IReadOnlyCollection<Guid> vehicleIds,
+        DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    {
+        return await Context.Set<MaintenanceRequest>()
+            .Where(m => vehicleIds.Contains(m.VehicleId) && m.RequestDate >= from && m.RequestDate < to)
+            .ToListAsync(cancellationToken);
+    }
 }

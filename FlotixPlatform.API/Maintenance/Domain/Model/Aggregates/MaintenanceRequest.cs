@@ -80,6 +80,17 @@ public partial class MaintenanceRequest
     public DateTimeOffset RequestDate { get; private set; }
 
     /// <summary>
+    ///     Gets whether the owner approved the quoted budget (approved, in repair or completed).
+    /// </summary>
+    public bool IsBudgetApproved => Status is MaintenanceRequestStatus.Approved or MaintenanceRequestStatus.InRepair
+        or MaintenanceRequestStatus.Completed;
+
+    /// <summary>
+    ///     Gets whether the repair has been completed.
+    /// </summary>
+    public bool IsCompleted => Status is MaintenanceRequestStatus.Completed;
+
+    /// <summary>
     ///     Registers the diagnostic and quote of the workshop: "Pendiente" → "Presupuestado".
     /// </summary>
     /// <param name="amount">The estimated cost quoted by the workshop.</param>

@@ -27,4 +27,17 @@ public interface IMaintenanceRequestRepository : IBaseRepository<MaintenanceRequ
     ///     An Enumerable containing the maintenance request objects if found, or empty otherwise.
     /// </returns>
     Task<IEnumerable<MaintenanceRequest>> FindByMechanicIdAsync(Guid mechanicId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Find the maintenance requests of a set of vehicles requested within a period
+    /// </summary>
+    /// <param name="vehicleIds">The identifiers of the vehicles.</param>
+    /// <param name="from">The start of the period (inclusive).</param>
+    /// <param name="to">The end of the period (exclusive).</param>
+    /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
+    /// <returns>
+    ///     An Enumerable containing the maintenance request objects if found, or empty otherwise.
+    /// </returns>
+    Task<IEnumerable<MaintenanceRequest>> FindByVehicleIdsAndRequestDateRangeAsync(IReadOnlyCollection<Guid> vehicleIds,
+        DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default);
 }
