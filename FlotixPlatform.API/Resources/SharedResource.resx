@@ -759,4 +759,205 @@
     <data name="UnexpectedErrorDeletingTelemetryRecord" xml:space="preserve">
         <value>An unexpected error occurred while deleting the telemetry record.</value>
     </data>
+    <data name="CreateAlertSummary" xml:space="preserve">
+        <value>Create an alert</value>
+    </data>
+    <data name="CreateAlertDescription" xml:space="preserve">
+        <value>Registers a new alert.</value>
+    </data>
+    <data name="GetAllAlertsSummary" xml:space="preserve">
+        <value>Get all alerts</value>
+    </data>
+    <data name="GetAllAlertsDescription" xml:space="preserve">
+        <value>Retrieves all alerts, optionally filtered by vehicle ID.</value>
+    </data>
+    <data name="GetAlertByIdSummary" xml:space="preserve">
+        <value>Get an alert by ID</value>
+    </data>
+    <data name="GetAlertByIdDescription" xml:space="preserve">
+        <value>Retrieves an alert using its identifier.</value>
+    </data>
+    <data name="CreateNotificationSummary" xml:space="preserve">
+        <value>Create a notification</value>
+    </data>
+    <data name="CreateNotificationDescription" xml:space="preserve">
+        <value>Registers a new notification.</value>
+    </data>
+    <data name="GetAllNotificationsSummary" xml:space="preserve">
+        <value>Get all notifications</value>
+    </data>
+    <data name="GetAllNotificationsDescription" xml:space="preserve">
+        <value>Retrieves all notifications, optionally filtered by user ID.</value>
+    </data>
+    <data name="GetNotificationByIdSummary" xml:space="preserve">
+        <value>Get a notification by ID</value>
+    </data>
+    <data name="GetNotificationByIdDescription" xml:space="preserve">
+        <value>Retrieves a notification using its identifier.</value>
+    </data>
+    <data name="UpdateNotificationSummary" xml:space="preserve">
+        <value>Update a notification</value>
+    </data>
+    <data name="UpdateNotificationDescription" xml:space="preserve">
+        <value>Updates the data of a notification.</value>
+    </data>
+    <data name="DeleteNotificationSummary" xml:space="preserve">
+        <value>Delete a notification</value>
+    </data>
+    <data name="DeleteNotificationDescription" xml:space="preserve">
+        <value>Deletes a notification using its identifier.</value>
+    </data>
+    <data name="CreateNotificationPreferenceSummary" xml:space="preserve">
+        <value>Create a notification preference</value>
+    </data>
+    <data name="CreateNotificationPreferenceDescription" xml:space="preserve">
+        <value>Registers a new notification preference.</value>
+    </data>
+    <data name="GetAllNotificationPreferencesSummary" xml:space="preserve">
+        <value>Get all notification preferences</value>
+    </data>
+    <data name="GetAllNotificationPreferencesDescription" xml:space="preserve">
+        <value>Retrieves all notification preferences, optionally filtered by user ID.</value>
+    </data>
+    <data name="GetNotificationPreferenceByIdSummary" xml:space="preserve">
+        <value>Get a notification preference by ID</value>
+    </data>
+    <data name="GetNotificationPreferenceByIdDescription" xml:space="preserve">
+        <value>Retrieves a notification preference using its identifier.</value>
+    </data>
+    <data name="UpdateNotificationPreferenceSummary" xml:space="preserve">
+        <value>Update a notification preference</value>
+    </data>
+    <data name="UpdateNotificationPreferenceDescription" xml:space="preserve">
+        <value>Updates the data of a notification preference.</value>
+    </data>
+    <data name="DeleteNotificationPreferenceSummary" xml:space="preserve">
+        <value>Delete a notification preference</value>
+    </data>
+    <data name="DeleteNotificationPreferenceDescription" xml:space="preserve">
+        <value>Deletes a notification preference using its identifier.</value>
+    </data>
+    <data name="CreateAlertSchema" xml:space="preserve">
+        <value>Request payload for creating an alert.</value>
+    </data>
+    <data name="AlertSchema" xml:space="preserve">
+        <value>An alert returned by the API.</value>
+    </data>
+    <data name="CreateNotificationSchema" xml:space="preserve">
+        <value>Request payload for creating a notification.</value>
+    </data>
+    <data name="UpdateNotificationSchema" xml:space="preserve">
+        <value>Request payload for updating a notification.</value>
+    </data>
+    <data name="NotificationSchema" xml:space="preserve">
+        <value>A notification returned by the API.</value>
+    </data>
+    <data name="CreateNotificationPreferenceSchema" xml:space="preserve">
+        <value>Request payload for creating a notification preference.</value>
+    </data>
+    <data name="UpdateNotificationPreferenceSchema" xml:space="preserve">
+        <value>Request payload for updating a notification preference.</value>
+    </data>
+    <data name="NotificationPreferenceSchema" xml:space="preserve">
+        <value>A notification preference returned by the API.</value>
+    </data>
+    <data name="AlertId" xml:space="preserve">
+        <value>The server-generated identifier of the alert.</value>
+    </data>
+    <data name="AlertVehicleId" xml:space="preserve">
+        <value>The identifier of the vehicle.</value>
+    </data>
+    <data name="AlertAlertType" xml:space="preserve">
+        <value>The type of the alert (e.g. Exceso de velocidad).</value>
+    </data>
+    <data name="AlertActivatedAt" xml:space="preserve">
+        <value>The moment the alert was activated.</value>
+    </data>
+    <data name="NotificationId" xml:space="preserve">
+        <value>The server-generated identifier of the notification.</value>
+    </data>
+    <data name="NotificationUserId" xml:space="preserve">
+        <value>The identifier of the recipient user.</value>
+    </data>
+    <data name="NotificationAlertId" xml:space="preserve">
+        <value>The identifier of the related alert, if any.</value>
+    </data>
+    <data name="NotificationMessage" xml:space="preserve">
+        <value>The message of the notification.</value>
+    </data>
+    <data name="NotificationIsRead" xml:space="preserve">
+        <value>Whether the notification has been read.</value>
+    </data>
+    <data name="NotificationSentAt" xml:space="preserve">
+        <value>The moment the notification was sent.</value>
+    </data>
+    <data name="NotificationPreferenceId" xml:space="preserve">
+        <value>The server-generated identifier of the notification preference.</value>
+    </data>
+    <data name="NotificationPreferenceUserId" xml:space="preserve">
+        <value>The identifier of the user.</value>
+    </data>
+    <data name="NotificationPreferenceMaintenance" xml:space="preserve">
+        <value>Whether maintenance notifications are enabled.</value>
+    </data>
+    <data name="NotificationPreferenceSpeed" xml:space="preserve">
+        <value>Whether speeding notifications are enabled.</value>
+    </data>
+    <data name="NotificationPreferenceIncidents" xml:space="preserve">
+        <value>Whether incident notifications are enabled.</value>
+    </data>
+    <data name="InvalidAlertRequest" xml:space="preserve">
+        <value>The alert request contains invalid values.</value>
+    </data>
+    <data name="AlertNotFound" xml:space="preserve">
+        <value>The alert was not found.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingAlert" xml:space="preserve">
+        <value>An unexpected error occurred while creating the alert.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingAlert" xml:space="preserve">
+        <value>An unexpected error occurred while updating the alert.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingAlert" xml:space="preserve">
+        <value>An unexpected error occurred while deleting the alert.</value>
+    </data>
+    <data name="RequiredAlertType" xml:space="preserve">
+        <value>Alert type is required.</value>
+    </data>
+    <data name="InvalidNotificationRequest" xml:space="preserve">
+        <value>The notification request contains invalid values.</value>
+    </data>
+    <data name="NotificationNotFound" xml:space="preserve">
+        <value>The notification was not found.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingNotification" xml:space="preserve">
+        <value>An unexpected error occurred while creating the notification.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingNotification" xml:space="preserve">
+        <value>An unexpected error occurred while updating the notification.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingNotification" xml:space="preserve">
+        <value>An unexpected error occurred while deleting the notification.</value>
+    </data>
+    <data name="RequiredMessage" xml:space="preserve">
+        <value>Message is required.</value>
+    </data>
+    <data name="InvalidNotificationPreferenceRequest" xml:space="preserve">
+        <value>The notification preference request contains invalid values.</value>
+    </data>
+    <data name="NotificationPreferenceNotFound" xml:space="preserve">
+        <value>The notification preference was not found.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingNotificationPreference" xml:space="preserve">
+        <value>An unexpected error occurred while creating the notification preference.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingNotificationPreference" xml:space="preserve">
+        <value>An unexpected error occurred while updating the notification preference.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingNotificationPreference" xml:space="preserve">
+        <value>An unexpected error occurred while deleting the notification preference.</value>
+    </data>
+    <data name="DuplicateNotificationPreferenceUserId" xml:space="preserve">
+        <value>A notification preference with this user ID already exists.</value>
+    </data>
 </root>
