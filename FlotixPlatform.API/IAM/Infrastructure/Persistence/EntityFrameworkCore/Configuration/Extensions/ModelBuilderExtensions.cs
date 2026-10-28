@@ -8,8 +8,9 @@ namespace FlotixPlatform.API.IAM.Infrastructure.Persistence.EntityFrameworkCore.
 ///     Entity Framework Core model configuration of the Identity, Profiles &amp; Security bounded context.
 /// </summary>
 /// <remarks>
-///     Owners, drivers and mechanics share the <c>users</c> table (table per hierarchy) and are told apart
-///     by the <c>role_type</c> column, as defined in the database design of the project report.
+///     The users live in the <c>iam</c> schema. Owners, drivers and mechanics share the <c>users</c> table
+///     (table per hierarchy) and are told apart by the <c>role_type</c> column, as defined in the database
+///     design of the project report.
 /// </remarks>
 public static class ModelBuilderExtensions
 {
@@ -19,6 +20,7 @@ public static class ModelBuilderExtensions
     /// <param name="builder">The model builder of the application database context.</param>
     public static void ApplyIAMConfiguration(this ModelBuilder builder)
     {
+        builder.Entity<User>().ToTable(nameof(User), "iam");
         builder.Entity<User>().HasKey(u => u.Id);
         builder.Entity<User>().Property(u => u.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<User>().Property(u => u.Name).IsRequired().HasMaxLength(100);
