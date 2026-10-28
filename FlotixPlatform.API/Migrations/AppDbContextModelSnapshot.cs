@@ -22,6 +22,113 @@ namespace FlotixPlatform.API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FlotixPlatform.API.Fleet.Domain.Model.Aggregates.FleetPreferences", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("FuelAnomalyDropPct")
+                        .HasColumnType("integer")
+                        .HasColumnName("fuel_anomaly_drop_pct");
+
+                    b.Property<int>("MaintenanceIntervalKm")
+                        .HasColumnType("integer")
+                        .HasColumnName("maintenance_interval_km");
+
+                    b.Property<int>("SpeedLimitKmh")
+                        .HasColumnType("integer")
+                        .HasColumnName("speed_limit_kmh");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_fleet_preferences");
+
+                    b.ToTable("fleet_preferences");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FuelAnomalyDropPct = 30,
+                            MaintenanceIntervalKm = 10000,
+                            SpeedLimitKmh = 90
+                        });
+                });
+
+            modelBuilder.Entity("FlotixPlatform.API.Fleet.Domain.Model.Aggregates.Vehicle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("CurrentMileage")
+                        .HasColumnType("integer")
+                        .HasColumnName("current_mileage");
+
+                    b.Property<int?>("DriverId")
+                        .HasColumnType("integer")
+                        .HasColumnName("driver_id");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("integer")
+                        .HasColumnName("owner_id");
+
+                    b.Property<string>("Plate")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)")
+                        .HasColumnName("plate");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("VehicleType")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("vehicle_type");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_vehicles");
+
+                    b.HasIndex("DriverId")
+                        .HasDatabaseName("i_x_vehicles_driver_id");
+
+                    b.HasIndex("OwnerId")
+                        .HasDatabaseName("i_x_vehicles_owner_id");
+
+                    b.HasIndex("Plate")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_vehicles_plate");
+
+                    b.ToTable("vehicles");
+                });
+
             modelBuilder.Entity("FlotixPlatform.API.IAM.Domain.Model.Aggregates.User", b =>
                 {
                     b.Property<int>("Id")
