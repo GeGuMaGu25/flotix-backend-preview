@@ -14,7 +14,7 @@ public interface ITelemetryDataRepository : IBaseRepository<TelemetryData>
     /// <param name="deviceId">The device ID to search.</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
-    ///     An Enumerable containing the telemetry record objects if found, or empty otherwise.
+    ///     An Enumerable containing the telemetry record objects from the most recent reading, or empty otherwise.
     /// </returns>
     Task<IEnumerable<TelemetryData>> FindByDeviceIdAsync(Guid deviceId, CancellationToken cancellationToken = default);
 }

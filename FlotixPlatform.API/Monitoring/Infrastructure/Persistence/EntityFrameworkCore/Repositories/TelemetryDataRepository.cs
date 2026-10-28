@@ -21,6 +21,7 @@ public class TelemetryDataRepository(AppDbContext context)
     {
         return await Context.Set<TelemetryData>()
             .Where(t => t.DeviceId == deviceId)
+            .OrderByDescending(t => t.RecordedAt)
             .ToListAsync(cancellationToken);
     }
 }
