@@ -1,392 +1,222 @@
 @startuml
-' Flotix Platform Class Diagram (bounded contexts, aggregates and services)
+' Flotix Platform Class Diagram
+' Mirrors figure 4.7.1 of the project report (classes grouped by bounded context)
+' with the members implemented in this repository.
 
 skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
 left to right direction
+hide empty members
 
-package "Shared" {
-  interface IAuditableEntity { +DateTimeOffset? CreatedAt
-    +DateTimeOffset? UpdatedAt }
-  interface "IBaseRepository<TEntity>" as IBaseRepository {
-    +AddAsync(TEntity, CancellationToken) : Task
-    +FindByIdAsync(int, CancellationToken) : Task<TEntity?>
-    +Update(TEntity) : void
-    +Remove(TEntity) : void
-    +ListAsync(CancellationToken) : Task<IEnumerable<TEntity>>
+package "Identity, Profiles & Security Context" {
+  abstract class User <<aggregate>> {
+    +Id : Guid
+    +Name : string
+    +Email : EmailAddress
+    +PasswordHash : string
+    +RoleType : Role
+    +{static} Create(SignUpCommand, string) : User
+    +UpdateProfile(UpdateUserProfileCommand) : void
   }
-  interface IUnitOfWork { +CompleteAsync(CancellationToken) : Task }
-  class "Result<TValue, TError>" as Result <<pattern>>
-  class AppDbContext
-  class AuditableEntityInterceptor
-}
-
-package "IAM" as IAMContext <<Identity, Profiles & Security>> {
-  class EmailAddress <<value-object>> { +string Value }
+  class Owner {
+    +CompanyName : string?
+  }
+  class Driver {
+    +LicenseNumber : string?
+    +LicenseExpiration : DateOnly?
+  }
+  class Mechanic {
+    +WorkshopName : string?
+  }
   enum Role {
     Owner
     Driver
     Mechanic
   }
-  class User <<aggregate>> {
-    +int Id
-    +EmailAddress Email
-    +string PasswordHash
-    +Role Role
-    +string FullName
-    +string? LicenseNumber
-    +DateOnly? LicenseExpiry
-    +string? CompanyName
-    +string? WorkshopName
-    +UpdateProfile(UpdateUserProfileCommand)
+  class EmailAddress <<value object>> {
+    +Value : string
   }
-  User ..|> IAuditableEntity
-  interface IUserRepository
-  IUserRepository --|> IBaseRepository
-  class UserCommandService
-  class UserQueryService
-  UserCommandService --> IUserRepository
-  UserCommandService --> IUnitOfWork
-  UserQueryService --> IUserRepository
-  User --> EmailAddress
-  User --> Role
-  class AuthenticationController
-  class UsersController
-  AuthenticationController --> UserCommandService
-  UsersController --> UserQueryService
-  class RequestAuthorizationMiddleware <<middleware>>
-  RequestAuthorizationMiddleware --> UserQueryService
-  interface IHashingService
-  interface ITokenService
-  UserCommandService --> IHashingService
-  UserCommandService --> ITokenService
+  User <|-- Owner
+  User <|-- Driver
+  User <|-- Mechanic
 }
 
-package "Fleet" as FleetContext <<Vehicle & Fleet Management>> {
-  class LicensePlate <<value-object>> { +string Value }
-  enum VehicleStatus {
-    Available
-    InMaintenance
-    Inactive
-  }
-  class FleetPreferences <<aggregate>> {
-    +int Id
-    +int SpeedLimitKmh
-    +int MaintenanceIntervalKm
-    +int FuelAnomalyDropPct
-    +UpdateInformation(UpdateFleetPreferencesCommand)
-  }
-  FleetPreferences ..|> IAuditableEntity
-  interface IFleetPreferencesRepository
-  IFleetPreferencesRepository --|> IBaseRepository
-  class FleetPreferencesCommandService
-  class FleetPreferencesQueryService
-  FleetPreferencesCommandService --> IFleetPreferencesRepository
-  FleetPreferencesCommandService --> IUnitOfWork
-  FleetPreferencesQueryService --> IFleetPreferencesRepository
+package "Vehicle & Fleet Management Context" {
   class Vehicle <<aggregate>> {
-    +int Id
-    +int OwnerId
-    +int? DriverId
-    +LicensePlate Plate
-    +string VehicleType
-    +int CurrentMileage
-    +VehicleStatus Status
-    +UpdateInformation(UpdateVehicleCommand)
+    +Id : Guid
+    +OwnerId : Guid
+    +DriverId : Guid?
+    +LicensePlate : LicensePlate
+    +VehicleType : string
+    +CurrentMileage : decimal
+    +Status : VehicleStatus
+    +UpdateInformation(UpdateVehicleCommand) : void
   }
-  Vehicle ..|> IAuditableEntity
-  interface IVehicleRepository
-  IVehicleRepository --|> IBaseRepository
-  class VehicleCommandService
-  class VehicleQueryService
-  VehicleCommandService --> IVehicleRepository
-  VehicleCommandService --> IUnitOfWork
-  VehicleQueryService --> IVehicleRepository
-  class VehiclesController
-  VehiclesController --> VehicleCommandService
-  Vehicle --> LicensePlate
-  Vehicle --> VehicleStatus
-  class FleetPreferencesController
-  FleetPreferencesController --> FleetPreferencesCommandService
+  class LicensePlate <<value object>> {
+    +Value : string
+  }
+  enum VehicleStatus {
+    Available : "Disponible"
+    InMaintenance : "En mantenimiento"
+    Inactive : "Inactivo"
+  }
 }
 
-package "Fuel" as FuelContext <<Fuel Control>> {
+package "Fuel Control Context" {
   class FuelRecord <<aggregate>> {
-    +int Id
-    +int VehicleId
-    +int DriverId
-    +decimal Liters
-    +decimal TotalCost
-    +int MileageAtRefuel
-    +DateOnly Date
-    +UpdateInformation(UpdateFuelRecordCommand)
+    +Id : Guid
+    +VehicleId : Guid
+    +DriverId : Guid
+    +Liters : decimal
+    +Cost : decimal
+    +MileageAtRefill : decimal
+    +RecordedDate : DateTimeOffset
+    +UpdateInformation(UpdateFuelRecordCommand) : void
   }
-  FuelRecord ..|> IAuditableEntity
-  interface IFuelRecordRepository
-  IFuelRecordRepository --|> IBaseRepository
-  class FuelRecordCommandService
-  class FuelRecordQueryService
-  FuelRecordCommandService --> IFuelRecordRepository
-  FuelRecordCommandService --> IUnitOfWork
-  FuelRecordQueryService --> IFuelRecordRepository
-  class FuelRecordsController
-  FuelRecordsController --> FuelRecordCommandService
 }
 
-package "Maintenance" as MaintenanceContext <<Maintenance Management>> {
-  class PhoneNumber <<value-object>> { +string Value }
-  enum MaintenanceRequestStatus {
-    Pending
-    Quoted
-    Approved
-    Rejected
-    InRepair
-    Completed
-  }
-  class Workshop <<aggregate>> {
-    +int Id
-    +int MechanicId
-    +string City
-    +string District
-    +string Address
-    +PhoneNumber Phone
-    +decimal Rating
-    +List<string> Tags
-    +UpdateInformation(UpdateWorkshopCommand)
-  }
-  Workshop ..|> IAuditableEntity
-  interface IWorkshopRepository
-  IWorkshopRepository --|> IBaseRepository
-  class WorkshopCommandService
-  class WorkshopQueryService
-  WorkshopCommandService --> IWorkshopRepository
-  WorkshopCommandService --> IUnitOfWork
-  WorkshopQueryService --> IWorkshopRepository
+package "Maintenance Management Context" {
   class MaintenanceRequest <<aggregate>> {
-    +int Id
-    +int VehicleId
-    +int? MechanicId
-    +string FaultDescription
-    +decimal EstimatedCost
-    +MaintenanceRequestStatus Status
-    +UpdateInformation(UpdateMaintenanceRequestCommand)
+    +Id : Guid
+    +VehicleId : Guid
+    +MechanicId : Guid
+    +Description : string
+    +EstimatedCost : decimal
+    +Status : MaintenanceRequestStatus
+    +RequestDate : DateTimeOffset
+    +IsBudgetApproved : bool
+    +IsCompleted : bool
+    +SubmitQuote(decimal) : void
+    +Approve() : void
+    +Reject() : void
+    +StartRepair() : void
+    +Finish() : void
   }
-  MaintenanceRequest ..|> IAuditableEntity
-  interface IMaintenanceRequestRepository
-  IMaintenanceRequestRepository --|> IBaseRepository
-  class MaintenanceRequestCommandService
-  class MaintenanceRequestQueryService
-  MaintenanceRequestCommandService --> IMaintenanceRequestRepository
-  MaintenanceRequestCommandService --> IUnitOfWork
-  MaintenanceRequestQueryService --> IMaintenanceRequestRepository
-  class WorkshopsController
-  WorkshopsController --> WorkshopCommandService
-  Workshop --> PhoneNumber
-  class MaintenanceRequestsController
-  MaintenanceRequestsController --> MaintenanceRequestCommandService
-  MaintenanceRequest --> MaintenanceRequestStatus
+  enum MaintenanceRequestStatus {
+    Pending : "Pendiente"
+    Quoted : "Presupuestado"
+    Approved : "Aprobado"
+    Rejected : "Rechazado"
+    InRepair : "En reparación"
+    Completed : "Completado"
+  }
 }
 
-package "Incidents" as IncidentsContext <<Incident Management>> {
-  enum IncidentStatus {
-    Open
-    InReview
-    Resolved
-  }
+package "Incident Management Context" {
   class Incident <<aggregate>> {
-    +int Id
-    +int VehicleId
-    +int DriverId
-    +string Description
-    +IncidentStatus Status
-    +DateTimeOffset ReportedAt
-    +UpdateInformation(UpdateIncidentCommand)
+    +Id : Guid
+    +VehicleId : Guid
+    +DriverId : Guid
+    +Description : string
+    +Status : IncidentStatus
+    +ReportedDate : DateTimeOffset
+    +UpdateInformation(UpdateIncidentCommand) : void
   }
-  Incident ..|> IAuditableEntity
-  interface IIncidentRepository
-  IIncidentRepository --|> IBaseRepository
-  class IncidentCommandService
-  class IncidentQueryService
-  IncidentCommandService --> IIncidentRepository
-  IncidentCommandService --> IUnitOfWork
-  IncidentQueryService --> IIncidentRepository
-  class IncidentsController
-  IncidentsController --> IncidentCommandService
-  Incident --> IncidentStatus
+  enum IncidentStatus {
+    Open : "Abierto"
+    InReview : "En revisión"
+    Resolved : "Resuelto"
+  }
 }
 
-package "Monitoring" as MonitoringContext <<Real-Time Monitoring / Fleet Tracking>> {
-  class SerialNumber <<value-object>> { +string Value }
-  enum ConnectionStatus {
-    Connected
-    Disconnected
-  }
+package "Real-Time Monitoring Context" {
   class IotDevice <<aggregate>> {
-    +int Id
-    +int VehicleId
-    +SerialNumber SerialNumber
-    +ConnectionStatus ConnectionStatus
-    +UpdateInformation(UpdateIotDeviceCommand)
+    +Id : Guid
+    +VehicleId : Guid
+    +SerialNumber : SerialNumber
+    +IsConnected : bool
+    +Connect() : void
+    +UpdateInformation(UpdateIotDeviceCommand) : void
   }
-  IotDevice ..|> IAuditableEntity
-  interface IIotDeviceRepository
-  IIotDeviceRepository --|> IBaseRepository
-  class IotDeviceCommandService
-  class IotDeviceQueryService
-  IotDeviceCommandService --> IIotDeviceRepository
-  IotDeviceCommandService --> IUnitOfWork
-  IotDeviceQueryService --> IIotDeviceRepository
-  class TelemetryRecord <<aggregate>> {
-    +int Id
-    +int DeviceId
-    +double Latitude
-    +double Longitude
-    +int Speed
-    +DateTimeOffset Timestamp
+  class TelemetryData <<aggregate>> {
+    +Id : Guid
+    +DeviceId : Guid
+    +Latitude : decimal
+    +Longitude : decimal
+    +Speed : decimal
+    +RecordedAt : DateTimeOffset
+    +{static} Validate(ReceiveTelemetryDataCommand) : void
   }
-  TelemetryRecord ..|> IAuditableEntity
-  interface ITelemetryRecordRepository
-  ITelemetryRecordRepository --|> IBaseRepository
-  class TelemetryRecordCommandService
-  class TelemetryRecordQueryService
-  TelemetryRecordCommandService --> ITelemetryRecordRepository
-  TelemetryRecordCommandService --> IUnitOfWork
-  TelemetryRecordQueryService --> ITelemetryRecordRepository
-  class IotDevicesController
-  IotDevicesController --> IotDeviceCommandService
-  IotDevice --> SerialNumber
-  IotDevice --> ConnectionStatus
-  class TelemetryDataController
-  TelemetryDataController --> TelemetryRecordCommandService
-  class MonitoringHub <<hub>>
+  class SerialNumber <<value object>> {
+    +Value : string
+  }
+  class TelemetryDataProcessor <<IoT Telemetry Processor>>
 }
 
-package "Notifications" as NotificationsContext <<Alerts & Notifications>> {
+package "Alerts & Notifications Context" {
   class Alert <<aggregate>> {
-    +int Id
-    +int VehicleId
-    +string AlertType
-    +DateTimeOffset ActivatedAt
+    +Id : Guid
+    +VehicleId : Guid
+    +AlertType : string
+    +TriggerDate : DateTimeOffset
   }
-  Alert ..|> IAuditableEntity
-  interface IAlertRepository
-  IAlertRepository --|> IBaseRepository
-  class AlertCommandService
-  class AlertQueryService
-  AlertCommandService --> IAlertRepository
-  AlertCommandService --> IUnitOfWork
-  AlertQueryService --> IAlertRepository
   class Notification <<aggregate>> {
-    +int Id
-    +int UserId
-    +int? AlertId
-    +string Message
-    +bool IsRead
-    +DateTimeOffset SentAt
-    +UpdateInformation(UpdateNotificationCommand)
+    +Id : Guid
+    +UserId : Guid
+    +AlertId : Guid?
+    +Message : string
+    +IsRead : bool
+    +SentDate : DateTimeOffset
+    +UpdateInformation(UpdateNotificationCommand) : void
   }
-  Notification ..|> IAuditableEntity
-  interface INotificationRepository
-  INotificationRepository --|> IBaseRepository
-  class NotificationCommandService
-  class NotificationQueryService
-  NotificationCommandService --> INotificationRepository
-  NotificationCommandService --> IUnitOfWork
-  NotificationQueryService --> INotificationRepository
-  class NotificationPreference <<aggregate>> {
-    +int Id
-    +int UserId
-    +bool Maintenance
-    +bool Speed
-    +bool Incidents
-    +UpdateInformation(UpdateNotificationPreferenceCommand)
-  }
-  NotificationPreference ..|> IAuditableEntity
-  interface INotificationPreferenceRepository
-  INotificationPreferenceRepository --|> IBaseRepository
-  class NotificationPreferenceCommandService
-  class NotificationPreferenceQueryService
-  NotificationPreferenceCommandService --> INotificationPreferenceRepository
-  NotificationPreferenceCommandService --> IUnitOfWork
-  NotificationPreferenceQueryService --> INotificationPreferenceRepository
-  class AlertsController
-  AlertsController --> AlertCommandService
-  class NotificationsController
-  NotificationsController --> NotificationCommandService
-  class NotificationPreferencesController
-  NotificationPreferencesController --> NotificationPreferenceCommandService
-  class NotificationsHub <<hub>>
 }
 
-package "Commerce" as CommerceContext <<Digital Experience / IoT Commerce>> {
-  class Sku <<value-object>> { +string Value }
-  enum OrderStatus {
-    PendingPayment
-    Preparing
-    Delivered
-    Cancelled
-  }
-  class IotCatalogItem <<aggregate>> {
-    +int Id
-    +Sku Sku
-    +string Name
-    +decimal UnitPrice
-    +string IconName
-    +UpdateInformation(UpdateIotCatalogItemCommand)
-  }
-  IotCatalogItem ..|> IAuditableEntity
-  interface IIotCatalogItemRepository
-  IIotCatalogItemRepository --|> IBaseRepository
-  class IotCatalogItemCommandService
-  class IotCatalogItemQueryService
-  IotCatalogItemCommandService --> IIotCatalogItemRepository
-  IotCatalogItemCommandService --> IUnitOfWork
-  IotCatalogItemQueryService --> IIotCatalogItemRepository
+package "Digital Experience / IoT Commerce Context" {
   class IotOrder <<aggregate>> {
-    +int Id
-    +int OwnerId
-    +Sku Sku
-    +int DeviceQuantity
-    +decimal TotalAmount
-    +OrderStatus Status
-    +DateOnly OrderDate
-    +UpdateInformation(UpdateIotOrderCommand)
+    +Id : Guid
+    +OwnerId : Guid
+    +Quantity : int
+    +TotalAmount : decimal
+    +Status : OrderStatus
+    +OrderDate : DateTimeOffset
+    +UpdateInformation(UpdateIotOrderCommand) : void
   }
-  IotOrder ..|> IAuditableEntity
-  interface IIotOrderRepository
-  IIotOrderRepository --|> IBaseRepository
-  class IotOrderCommandService
-  class IotOrderQueryService
-  IotOrderCommandService --> IIotOrderRepository
-  IotOrderCommandService --> IUnitOfWork
-  IotOrderQueryService --> IIotOrderRepository
-  class IotCatalogController
-  IotCatalogController --> IotCatalogItemCommandService
-  IotCatalogItem --> Sku
-  class IotOrdersController
-  IotOrdersController --> IotOrderCommandService
-  IotOrder --> Sku
-  IotOrder --> OrderStatus
-  IotOrderCommandService --> IIotCatalogItemRepository : prices orders
+  enum OrderStatus {
+    PendingPayment : "Pendiente de pago"
+    Preparing : "En preparación"
+    Delivered : "Entregado"
+    Cancelled : "Cancelado"
+  }
 }
 
-package "Analytics" as AnalyticsContext <<Reporting & Analytics>> {
+package "Reporting & Analytics Context" {
   class Report <<aggregate>> {
-    +int Id
-    +int OwnerId
-    +string ReportType
-    +Dictionary<string, string> FilterParams
-    +DateTimeOffset GeneratedAt
+    +Id : Guid
+    +OwnerId : Guid
+    +ReportType : ReportType
+    +GeneratedDate : DateTimeOffset
+    +FilterParams : string
   }
-  Report ..|> IAuditableEntity
-  interface IReportRepository
-  IReportRepository --|> IBaseRepository
-  class ReportCommandService
-  class ReportQueryService
-  ReportCommandService --> IReportRepository
-  ReportCommandService --> IUnitOfWork
-  ReportQueryService --> IReportRepository
-  class ReportsController
-  ReportsController --> ReportCommandService
+  class ReportLine <<value object>> {
+    +VehicleId : Guid
+    +LicensePlate : string
+    +Records : int
+    +Quantity : decimal
+    +TotalCost : decimal
+  }
+  enum ReportType {
+    FuelConsumption : "Reporte de consumo de combustible"
+    MaintenanceCost : "Reporte de costos de mantenimiento"
+  }
 }
 
+' Relations of the report diagram (foreign keys with ON DELETE RESTRICT)
+Owner "1" --> "0..*" Vehicle : manages >
+Driver "0..1" --> "0..*" Vehicle : assigned to >
+Driver "1" --> "0..*" FuelRecord : registers >
+Driver "1" --> "0..*" Incident : reports >
+Mechanic "1" --> "0..*" MaintenanceRequest : attends >
+Owner "1" --> "0..*" IotOrder : places >
+Owner "1" --> "0..*" Report : views >
+User "1" --> "0..*" Notification : receives >
+Vehicle "1" --> "0..*" FuelRecord : requires >
+Vehicle "1" --> "0..*" MaintenanceRequest : requires >
+Vehicle "1" --> "0..*" Incident : has >
+Vehicle "1" --> "0..1" IotDevice : equipped with >
+Vehicle "1" --> "0..*" Alert : triggers >
+IotDevice "1" --> "0..*" TelemetryData : transmits >
+Alert "1" --> "0..*" Notification : generates >
+Report ..> ReportLine : consolidates >
+TelemetryDataProcessor ..> TelemetryData : stores >
+TelemetryDataProcessor ..> IotDevice : connects >
 @enduml

@@ -5,6 +5,38 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- TS02: IoT telemetry ingestion with `202 Accepted`, a background IoT Telemetry Processor and the `VehicleLocationUpdated`
+  SignalR event; corrupt packets and packets of unlinked devices are written to the error log.
+- TS03: maintenance flow between owner and mechanic with diagnostic and quote, budget decision, repair start and
+  completion commands; invalid transitions return `409`.
+- TS04: generation of fuel consumption and maintenance cost reports by date range through anti-corruption layer facades
+  of the Fleet, Fuel and Maintenance contexts.
+- Role-based JWT (HS256) authentication with configurable `TokenSettings`.
+
+### Changed
+
+- **BREAKING:** the persistence model follows the database design of the report: UUID identifiers, the report table and
+  column names, one PostgreSQL schema per bounded context and foreign keys with restricted deletes (referenced rows
+  return `409` on delete, unknown references return `404`).
+- **BREAKING:** users are stored with table-per-hierarchy inheritance (`Owner`, `Driver`, `Mechanic`) discriminated by
+  `role_type`.
+- **BREAKING:** telemetry, maintenance and report endpoints use the contracts of the technical stories.
+
+### Removed
+
+- **BREAKING:** Data Protection bearer tokens, replaced by JWT.
+- **BREAKING:** workshops, IoT catalog, notification preferences and fleet preferences, which are not part of the
+  database design of the report.
+
+### Documentation
+
+- Technical stories TS01 to TS31 of the report with their implementation status, ADRs, class diagram and README aligned
+  with the project report.
+
 ## [1.0.0] - 2026-10-28
 
 ### Added
