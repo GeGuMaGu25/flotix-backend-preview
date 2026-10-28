@@ -825,12 +825,6 @@
     <data name="IotOrderReferencedResourceNotFound" xml:space="preserve">
         <value>No existe un vehículo, usuario u otro recurso referenciado por el pedido IoT.</value>
     </data>
-    <data name="CreateReportSummary" xml:space="preserve">
-        <value>Crear un reporte</value>
-    </data>
-    <data name="CreateReportDescription" xml:space="preserve">
-        <value>Registra un nuevo reporte.</value>
-    </data>
     <data name="GetAllReportsSummary" xml:space="preserve">
         <value>Obtener todos los reportes</value>
     </data>
@@ -849,9 +843,6 @@
     <data name="DeleteReportDescription" xml:space="preserve">
         <value>Elimina un reporte mediante su identificador.</value>
     </data>
-    <data name="CreateReportSchema" xml:space="preserve">
-        <value>Datos de la solicitud para crear un reporte.</value>
-    </data>
     <data name="ReportSchema" xml:space="preserve">
         <value>Un reporte devuelto por la API.</value>
     </data>
@@ -862,7 +853,7 @@
         <value>El identificador del usuario propietario.</value>
     </data>
     <data name="ReportReportType" xml:space="preserve">
-        <value>El tipo de reporte (p. ej. Reporte de incidencias).</value>
+        <value>El tipo de reporte.</value>
     </data>
     <data name="ReportGeneratedDate" xml:space="preserve">
         <value>El momento en que se generó el reporte.</value>
@@ -871,22 +862,16 @@
         <value>Los filtros aplicados al reporte (p. ej. rango de fechas).</value>
     </data>
     <data name="InvalidReportRequest" xml:space="preserve">
-        <value>La solicitud de reporte contiene valores no válidos.</value>
+        <value>El tipo de reporte no está soportado o el periodo no es válido.</value>
     </data>
     <data name="ReportNotFound" xml:space="preserve">
         <value>No se encontró el reporte.</value>
-    </data>
-    <data name="UnexpectedErrorCreatingReport" xml:space="preserve">
-        <value>Ocurrió un error inesperado al crear el reporte.</value>
-    </data>
-    <data name="UnexpectedErrorUpdatingReport" xml:space="preserve">
-        <value>Ocurrió un error inesperado al actualizar el reporte.</value>
     </data>
     <data name="UnexpectedErrorDeletingReport" xml:space="preserve">
         <value>Ocurrió un error inesperado al eliminar el reporte.</value>
     </data>
     <data name="ReportReferencedResourceNotFound" xml:space="preserve">
-        <value>No existe un vehículo, usuario u otro recurso referenciado por el reporte.</value>
+        <value>El dueño del reporte no existe.</value>
     </data>
     <data name="RequiredReportType" xml:space="preserve">
         <value>El campo tipo de reporte es obligatorio.</value>
@@ -977,5 +962,62 @@
     </data>
     <data name="UnexpectedErrorSubmittingMaintenanceRequest" xml:space="preserve">
         <value>Ocurrió un error inesperado al enviar la solicitud de mantenimiento.</value>
+    </data>
+    <data name="GenerateReportSummary" xml:space="preserve">
+        <value>Generar un reporte</value>
+    </data>
+    <data name="GenerateReportDescription" xml:space="preserve">
+        <value>Genera un reporte de consumo de combustible o de costos de mantenimiento de la flota de un dueño en un rango de fechas y almacena sus metadatos. Si no hay registros en el periodo, el reporte incluye un mensaje informativo.</value>
+    </data>
+    <data name="GenerateReportSchema" xml:space="preserve">
+        <value>Datos de la solicitud para generar un reporte.</value>
+    </data>
+    <data name="GeneratedReportSchema" xml:space="preserve">
+        <value>Un reporte generado con las cifras de cada vehículo y los totales de la flota.</value>
+    </data>
+    <data name="ReportLineSchema" xml:space="preserve">
+        <value>Cifras de un vehículo en un reporte generado.</value>
+    </data>
+    <data name="ReportFrom" xml:space="preserve">
+        <value>El primer día del periodo (inclusive).</value>
+    </data>
+    <data name="ReportTo" xml:space="preserve">
+        <value>El último día del periodo (inclusive).</value>
+    </data>
+    <data name="ReportLines" xml:space="preserve">
+        <value>Las cifras de cada vehículo con registros en el periodo.</value>
+    </data>
+    <data name="ReportTotalRecords" xml:space="preserve">
+        <value>La cantidad total de registros de la flota en el periodo.</value>
+    </data>
+    <data name="ReportTotalQuantity" xml:space="preserve">
+        <value>El total de litros (reporte de combustible) o de reparaciones completadas (reporte de mantenimiento).</value>
+    </data>
+    <data name="ReportTotalCost" xml:space="preserve">
+        <value>El costo total de combustible (reporte de combustible) o de presupuestos aprobados (reporte de mantenimiento).</value>
+    </data>
+    <data name="ReportMessage" xml:space="preserve">
+        <value>Un mensaje informativo cuando no hay registros en el periodo.</value>
+    </data>
+    <data name="ReportLineVehicleId" xml:space="preserve">
+        <value>El identificador del vehículo.</value>
+    </data>
+    <data name="ReportLineLicensePlate" xml:space="preserve">
+        <value>La placa del vehículo.</value>
+    </data>
+    <data name="ReportLineRecords" xml:space="preserve">
+        <value>La cantidad de recargas (reporte de combustible) o de solicitudes de mantenimiento (reporte de mantenimiento) en el periodo.</value>
+    </data>
+    <data name="ReportLineQuantity" xml:space="preserve">
+        <value>Los litros cargados (reporte de combustible) o las reparaciones completadas (reporte de mantenimiento).</value>
+    </data>
+    <data name="ReportLineTotalCost" xml:space="preserve">
+        <value>El costo de combustible (reporte de combustible) o de los presupuestos aprobados (reporte de mantenimiento).</value>
+    </data>
+    <data name="NoRecordsForReport" xml:space="preserve">
+        <value>No existen registros en el rango solicitado.</value>
+    </data>
+    <data name="UnexpectedErrorGeneratingReport" xml:space="preserve">
+        <value>Ocurrió un error inesperado al generar el reporte.</value>
     </data>
 </root>
