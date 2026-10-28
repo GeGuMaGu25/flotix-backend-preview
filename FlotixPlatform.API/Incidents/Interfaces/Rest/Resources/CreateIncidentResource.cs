@@ -1,0 +1,21 @@
+using System.ComponentModel.DataAnnotations;
+using FlotixPlatform.API.Incidents.Domain.Model.ValueObjects;
+
+namespace FlotixPlatform.API.Incidents.Interfaces.Rest.Resources;
+
+/// <summary>
+///     Represents the data required to create an incident.
+/// </summary>
+/// <param name="VehicleId">The identifier of the vehicle.</param>
+/// <param name="DriverId">The identifier of the driver user.</param>
+/// <param name="Description">The description of the incident. (required)</param>
+/// <param name="Status">The current status of the incident.</param>
+public record CreateIncidentResource(
+    [Range(1, int.MaxValue, ErrorMessage = "RangeField")]
+    int VehicleId,
+    [Range(1, int.MaxValue, ErrorMessage = "RangeField")]
+    int DriverId,
+    [Required(ErrorMessage = "RequiredDescription")]
+    [StringLength(500, ErrorMessage = "StringLengthField")]
+    string Description,
+    IncidentStatus Status);
