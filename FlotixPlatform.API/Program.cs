@@ -1,4 +1,9 @@
 using System.Text.Json.Serialization;
+using FlotixPlatform.API.Analytics.Application.Internal.CommandServices;
+using FlotixPlatform.API.Analytics.Application.Internal.QueryServices;
+using FlotixPlatform.API.Analytics.Application.Services;
+using FlotixPlatform.API.Analytics.Domain.Repositories;
+using FlotixPlatform.API.Analytics.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using FlotixPlatform.API.Commerce.Application.Internal.CommandServices;
 using FlotixPlatform.API.Commerce.Application.Internal.QueryServices;
 using FlotixPlatform.API.Commerce.Application.Services;
@@ -63,6 +68,7 @@ using IncidentsLocalizedOpenApiAssembler = FlotixPlatform.API.Incidents.Interfac
 using MonitoringLocalizedOpenApiAssembler = FlotixPlatform.API.Monitoring.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 using NotificationsLocalizedOpenApiAssembler = FlotixPlatform.API.Notifications.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 using CommerceLocalizedOpenApiAssembler = FlotixPlatform.API.Commerce.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
+using AnalyticsLocalizedOpenApiAssembler = FlotixPlatform.API.Analytics.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -135,6 +141,8 @@ builder.Services.AddOpenApi(options =>
     options.AddSchemaTransformer(NotificationsLocalizedOpenApiAssembler.TransformSchemaAsync);
     options.AddOperationTransformer(CommerceLocalizedOpenApiAssembler.TransformOperationAsync);
     options.AddSchemaTransformer(CommerceLocalizedOpenApiAssembler.TransformSchemaAsync);
+    options.AddOperationTransformer(AnalyticsLocalizedOpenApiAssembler.TransformOperationAsync);
+    options.AddSchemaTransformer(AnalyticsLocalizedOpenApiAssembler.TransformSchemaAsync);
 });
 
 // Real-time communication with SignalR.
@@ -233,6 +241,11 @@ builder.Services.AddScoped<IIotCatalogItemQueryService, IotCatalogItemQueryServi
 builder.Services.AddScoped<IIotOrderRepository, IotOrderRepository>();
 builder.Services.AddScoped<IIotOrderCommandService, IotOrderCommandService>();
 builder.Services.AddScoped<IIotOrderQueryService, IotOrderQueryService>();
+
+// Reporting & Analytics Bounded Context Injection Configuration
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IReportCommandService, ReportCommandService>();
+builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 
 // IAM token protection keys (persist the key ring in production, e.g. PersistKeysToFileSystem).
 builder.Services.AddDataProtection();
