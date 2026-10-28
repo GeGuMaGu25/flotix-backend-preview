@@ -11,7 +11,7 @@ using Microsoft.Extensions.Localization;
 namespace FlotixPlatform.API.Maintenance.Interfaces.Rest;
 
 /// <summary>
-///     Maintenance requests' controller.
+///     Maintenance requests' controller: lifecycle of the maintenance requests between owners and workshops.
 /// </summary>
 /// <param name="maintenanceRequestCommandService">The MaintenanceRequest Command Service</param>
 /// <param name="maintenanceRequestQueryService">The MaintenanceRequest Query Service</param>
@@ -29,44 +29,39 @@ public class MaintenanceRequestsController(
     : ControllerBase
 {
     /// <summary>
-    ///     Creates a maintenance request.
+    ///     Submits a maintenance request to a mechanic; the request starts in "Pendiente" status.
     /// </summary>
-    /// <param name="resource">CreateMaintenanceRequestResource resource</param>
+    /// <param name="resource">SubmitMaintenanceRequestResource resource</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
-    ///     A response as an action result containing the created maintenance request, or an error response if the maintenance request was
-    ///     not created.
+    ///     A response as an action result containing the submitted maintenance request, or an error response if it was
+    ///     not submitted.
     /// </returns>
     [HttpPost]
     [ProducesResponseType(typeof(MaintenanceRequestResource), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> CreateMaintenanceRequest([FromBody] CreateMaintenanceRequestResource resource,
+    public async Task<ActionResult> SubmitMaintenanceRequest([FromBody] SubmitMaintenanceRequestResource resource,
         CancellationToken cancellationToken)
     {
         try
         {
-            var createMaintenanceRequestCommand = CreateMaintenanceRequestCommandFromResourceAssembler.ToCommandFromResource(resource);
-            var result = await maintenanceRequestCommandService.Handle(createMaintenanceRequestCommand, cancellationToken);
-            return ActionResultFromCreateMaintenanceRequestResultAssembler.ToActionResultFromCreateMaintenanceRequestResult(
+            var submitMaintenanceRequestCommand = SubmitMaintenanceRequestCommandFromResourceAssembler.ToCommandFromResource(resource);
+            var result = await maintenanceRequestCommandService.Handle(submitMaintenanceRequestCommand, cancellationToken);
+            return ActionResultFromSubmitMaintenanceRequestResultAssembler.ToActionResultFromSubmitMaintenanceRequestResult(
                 result,
                 this,
                 localizer,
                 nameof(GetMaintenanceRequestById));
         }
-        catch (ArgumentException ex)
-        {
-            logger.LogWarning(ex, "Validation failed while creating maintenance request");
-            return BadRequest(localizer["InvalidMaintenanceRequestRequest"].Value);
-        }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unexpected error while creating maintenance request");
+            logger.LogError(ex, "Unexpected error while submitting maintenance request");
 
             return Problem(
                 title: localizer["UnexpectedServerError"].Value,
-                detail: localizer["UnexpectedErrorCreatingMaintenanceRequest"].Value,
+                detail: localizer["UnexpectedErrorSubmittingMaintenanceRequest"].Value,
                 statusCode: 500);
         }
     }
@@ -116,47 +111,109 @@ public class MaintenanceRequestsController(
     }
 
     /// <summary>
-    ///     Updates a maintenance request.
+    ///     Registers the diagnostic and quote of the workshop: "Pendiente" → "Presupuestado".
     /// </summary>
     /// <param name="id">The MaintenanceRequest ID</param>
-    /// <param name="resource">UpdateMaintenanceRequestResource resource</param>
+    /// <param name="resource">RegisterDiagnosticAndQuoteResource resource</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
-    ///     A response as an action result containing the updated maintenance request, or an error response if the maintenance request was
-    ///     not updated.
+    ///     A response as an action result containing the quoted maintenance request, not found if it does not exist,
+    ///     or conflict if the request is not in the status the transition requires.
     /// </returns>
-    [HttpPut("{id:guid}")]
+    [HttpPost("{id:guid}/diagnostic-and-quote")]
     [ProducesResponseType(typeof(MaintenanceRequestResource), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> UpdateMaintenanceRequest(Guid id, [FromBody] UpdateMaintenanceRequestResource resource,
+    public async Task<ActionResult> RegisterDiagnosticAndQuote(Guid id, [FromBody] RegisterDiagnosticAndQuoteResource resource,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            var updateMaintenanceRequestCommand = UpdateMaintenanceRequestCommandFromResourceAssembler.ToCommandFromResource(id, resource);
-            var result = await maintenanceRequestCommandService.Handle(updateMaintenanceRequestCommand, cancellationToken);
-            return ActionResultFromUpdateMaintenanceRequestResultAssembler.ToActionResultFromUpdateMaintenanceRequestResult(
-                result,
-                this,
-                localizer);
-        }
-        catch (ArgumentException ex)
-        {
-            logger.LogWarning(ex, "Validation failed while updating maintenance request {MaintenanceRequestId}", id);
-            return BadRequest(localizer["InvalidMaintenanceRequestRequest"].Value);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Unexpected error while updating maintenance request {MaintenanceRequestId}", id);
+        var registerDiagnosticAndQuoteCommand = RegisterDiagnosticAndQuoteCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+        var result = await maintenanceRequestCommandService.Handle(registerDiagnosticAndQuoteCommand, cancellationToken);
+        return ActionResultFromChangeMaintenanceRequestStatusResultAssembler.ToActionResultFromChangeMaintenanceRequestStatusResult(
+            result,
+            this,
+            localizer);
+    }
 
-            return Problem(
-                title: localizer["UnexpectedServerError"].Value,
-                detail: localizer["UnexpectedErrorUpdatingMaintenanceRequest"].Value,
-                statusCode: 500);
-        }
+    /// <summary>
+    ///     Approves or rejects the quoted budget: "Presupuestado" → "Aprobado" or "Rechazado".
+    /// </summary>
+    /// <param name="id">The MaintenanceRequest ID</param>
+    /// <param name="resource">ApproveOrRejectBudgetResource resource</param>
+    /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
+    /// <returns>
+    ///     A response as an action result containing the approved or rejected maintenance request, not found if it does not exist,
+    ///     or conflict if the request is not in the status the transition requires.
+    /// </returns>
+    [HttpPost("{id:guid}/budget-decision")]
+    [ProducesResponseType(typeof(MaintenanceRequestResource), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult> ApproveOrRejectBudget(Guid id, [FromBody] ApproveOrRejectBudgetResource resource,
+        CancellationToken cancellationToken)
+    {
+        var approveOrRejectBudgetCommand = ApproveOrRejectBudgetCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+        var result = await maintenanceRequestCommandService.Handle(approveOrRejectBudgetCommand, cancellationToken);
+        return ActionResultFromChangeMaintenanceRequestStatusResultAssembler.ToActionResultFromChangeMaintenanceRequestStatusResult(
+            result,
+            this,
+            localizer);
+    }
+
+    /// <summary>
+    ///     Registers the start of the approved repair: "Aprobado" → "En reparación".
+    /// </summary>
+    /// <param name="id">The MaintenanceRequest ID</param>
+    /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
+    /// <returns>
+    ///     A response as an action result containing the in repair maintenance request, not found if it does not exist,
+    ///     or conflict if the request is not in the status the transition requires.
+    /// </returns>
+    [HttpPost("{id:guid}/repair-start")]
+    [ProducesResponseType(typeof(MaintenanceRequestResource), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult> UpdateRepairStatus(Guid id,
+        CancellationToken cancellationToken)
+    {
+        var updateRepairStatusCommand = new UpdateRepairStatusCommand(id);
+        var result = await maintenanceRequestCommandService.Handle(updateRepairStatusCommand, cancellationToken);
+        return ActionResultFromChangeMaintenanceRequestStatusResultAssembler.ToActionResultFromChangeMaintenanceRequestStatusResult(
+            result,
+            this,
+            localizer);
+    }
+
+    /// <summary>
+    ///     Registers the completion of the repair: "En reparación" → "Completado".
+    /// </summary>
+    /// <param name="id">The MaintenanceRequest ID</param>
+    /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
+    /// <returns>
+    ///     A response as an action result containing the completed maintenance request, not found if it does not exist,
+    ///     or conflict if the request is not in the status the transition requires.
+    /// </returns>
+    [HttpPost("{id:guid}/completion")]
+    [ProducesResponseType(typeof(MaintenanceRequestResource), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult> CompleteMaintenance(Guid id,
+        CancellationToken cancellationToken)
+    {
+        var completeMaintenanceCommand = new CompleteMaintenanceCommand(id);
+        var result = await maintenanceRequestCommandService.Handle(completeMaintenanceCommand, cancellationToken);
+        return ActionResultFromChangeMaintenanceRequestStatusResultAssembler.ToActionResultFromChangeMaintenanceRequestStatusResult(
+            result,
+            this,
+            localizer);
     }
 
     /// <summary>

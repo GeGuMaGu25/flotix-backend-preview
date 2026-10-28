@@ -9,29 +9,60 @@ namespace FlotixPlatform.API.Maintenance.Application.Services;
 ///     Command service interface for maintenance request operations.
 /// </summary>
 /// <remarks>
-///     This interface defines the contract for handling the commands that change maintenance requests.
+///     This interface defines the contract for the lifecycle of a maintenance request between the owner and
+///     the workshop: submission, diagnostic and quote, budget decision, repair start, completion and deletion.
 /// </remarks>
 public interface IMaintenanceRequestCommandService
 {
     /// <summary>
-    ///     Handle the create maintenance request command.
+    ///     Handle the submit maintenance request command.
     /// </summary>
-    /// <param name="command">CreateMaintenanceRequestCommand command</param>
+    /// <param name="command">SubmitMaintenanceRequestCommand command</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
-    ///     A Result containing the created MaintenanceRequest on success, or the error reason on failure.
+    ///     A Result containing the submitted MaintenanceRequest on success, or the error reason on failure.
     /// </returns>
-    Task<Result<MaintenanceRequest, CreateMaintenanceRequestError>> Handle(CreateMaintenanceRequestCommand command, CancellationToken cancellationToken = default);
+    Task<Result<MaintenanceRequest, SubmitMaintenanceRequestError>> Handle(SubmitMaintenanceRequestCommand command, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Handle the update maintenance request command.
+    ///     Handle the register diagnostic and quote command.
     /// </summary>
-    /// <param name="command">UpdateMaintenanceRequestCommand command</param>
+    /// <param name="command">RegisterDiagnosticAndQuoteCommand command</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
-    ///     A Result containing the updated MaintenanceRequest on success, or the error reason on failure.
+    ///     A Result containing the quoted MaintenanceRequest on success, or the error reason on failure.
     /// </returns>
-    Task<Result<MaintenanceRequest, UpdateMaintenanceRequestError>> Handle(UpdateMaintenanceRequestCommand command, CancellationToken cancellationToken = default);
+    Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>> Handle(RegisterDiagnosticAndQuoteCommand command, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Handle the approve or reject budget command.
+    /// </summary>
+    /// <param name="command">ApproveOrRejectBudgetCommand command</param>
+    /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
+    /// <returns>
+    ///     A Result containing the approved or rejected MaintenanceRequest on success, or the error reason on failure.
+    /// </returns>
+    Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>> Handle(ApproveOrRejectBudgetCommand command, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Handle the update repair status command, which starts the approved repair.
+    /// </summary>
+    /// <param name="command">UpdateRepairStatusCommand command</param>
+    /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
+    /// <returns>
+    ///     A Result containing the MaintenanceRequest in repair on success, or the error reason on failure.
+    /// </returns>
+    Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>> Handle(UpdateRepairStatusCommand command, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Handle the complete maintenance command.
+    /// </summary>
+    /// <param name="command">CompleteMaintenanceCommand command</param>
+    /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
+    /// <returns>
+    ///     A Result containing the completed MaintenanceRequest on success, or the error reason on failure.
+    /// </returns>
+    Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>> Handle(CompleteMaintenanceCommand command, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Handle the delete maintenance request command.

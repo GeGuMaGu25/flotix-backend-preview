@@ -7,7 +7,9 @@ namespace FlotixPlatform.API.Maintenance.Domain.Model.Aggregates;
 ///     Represents a request to repair a vehicle, attended by a mechanic.
 /// </summary>
 /// <remarks>
-///     This aggregate root is created from a CreateMaintenanceRequestCommand and updated through an UpdateMaintenanceRequestCommand.
+///     This aggregate root is created from a SubmitMaintenanceRequestCommand and moves through its lifecycle:
+///     Pendiente → Presupuestado → Aprobado | Rechazado; Aprobado → En reparación → Completado.
+///     Completed and rejected requests are closed.
 ///     Audit timestamps (CreatedAt, UpdatedAt) are managed by the persistence layer.
 /// </remarks>
 public partial class MaintenanceRequest
@@ -21,12 +23,12 @@ public partial class MaintenanceRequest
     }
 
     /// <summary>
-    ///     Creates a new MaintenanceRequest from a creation command.
+    ///     Creates a new MaintenanceRequest, in "Pendiente" status, from a submit command.
     /// </summary>
-    /// <param name="command">The CreateMaintenanceRequestCommand command</param>
+    /// <param name="command">The SubmitMaintenanceRequestCommand command</param>
     /// <exception cref="ArgumentNullException">Thrown when the command is null.</exception>
     /// <exception cref="ArgumentException">Thrown when the command contains invalid values.</exception>
-    public MaintenanceRequest(CreateMaintenanceRequestCommand command)
+    public MaintenanceRequest(SubmitMaintenanceRequestCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
         ArgumentOutOfRangeException.ThrowIfEqual(command.VehicleId, Guid.Empty);
@@ -76,28 +78,6 @@ public partial class MaintenanceRequest
     ///     Gets the moment the maintenance was requested.
     /// </summary>
     public DateTimeOffset RequestDate { get; private set; }
-
-    /// <summary>
-    ///     Creates a new MaintenanceRequest, in "Pendiente" status, from a submit command.
-    /// </summary>
-    /// <param name="command">The SubmitMaintenanceRequestCommand command</param>
-    /// <exception cref="ArgumentNullException">Thrown when the command is null.</exception>
-    /// <exception cref="ArgumentException">Thrown when the command contains invalid values.</exception>
-    public MaintenanceRequest(SubmitMaintenanceRequestCommand command)
-    {
-        ArgumentNullException.ThrowIfNull(command);
-        ArgumentOutOfRangeException.ThrowIfEqual(command.VehicleId, Guid.Empty);
-        ArgumentOutOfRangeException.ThrowIfEqual(command.MechanicId, Guid.Empty);
-        ArgumentException.ThrowIfNullOrWhiteSpace(command.Description);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.Description.Length, 500);
-
-        VehicleId = command.VehicleId;
-        MechanicId = command.MechanicId;
-        Description = command.Description;
-        EstimatedCost = 0m;
-        Status = MaintenanceRequestStatus.Pending;
-        RequestDate = DateTimeOffset.UtcNow;
-    }
 
     /// <summary>
     ///     Registers the diagnostic and quote of the workshop: "Pendiente" → "Presupuestado".
@@ -153,29 +133,5 @@ public partial class MaintenanceRequest
                 $"A maintenance request in status {Status} cannot change to {newStatus}; it must be {requiredStatus}.");
 
         Status = newStatus;
-    }
-
-    /// <summary>
-    ///     Updates the maintenance request information from an update command.
-    /// </summary>
-    /// <param name="command">The UpdateMaintenanceRequestCommand command</param>
-    /// <exception cref="ArgumentException">Thrown when the command contains invalid values.</exception>
-    /// <exception cref="InvalidOperationException">Thrown when the update breaks the rule: A completed or rejected maintenance request cannot change its status.</exception>
-    public void UpdateInformation(UpdateMaintenanceRequestCommand command)
-    {
-        ArgumentNullException.ThrowIfNull(command);
-        if (Status is MaintenanceRequestStatus.Completed or MaintenanceRequestStatus.Rejected && command.Status != Status)
-            throw new InvalidOperationException("A completed or rejected maintenance request cannot change its status.");
-
-        ArgumentOutOfRangeException.ThrowIfEqual(command.MechanicId, Guid.Empty);
-        ArgumentException.ThrowIfNullOrWhiteSpace(command.Description);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.Description.Length, 500);
-        ArgumentOutOfRangeException.ThrowIfNegative(command.EstimatedCost);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.EstimatedCost, 1000000m);
-
-        MechanicId = command.MechanicId;
-        Description = command.Description;
-        EstimatedCost = command.EstimatedCost;
-        Status = command.Status;
     }
 }

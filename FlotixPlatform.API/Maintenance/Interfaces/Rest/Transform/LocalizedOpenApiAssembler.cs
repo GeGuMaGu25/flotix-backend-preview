@@ -17,9 +17,9 @@ public static class LocalizedOpenApiAssembler
         IReadOnlyDictionary<string, string> Responses)> OperationResources =
         new Dictionary<string, (string, string, IReadOnlyDictionary<string, string>)>
         {
-            ["CreateMaintenanceRequest"] = (
-                "CreateMaintenanceRequestSummary",
-                "CreateMaintenanceRequestDescription",
+            ["SubmitMaintenanceRequest"] = (
+                "SubmitMaintenanceRequestSummary",
+                "SubmitMaintenanceRequestDescription",
                 new Dictionary<string, string>
                 {
                     ["201"] = "Response201",
@@ -42,9 +42,42 @@ public static class LocalizedOpenApiAssembler
                     ["200"] = "Response200",
                     ["404"] = "Response404"
                 }),
-            ["UpdateMaintenanceRequest"] = (
-                "UpdateMaintenanceRequestSummary",
-                "UpdateMaintenanceRequestDescription",
+            ["RegisterDiagnosticAndQuote"] = (
+                "RegisterDiagnosticAndQuoteSummary",
+                "RegisterDiagnosticAndQuoteDescription",
+                new Dictionary<string, string>
+                {
+                    ["200"] = "Response200",
+                    ["400"] = "Response400",
+                    ["404"] = "Response404",
+                    ["409"] = "Response409",
+                    ["500"] = "Response500"
+                }),
+            ["ApproveOrRejectBudget"] = (
+                "ApproveOrRejectBudgetSummary",
+                "ApproveOrRejectBudgetDescription",
+                new Dictionary<string, string>
+                {
+                    ["200"] = "Response200",
+                    ["400"] = "Response400",
+                    ["404"] = "Response404",
+                    ["409"] = "Response409",
+                    ["500"] = "Response500"
+                }),
+            ["UpdateRepairStatus"] = (
+                "UpdateRepairStatusSummary",
+                "UpdateRepairStatusDescription",
+                new Dictionary<string, string>
+                {
+                    ["200"] = "Response200",
+                    ["400"] = "Response400",
+                    ["404"] = "Response404",
+                    ["409"] = "Response409",
+                    ["500"] = "Response500"
+                }),
+            ["CompleteMaintenance"] = (
+                "CompleteMaintenanceSummary",
+                "CompleteMaintenanceDescription",
                 new Dictionary<string, string>
                 {
                     ["200"] = "Response200",
@@ -66,8 +99,9 @@ public static class LocalizedOpenApiAssembler
 
     private static readonly Dictionary<Type, (string Schema, string Owner)> SchemaResources = new()
     {
-            [typeof(CreateMaintenanceRequestResource)] = ("CreateMaintenanceRequestSchema", "MaintenanceRequest"),
-            [typeof(UpdateMaintenanceRequestResource)] = ("UpdateMaintenanceRequestSchema", "MaintenanceRequest"),
+            [typeof(SubmitMaintenanceRequestResource)] = ("SubmitMaintenanceRequestSchema", "MaintenanceRequest"),
+            [typeof(RegisterDiagnosticAndQuoteResource)] = ("RegisterDiagnosticAndQuoteSchema", "MaintenanceRequest"),
+            [typeof(ApproveOrRejectBudgetResource)] = ("ApproveOrRejectBudgetSchema", "MaintenanceRequest"),
             [typeof(MaintenanceRequestResource)] = ("MaintenanceRequestSchema", "MaintenanceRequest")
     };
 
