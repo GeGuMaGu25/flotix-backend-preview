@@ -630,4 +630,133 @@
     <data name="RequiredDescription" xml:space="preserve">
         <value>El campo descripción es obligatorio.</value>
     </data>
+    <data name="CreateIotDeviceSummary" xml:space="preserve">
+        <value>Crear un dispositivo IoT</value>
+    </data>
+    <data name="CreateIotDeviceDescription" xml:space="preserve">
+        <value>Registra un nuevo dispositivo IoT.</value>
+    </data>
+    <data name="GetAllIotDevicesSummary" xml:space="preserve">
+        <value>Obtener todos los dispositivos IoT</value>
+    </data>
+    <data name="GetAllIotDevicesDescription" xml:space="preserve">
+        <value>Obtiene todos los dispositivos IoT, opcionalmente filtrados por ID del vehículo.</value>
+    </data>
+    <data name="GetIotDeviceByIdSummary" xml:space="preserve">
+        <value>Obtener un dispositivo IoT por ID</value>
+    </data>
+    <data name="GetIotDeviceByIdDescription" xml:space="preserve">
+        <value>Obtiene un dispositivo IoT mediante su identificador.</value>
+    </data>
+    <data name="UpdateIotDeviceSummary" xml:space="preserve">
+        <value>Actualizar un dispositivo IoT</value>
+    </data>
+    <data name="UpdateIotDeviceDescription" xml:space="preserve">
+        <value>Actualiza los datos de un dispositivo IoT.</value>
+    </data>
+    <data name="DeleteIotDeviceSummary" xml:space="preserve">
+        <value>Eliminar un dispositivo IoT</value>
+    </data>
+    <data name="DeleteIotDeviceDescription" xml:space="preserve">
+        <value>Elimina un dispositivo IoT mediante su identificador.</value>
+    </data>
+    <data name="CreateTelemetryRecordSummary" xml:space="preserve">
+        <value>Crear un registro de telemetría</value>
+    </data>
+    <data name="CreateTelemetryRecordDescription" xml:space="preserve">
+        <value>Registra un nuevo registro de telemetría.</value>
+    </data>
+    <data name="GetAllTelemetryRecordsSummary" xml:space="preserve">
+        <value>Obtener todos los registros de telemetría</value>
+    </data>
+    <data name="GetAllTelemetryRecordsDescription" xml:space="preserve">
+        <value>Obtiene todos los registros de telemetría, opcionalmente filtrados por ID del dispositivo.</value>
+    </data>
+    <data name="GetTelemetryRecordByIdSummary" xml:space="preserve">
+        <value>Obtener un registro de telemetría por ID</value>
+    </data>
+    <data name="GetTelemetryRecordByIdDescription" xml:space="preserve">
+        <value>Obtiene un registro de telemetría mediante su identificador.</value>
+    </data>
+    <data name="CreateIotDeviceSchema" xml:space="preserve">
+        <value>Datos de la solicitud para crear un dispositivo IoT.</value>
+    </data>
+    <data name="UpdateIotDeviceSchema" xml:space="preserve">
+        <value>Datos de la solicitud para actualizar un dispositivo IoT.</value>
+    </data>
+    <data name="IotDeviceSchema" xml:space="preserve">
+        <value>Un dispositivo IoT devuelto por la API.</value>
+    </data>
+    <data name="CreateTelemetryRecordSchema" xml:space="preserve">
+        <value>Datos de la solicitud para crear un registro de telemetría.</value>
+    </data>
+    <data name="TelemetryRecordSchema" xml:space="preserve">
+        <value>Un registro de telemetría devuelto por la API.</value>
+    </data>
+    <data name="IotDeviceId" xml:space="preserve">
+        <value>El identificador del dispositivo IoT generado por el servidor.</value>
+    </data>
+    <data name="IotDeviceVehicleId" xml:space="preserve">
+        <value>El identificador del vehículo.</value>
+    </data>
+    <data name="IotDeviceSerialNumber" xml:space="preserve">
+        <value>El número de serie del dispositivo IoT.</value>
+    </data>
+    <data name="IotDeviceConnectionStatus" xml:space="preserve">
+        <value>El estado de conexión del dispositivo IoT.</value>
+    </data>
+    <data name="TelemetryRecordId" xml:space="preserve">
+        <value>El identificador del registro de telemetría generado por el servidor.</value>
+    </data>
+    <data name="TelemetryRecordDeviceId" xml:space="preserve">
+        <value>El identificador del dispositivo IoT que reporta.</value>
+    </data>
+    <data name="TelemetryRecordLatitude" xml:space="preserve">
+        <value>La latitud de la posición reportada.</value>
+    </data>
+    <data name="TelemetryRecordLongitude" xml:space="preserve">
+        <value>La longitud de la posición reportada.</value>
+    </data>
+    <data name="TelemetryRecordSpeed" xml:space="preserve">
+        <value>La velocidad reportada en km/h.</value>
+    </data>
+    <data name="TelemetryRecordTimestamp" xml:space="preserve">
+        <value>El momento en que el dispositivo tomó la lectura.</value>
+    </data>
+    <data name="InvalidIotDeviceRequest" xml:space="preserve">
+        <value>La solicitud de dispositivo IoT contiene valores no válidos.</value>
+    </data>
+    <data name="IotDeviceNotFound" xml:space="preserve">
+        <value>No se encontró el dispositivo IoT.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingIotDevice" xml:space="preserve">
+        <value>Ocurrió un error inesperado al crear el dispositivo IoT.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingIotDevice" xml:space="preserve">
+        <value>Ocurrió un error inesperado al actualizar el dispositivo IoT.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingIotDevice" xml:space="preserve">
+        <value>Ocurrió un error inesperado al eliminar el dispositivo IoT.</value>
+    </data>
+    <data name="DuplicateIotDeviceSerialNumber" xml:space="preserve">
+        <value>Ya existe un dispositivo IoT con ese valor de número de serie.</value>
+    </data>
+    <data name="RequiredSerialNumber" xml:space="preserve">
+        <value>El campo número de serie es obligatorio.</value>
+    </data>
+    <data name="InvalidTelemetryRecordRequest" xml:space="preserve">
+        <value>La solicitud de registro de telemetría contiene valores no válidos.</value>
+    </data>
+    <data name="TelemetryRecordNotFound" xml:space="preserve">
+        <value>No se encontró el registro de telemetría.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingTelemetryRecord" xml:space="preserve">
+        <value>Ocurrió un error inesperado al crear el registro de telemetría.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingTelemetryRecord" xml:space="preserve">
+        <value>Ocurrió un error inesperado al actualizar el registro de telemetría.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingTelemetryRecord" xml:space="preserve">
+        <value>Ocurrió un error inesperado al eliminar el registro de telemetría.</value>
+    </data>
 </root>
