@@ -78,6 +78,84 @@ public partial class MaintenanceRequest
     public DateTimeOffset RequestDate { get; private set; }
 
     /// <summary>
+    ///     Creates a new MaintenanceRequest, in "Pendiente" status, from a submit command.
+    /// </summary>
+    /// <param name="command">The SubmitMaintenanceRequestCommand command</param>
+    /// <exception cref="ArgumentNullException">Thrown when the command is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when the command contains invalid values.</exception>
+    public MaintenanceRequest(SubmitMaintenanceRequestCommand command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.VehicleId, Guid.Empty);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.MechanicId, Guid.Empty);
+        ArgumentException.ThrowIfNullOrWhiteSpace(command.Description);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.Description.Length, 500);
+
+        VehicleId = command.VehicleId;
+        MechanicId = command.MechanicId;
+        Description = command.Description;
+        EstimatedCost = 0m;
+        Status = MaintenanceRequestStatus.Pending;
+        RequestDate = DateTimeOffset.UtcNow;
+    }
+
+    /// <summary>
+    ///     Registers the diagnostic and quote of the workshop: "Pendiente" → "Presupuestado".
+    /// </summary>
+    /// <param name="amount">The estimated cost quoted by the workshop.</param>
+    /// <exception cref="ArgumentException">Thrown when the amount is negative or too high.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the request is not pending.</exception>
+    public void SubmitQuote(decimal amount)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(amount);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(amount, 1000000m);
+        TransitionTo(MaintenanceRequestStatus.Quoted, MaintenanceRequestStatus.Pending);
+        EstimatedCost = amount;
+    }
+
+    /// <summary>
+    ///     Approves the quoted budget: "Presupuestado" → "Aprobado".
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when the request has not been quoted.</exception>
+    public void Approve() => TransitionTo(MaintenanceRequestStatus.Approved, MaintenanceRequestStatus.Quoted);
+
+    /// <summary>
+    ///     Rejects the quoted budget: "Presupuestado" → "Rechazado".
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when the request has not been quoted.</exception>
+    public void Reject() => TransitionTo(MaintenanceRequestStatus.Rejected, MaintenanceRequestStatus.Quoted);
+
+    /// <summary>
+    ///     Starts the approved repair: "Aprobado" → "En reparación".
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when the budget has not been approved.</exception>
+    public void StartRepair() => TransitionTo(MaintenanceRequestStatus.InRepair, MaintenanceRequestStatus.Approved);
+
+    /// <summary>
+    ///     Finishes the repair: "En reparación" → "Completado".
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when the repair has not started.</exception>
+    public void Finish() => TransitionTo(MaintenanceRequestStatus.Completed, MaintenanceRequestStatus.InRepair);
+
+    /// <summary>
+    ///     Moves the request to a new status when it is in the status the transition requires.
+    /// </summary>
+    /// <remarks>
+    ///     Completed and rejected requests are closed, so no transition starts from them.
+    /// </remarks>
+    /// <param name="newStatus">The status after the transition.</param>
+    /// <param name="requiredStatus">The status the request must have.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the request is not in the required status.</exception>
+    private void TransitionTo(MaintenanceRequestStatus newStatus, MaintenanceRequestStatus requiredStatus)
+    {
+        if (Status != requiredStatus)
+            throw new InvalidOperationException(
+                $"A maintenance request in status {Status} cannot change to {newStatus}; it must be {requiredStatus}.");
+
+        Status = newStatus;
+    }
+
+    /// <summary>
     ///     Updates the maintenance request information from an update command.
     /// </summary>
     /// <param name="command">The UpdateMaintenanceRequestCommand command</param>
