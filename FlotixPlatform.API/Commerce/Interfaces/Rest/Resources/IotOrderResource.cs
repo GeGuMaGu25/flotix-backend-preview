@@ -1,0 +1,22 @@
+using FlotixPlatform.API.Commerce.Domain.Model.ValueObjects;
+
+namespace FlotixPlatform.API.Commerce.Interfaces.Rest.Resources;
+
+/// <summary>
+///     Represents the data provided by the server about an IoT order.
+/// </summary>
+/// <param name="Id">The server-generated ID of the IoT order</param>
+/// <param name="OwnerId">The identifier of the owner user.</param>
+/// <param name="Sku">The stock keeping unit of the IoT product.</param>
+/// <param name="DeviceQuantity">The number of devices ordered.</param>
+/// <param name="TotalAmount">The total amount, priced from the catalog.</param>
+/// <param name="Status">The current status of the IoT order.</param>
+/// <param name="OrderDate">The date the order was placed.</param>
+public record IotOrderResource(
+    int Id,
+    int OwnerId,
+    string Sku,
+    int DeviceQuantity,
+    decimal TotalAmount,
+    OrderStatus Status,
+    DateOnly OrderDate);
