@@ -1,650 +1,868 @@
 # Flotix Platform REST API Technical Stories
 
 ## Overview
-Este documento reproduce las historias técnicas (TS01 a TS31) del capítulo 3.1 del informe del proyecto, redactadas con el rol Developer para respaldar la implementación de los servicios del Backend, e indica el estado de implementación de cada una en este repositorio.
+This document contains API-focused technical stories intended for frontend or mobile developers integrating with the flotix-platform REST API.
 
-Ruta base de los recursos: `/api/v1/<recurso>` (convención de nombres kebab-case). Los valores de estado usan los nombres en español del informe.
-
-| Estado | Significado |
-|---|---|
-| ✅ Implementada | Todos los escenarios de aceptación están implementados. |
-| 🟡 Parcial | Parte de los escenarios está implementada; la nota indica lo que falta. |
-| ⏳ Pendiente | Fuera del alcance del Sprint 3. |
-
-## Resumen
-
-| ID | Título | Epic | Estado |
-|---|---|---|---|
-| TS01 | Implementar registro y consulta de vehículos vía API | EP01 | ✅ Implementada (Sprint 3) |
-| TS02 | Implementar ingesta de datos IoT en tiempo real | EP05 | ✅ Implementada (Sprint 3) |
-| TS03 | Implementar flujo de solicitud de mantenimiento entre Dueño y Mecánica | EP03 | ✅ Implementada (Sprint 3) |
-| TS04 | Implementar generación de reportes | EP08 | ✅ Implementada (Sprint 3) |
-| TS05 | Implementar actualización y eliminación de vehículos vía API | EP01 | ✅ Implementada (Sprint 3) |
-| TS06 | Implementar asignación de conductores a vehículos vía API | EP01 | ⏳ Pendiente |
-| TS07 | Implementar consulta y búsqueda de conductores vía API | EP01 | 🟡 Parcial |
-| TS08 | Implementar registro de recargas de combustible vía API | EP02 | 🟡 Parcial |
-| TS09 | Implementar historial y cálculo de rendimiento de combustible | EP02 | ⏳ Pendiente |
-| TS10 | Implementar detección de consumo anómalo | EP02 | ⏳ Pendiente |
-| TS11 | Implementar resumen y eliminación de registros de combustible | EP02 | 🟡 Parcial |
-| TS12 | Implementar creación y consulta de solicitudes de mantenimiento vía API | EP03 | 🟡 Parcial |
-| TS13 | Implementar sincronización del estado del vehículo con el mantenimiento | EP03 | 🟡 Parcial |
-| TS14 | Implementar consulta y búsqueda de talleres afiliados | EP03 | ⏳ Pendiente |
-| TS15 | Implementar eliminación de solicitudes de mantenimiento vía API | EP03 | ✅ Implementada (Sprint 3) |
-| TS16 | Implementar registro de incidencias y generación de notificación | EP04 | 🟡 Parcial |
-| TS17 | Implementar ciclo de vida de incidencias | EP04 | ⏳ Pendiente |
-| TS18 | Implementar consulta y eliminación de incidencias | EP04 | 🟡 Parcial |
-| TS19 | Implementar vinculación de dispositivos IoT con vehículos | EP05 | ✅ Implementada (Sprint 3) |
-| TS20 | Implementar consulta de posición e indicadores de monitoreo | EP05 | 🟡 Parcial |
-| TS21 | Implementar generación de alertas de exceso de velocidad | EP06 | ⏳ Pendiente |
-| TS22 | Implementar consulta de alertas y notificaciones | EP06 | 🟡 Parcial |
-| TS23 | Implementar marcado de notificaciones como leídas | EP06 | 🟡 Parcial |
-| TS24 | Implementar catálogo de dispositivos IoT vía API | EP07 | ⏳ Pendiente |
-| TS25 | Implementar creación de pedidos y confirmación de pago | EP07 | 🟡 Parcial |
-| TS26 | Implementar consulta del historial de pedidos | EP07 | ✅ Implementada |
-| TS27 | Implementar avance de estado de pedidos | EP07 | 🟡 Parcial |
-| TS28 | Implementar panel general de operación | EP08 | ⏳ Pendiente |
-| TS29 | Implementar resumen consolidado y comparativo de rendimiento | EP08 | ⏳ Pendiente |
-| TS30 | Implementar exportación e historial de reportes | EP08 | 🟡 Parcial |
-| TS31 | Documentar el RESTful API con OpenAPI | EP01 a EP08 | ✅ Implementada (Sprint 3) |
+Base resource route: `/api/v1/{resource}` (kebab-case route naming convention).
 
 ## Technical Stories
 
-### TS01 — Implementar registro y consulta de vehículos vía API
-Como Developer, Quiero implementar los endpoints de creación y consulta de vehículos, Para que el Frontend pueda gestionar la flota.
-**Relacionado con:** EP01
-#### Criterios de aceptación:
-- Escenario 1: Creación exitosa
-    - Dado un conjunto de datos válido
-    - Cuando se envía al servicio de registro
-    - Entonces retorna el código 201 (Creado) con el recurso creado
-- Escenario 2: Datos inválidos
-    - Dado que los datos están incompletos
-    - Cuando se procesan
-    - Entonces retorna el código 400 (Solicitud incorrecta) con el detalle del error
-#### Implementación en el backend
-- **Estado:** ✅ Implementada en Sprint 3
-- **Endpoints:** `POST /api/v1/vehicles`, `GET /api/v1/vehicles`, `GET /api/v1/vehicles/{id}`
-- **Nota:** Los datos inválidos retornan 400 con el detalle del error localizado.
+### TS001 — Sign up a user
+As a frontend developer, I want to register a user with the `Owner`, `Driver` or `Mechanic` role through the API so that I can implement the registration feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful sign-up
+    - Given a request `POST /api/v1/authentication/sign-up` that includes required fields (`email`, `password`, `roleType`, `name`) is received
+    - When the API validates the data, hashes the password and persists the new user successfully
+    - Then the API responds with `201 Created` and returns the created user resource (`id`, `email`, `roleType`, `name`, `licenseNumber`, `licenseExpiration`, `companyName`, `workshopName`) without the password.
+- Scenario: Validation error
+    - Given a request `POST /api/v1/authentication/sign-up` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Driver without license
+    - Given a request `POST /api/v1/authentication/sign-up` with `roleType` `Driver` and without `licenseNumber` or `licenseExpiration` is received
+    - When the API validates the driver profile
+    - Then the API responds with `400 Bad Request` and a localized error message.
+- Scenario: Duplicate email
+    - Given a request `POST /api/v1/authentication/sign-up` for an `email` that already exists is received
+    - When the API detects the duplicate email before persistence or during persistence confirmation
+    - Then the API responds with `409 Conflict` and a localized error message.
+- Scenario: Unexpected server error
+    - Given a request `POST /api/v1/authentication/sign-up` is received
+    - When an unexpected error occurs during persistence
+    - Then the API responds with `500 Internal Server Error` and a `ProblemDetails` payload.
 ---
-### TS02 — Implementar ingesta de datos IoT en tiempo real
-Como Developer, Quiero implementar el servicio que recibe y procesa la telemetría enviada por los dispositivos IoT (GPS, odómetro, combustible), Para alimentar el monitoreo en tiempo real de la plataforma.
-**Relacionado con:** EP05
-#### Criterios de aceptación:
-- Escenario 1: Ingesta exitosa
-    - Dado que un dispositivo envía un paquete de telemetría válido
-    - Cuando el servicio lo procesa
-    - Entonces actualiza la posición y los indicadores del vehículo correspondiente
-- Escenario 2: Paquete corrupto
-    - Dado que el paquete recibido no cumple el esquema esperado
-    - Cuando se valida
-    - Entonces el servicio lo descarta y registra el evento en el registro de errores
-#### Implementación en el backend
-- **Estado:** ✅ Implementada en Sprint 3
-- **Endpoints:** `POST /api/v1/telemetry-data` (202 Accepted), hub `/hubs/monitoring` (`VehicleLocationUpdated`)
-- **Nota:** El IoT Telemetry Processor procesa los paquetes en segundo plano: almacena la lectura en `telemetry_data`, marca el dispositivo como conectado y publica la ubicación del vehículo. Los paquetes corruptos o de dispositivos sin vínculo se descartan y se registran en el registro de errores.
+### TS002 — Sign in a user
+As a frontend developer, I want to sign in with my credentials through the API so that I can obtain a token to call the protected endpoints from my application.
+#### Acceptance criteria:
+- Scenario: Valid credentials
+    - Given a request `POST /api/v1/authentication/sign-in` with a registered `email` and its `password` is received
+    - When the API verifies the credentials
+    - Then the API responds with `200 OK` and returns the authenticated user resource (`id`, `email`, `roleType`, `name`, `token`), where `token` is a JWT that includes the user id and role.
+- Scenario: Invalid credentials
+    - Given a request `POST /api/v1/authentication/sign-in` with an unknown `email` or a wrong `password` is received
+    - When the API cannot verify the credentials
+    - Then the API responds with `401 Unauthorized` and a localized error message.
+- Scenario: Validation error
+    - Given a request `POST /api/v1/authentication/sign-in` with missing required fields is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
 ---
-### TS03 — Implementar flujo de solicitud de mantenimiento entre Dueño y Mecánica
-Como Developer, Quiero implementar los endpoints que gestionan el ciclo de vida de una solicitud de mantenimiento (creación, diagnóstico, presupuesto, aprobación y cierre), Para que Dueños y talleres puedan coordinar un servicio de principio a fin desde la plataforma.
-**Relacionado con:** EP03
-#### Criterios de aceptación:
-- Escenario 1: Transición válida
-    - Dada una solicitud en estado "Pendiente"
-    - Cuando el taller registra un diagnóstico
-    - Entonces el sistema la pasa al estado "Presupuestado"
-- Escenario 2: Transición inválida
-    - Dada una solicitud ya cerrada
-    - Cuando se intenta modificar
-    - Entonces el sistema retorna el código 409 (Conflicto)
-#### Implementación en el backend
-- **Estado:** ✅ Implementada en Sprint 3
-- **Endpoints:** `POST /api/v1/maintenance-requests`, `POST /api/v1/maintenance-requests/{id}/diagnostic-and-quote`, `/budget-decision`, `/repair-start`, `/completion`
-- **Nota:** Las transiciones inválidas o sobre solicitudes cerradas retornan 409 (Conflicto).
+### TS003 — List users by `roleType`
+As a frontend developer, I want to request the API to list users, optionally filtered by `{roleType}`, so that I can implement the user listing feature in my application.
+#### Acceptance criteria:
+- Scenario: Returns one or more users
+    - Given a request `GET /api/v1/users?roleType={roleType}` is received
+    - When the API finds one or more matching user resources
+    - Then the API responds with `200 OK` and returns a non-empty array of user resources, with each resource including `id`, `email`, `roleType`, `name`, `licenseNumber`, `licenseExpiration`, `companyName`, `workshopName`.
+- Scenario: Returns no users
+    - Given a request `GET /api/v1/users?roleType={roleType}` is received
+    - When the API finds no matching resources
+    - Then the API responds with `200 OK` and returns an empty array.
 ---
-### TS04 — Implementar generación de reportes
-Como Developer, Quiero implementar los endpoints de generación de reportes de combustible y mantenimiento, Para que Dueños y talleres puedan analizar su operación desde la plataforma.
-**Relacionado con:** EP08
-#### Criterios de aceptación:
-- Escenario 1: Generación exitosa
-    - Dado un rango de fechas y tipo de reporte válidos
-    - Cuando se solicita
-    - Entonces el sistema retorna el reporte correspondiente
-- Escenario 2: Sin datos disponibles
-    - Dado que no existen registros en el rango solicitado
-    - Cuando se procesa
-    - Entonces retorna un mensaje informativo sin error
-#### Implementación en el backend
-- **Estado:** ✅ Implementada en Sprint 3
-- **Endpoints:** `POST /api/v1/reports`, `GET /api/v1/reports`
-- **Nota:** Genera reportes de consumo de combustible y de costos de mantenimiento por rango de fechas; sin datos retorna un mensaje informativo sin error.
+### TS004 — Retrieve an user by id
+As a frontend developer, I want to request an user by its `{id}` so that I can implement the details view in my application.
+#### Acceptance criteria:
+- Scenario: Found
+    - Given a request `GET /api/v1/users/{id}` is received
+    - When the API finds the resource
+    - Then the API responds with `200 OK` and returns the user resource (`id`, `email`, `roleType`, `name`, `licenseNumber`, `licenseExpiration`, `companyName`, `workshopName`).
+- Scenario: Not found
+    - Given a request `GET /api/v1/users/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found`.
 ---
-### TS05 — Implementar actualización y eliminación de vehículos vía API
-Como Developer, Quiero implementar los endpoints de modificación y eliminación de vehículos, Para que el Frontend pueda mantener actualizada la información de la flota.
-**Relacionado con:** EP01
-#### Criterios de aceptación:
-- Escenario 1: Actualización exitosa
-    - Dado un vehículo existente y datos válidos
-    - Cuando se envían al servicio de actualización
-    - Entonces retorna el código 200 (OK) con el recurso actualizado
-- Escenario 2: Eliminación exitosa
-    - Dado un vehículo existente
-    - Cuando se solicita su eliminación
-    - Entonces retorna el código 204 (Sin contenido) y el vehículo deja de figurar en la consulta de la flota
-- Escenario 3: Vehículo inexistente
-    - Dado un identificador que no corresponde a ningún vehículo
-    - Cuando se solicita su actualización o eliminación
-    - Entonces retorna el código 404 (No encontrado)
-#### Implementación en el backend
-- **Estado:** ✅ Implementada en Sprint 3
-- **Endpoints:** `PUT /api/v1/vehicles/{id}`, `DELETE /api/v1/vehicles/{id}`
-- **Nota:** Un vehículo con registros relacionados (combustible, mantenimientos, incidencias, telemetría) no se elimina y retorna 409, para conservar la trazabilidad.
+### TS005 — Update an user
+As a frontend developer, I want to update an user through the API so that I can implement the user edition feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful update
+    - Given a request `PUT /api/v1/users/{id}` that includes required fields (`name`) is received
+    - When the API validates and persists the changes successfully
+    - Then the API responds with `200 OK` and returns the updated resource representation (`id`, `email`, `roleType`, `name`, `licenseNumber`, `licenseExpiration`, `companyName`, `workshopName`).
+- Scenario: Validation error
+    - Given a request `PUT /api/v1/users/{id}` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Not found
+    - Given a request `PUT /api/v1/users/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Driver without license
+    - Given a request `PUT /api/v1/users/{id}` for a driver without `licenseNumber` or `licenseExpiration` is received
+    - When the API validates the driver profile
+    - Then the API responds with `400 Bad Request` and a localized error message.
 ---
-### TS06 — Implementar asignación de conductores a vehículos vía API
-Como Developer, Quiero implementar los endpoints de asignación y desasignación de conductores, Para que la plataforma mantenga la relación entre cada unidad y su conductor.
-**Relacionado con:** EP01
-#### Criterios de aceptación:
-- Escenario 1: Asignación exitosa
-    - Dado un vehículo y un conductor registrados
-    - Cuando se solicita la asignación
-    - Entonces retorna el código 200 (OK) con la asignación registrada y el conductor figura con estado "En ruta"
-- Escenario 2: Desasignación
-    - Dado un vehículo con conductor asignado
-    - Cuando se solicita retirar la asignación
-    - Entonces retorna el código 200 (OK) y el vehículo figura con conductor "Sin asignar"
-- Escenario 3: Conductor inexistente
-    - Dado un identificador que no corresponde a ningún conductor registrado
-    - Cuando se solicita la asignación
-    - Entonces retorna el código 404 (No encontrado)
-#### Implementación en el backend
-- **Estado:** ⏳ Pendiente
-- **Nota:** Hoy el conductor se asigna con `PUT /api/v1/vehicles/{id}` (`driverId`); faltan los endpoints de asignación/desasignación y los estados "En ruta" / "Sin asignar".
+### TS006 — Delete an user
+As a frontend developer, I want to delete an user through the API so that I can implement the user removal feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful delete
+    - Given a request `DELETE /api/v1/users/{id}` is received
+    - When the API finds and removes the resource
+    - Then the API responds with `204 No Content`.
+- Scenario: Not found
+    - Given a request `DELETE /api/v1/users/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: User with related records
+    - Given a request `DELETE /api/v1/users/{id}` for an user that still has vehicles, fuel records, incidents, maintenance requests, notifications, IoT orders or reports is received
+    - When the API detects the related records during persistence confirmation
+    - Then the API responds with `409 Conflict` and a localized error message; the resource is not removed.
 ---
-### TS07 — Implementar consulta y búsqueda de conductores vía API
-Como Developer, Quiero implementar el endpoint de consulta de conductores con filtro de búsqueda, Para que el Frontend pueda listar y localizar al personal de la flota.
-**Relacionado con:** EP01
-#### Criterios de aceptación:
-- Escenario 1: Lista completa
-    - Dado que existen conductores registrados
-    - Cuando se solicita la lista sin filtro
-    - Entonces retorna el código 200 (OK) con nombre, correo, licencia, vehículo asignado y estado de cada conductor, junto con el total, los activos y los que están en ruta
-- Escenario 2: Búsqueda con resultados
-    - Dado un texto de búsqueda
-    - Cuando coincide con el nombre, correo o licencia de un conductor
-    - Entonces retorna el código 200 (OK) solo con los conductores que coinciden
-- Escenario 3: Búsqueda sin resultados
-    - Dado un texto de búsqueda que no coincide con ningún conductor
-    - Cuando se procesa
-    - Entonces retorna el código 200 (OK) con una lista vacía
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `GET /api/v1/users?roleType=Driver`
-- **Nota:** Falta la búsqueda por nombre, correo o licencia y los contadores.
+### TS007 — List vehicles by `ownerId` or `driverId`
+As a frontend developer, I want to request the API to list vehicles, optionally filtered by `{ownerId}` or `{driverId}`, so that I can implement the vehicle listing feature in my application.
+#### Acceptance criteria:
+- Scenario: Returns one or more vehicles
+    - Given a request `GET /api/v1/vehicles?ownerId={ownerId}&driverId={driverId}` is received
+    - When the API finds one or more matching vehicle resources
+    - Then the API responds with `200 OK` and returns a non-empty array of vehicle resources, with each resource including `id`, `ownerId`, `driverId`, `licensePlate`, `vehicleType`, `currentMileage`, `status`.
+- Scenario: Returns no vehicles
+    - Given a request `GET /api/v1/vehicles?ownerId={ownerId}&driverId={driverId}` is received
+    - When the API finds no matching resources
+    - Then the API responds with `200 OK` and returns an empty array.
 ---
-### TS08 — Implementar registro de recargas de combustible vía API
-Como Developer, Quiero implementar el endpoint de registro de recargas de combustible, Para que los Conductores puedan reportar el consumo real de cada unidad.
-**Relacionado con:** EP02
-#### Criterios de aceptación:
-- Escenario 1: Registro exitoso
-    - Dado un vehículo existente y litros, costo total, kilometraje y fecha válidos
-    - Cuando se envían al servicio de registro
-    - Entonces retorna el código 201 (Creado) con la recarga creada
-- Escenario 2: Datos inválidos
-    - Dado que los litros o el costo son menores o iguales a cero, o que faltan campos obligatorios
-    - Cuando se procesan
-    - Entonces retorna el código 400 (Solicitud incorrecta) con el detalle del error
-- Escenario 3: Kilometraje inconsistente
-    - Dado que el kilometraje es menor al de la última recarga del vehículo
-    - Cuando se procesa
-    - Entonces retorna el código 400 (Solicitud incorrecta) indicando la inconsistencia
-- Escenario 4: Vehículo inexistente
-    - Dado un identificador que no corresponde a ningún vehículo
-    - Cuando se solicita el registro
-    - Entonces retorna el código 404 (No encontrado)
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `POST /api/v1/fuel-records`
-- **Nota:** Cubre los escenarios 1, 2 y 4; falta validar el kilometraje contra la última recarga (escenario 3).
+### TS008 — Retrieve a vehicle by id
+As a frontend developer, I want to request a vehicle by its `{id}` so that I can implement the details view in my application.
+#### Acceptance criteria:
+- Scenario: Found
+    - Given a request `GET /api/v1/vehicles/{id}` is received
+    - When the API finds the resource
+    - Then the API responds with `200 OK` and returns the vehicle resource (`id`, `ownerId`, `driverId`, `licensePlate`, `vehicleType`, `currentMileage`, `status`).
+- Scenario: Not found
+    - Given a request `GET /api/v1/vehicles/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found`.
 ---
-### TS09 — Implementar historial y cálculo de rendimiento de combustible
-Como Developer, Quiero implementar el endpoint que retorna el historial de recargas con su rendimiento en km/L, Para que el Dueño pueda analizar el consumo de cada unidad.
-**Relacionado con:** EP02
-#### Criterios de aceptación:
-- Escenario 1: Rendimiento calculado
-    - Dado un vehículo con al menos dos recargas registradas
-    - Cuando se solicita el historial
-    - Entonces retorna el código 200 (OK) con el rendimiento en km/L de cada recarga posterior a la primera, calculado con la diferencia de kilometraje entre recargas
-- Escenario 2: Primera recarga
-    - Dado que una recarga es la primera del vehículo
-    - Cuando se solicita el historial
-    - Entonces el rendimiento de esa recarga se retorna sin valor
-- Escenario 3: Orden del historial
-    - Dado un vehículo con recargas de varias fechas
-    - Cuando se solicita el historial
-    - Entonces retorna las recargas de la más reciente a la más antigua
-#### Implementación en el backend
-- **Estado:** ⏳ Pendiente
+### TS009 — Register a vehicle
+As a frontend developer, I want to register a vehicle of my fleet through the API so that I can implement the vehicle creation feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful create
+    - Given a request `POST /api/v1/vehicles` that includes required fields (`ownerId`, `licensePlate`, `vehicleType`, `currentMileage`, `status`) is received
+    - When the API validates and persists the new resource successfully
+    - Then the API responds with `201 Created`, and returns the created resource representation (`id`, `ownerId`, `driverId`, `licensePlate`, `vehicleType`, `currentMileage`, `status`).
+- Scenario: Validation error
+    - Given a request `POST /api/v1/vehicles` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Duplicate license plate
+    - Given a request `POST /api/v1/vehicles` for a `licensePlate` that already exists is received
+    - When the API detects the duplicate license plate before persistence or during persistence confirmation
+    - Then the API responds with `409 Conflict` and a localized error message.
+- Scenario: Referenced resource not found
+    - Given a request `POST /api/v1/vehicles` with a `ownerId` or `driverId` that does not exist is received
+    - When the API cannot find the referenced resource during persistence confirmation
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Unexpected server error
+    - Given a request `POST /api/v1/vehicles` is received
+    - When an unexpected error occurs during persistence
+    - Then the API responds with `500 Internal Server Error` and a `ProblemDetails` payload.
 ---
-### TS10 — Implementar detección de consumo anómalo
-Como Developer, Quiero implementar la regla que identifica recargas con rendimiento inusualmente bajo, Para que el Dueño pueda investigar posibles fugas, fallas o malas prácticas.
-**Relacionado con:** EP02
-#### Criterios de aceptación:
-- Escenario 1: Consumo anómalo
-    - Dado que el rendimiento de una recarga es inferior al 70% del promedio histórico del vehículo
-    - Cuando el servicio calcula el rendimiento
-    - Entonces marca la recarga como consumo anómalo en la respuesta
-- Escenario 2: Consumo normal
-    - Dado que el rendimiento es igual o superior al 70% del promedio histórico
-    - Cuando el servicio calcula el rendimiento
-    - Entonces no marca la recarga como anómala
-#### Implementación en el backend
-- **Estado:** ⏳ Pendiente
+### TS010 — Update a vehicle
+As a frontend developer, I want to update a vehicle through the API so that I can implement the vehicle edition feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful update
+    - Given a request `PUT /api/v1/vehicles/{id}` that includes required fields (`licensePlate`, `vehicleType`, `currentMileage`, `status`) is received
+    - When the API validates and persists the changes successfully
+    - Then the API responds with `200 OK` and returns the updated resource representation (`id`, `ownerId`, `driverId`, `licensePlate`, `vehicleType`, `currentMileage`, `status`).
+- Scenario: Validation error
+    - Given a request `PUT /api/v1/vehicles/{id}` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Not found
+    - Given a request `PUT /api/v1/vehicles/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Mileage decrease
+    - Given a request `PUT /api/v1/vehicles/{id}` with a `currentMileage` lower than the stored one is received
+    - When the API applies the vehicle rules
+    - Then the API responds with `400 Bad Request` and a localized error message.
+- Scenario: Duplicate license plate
+    - Given a request `PUT /api/v1/vehicles/{id}` with a `licensePlate` of another vehicle is received
+    - When the API detects the duplicate license plate
+    - Then the API responds with `409 Conflict` and a localized error message.
+- Scenario: Referenced resource not found
+    - Given a request `PUT /api/v1/vehicles/{id}` with a `driverId` that does not exist is received
+    - When the API cannot find the referenced resource during persistence confirmation
+    - Then the API responds with `404 Not Found` and a localized error message.
 ---
-### TS11 — Implementar resumen y eliminación de registros de combustible
-Como Developer, Quiero implementar los endpoints de resumen de combustible y de eliminación de registros con recálculo, Para que el costo de combustible de la flota se mantenga exacto.
-**Relacionado con:** EP02
-#### Criterios de aceptación:
-- Escenario 1: Resumen disponible
-    - Dado que existen recargas registradas
-    - Cuando se solicita el resumen
-    - Entonces retorna el código 200 (OK) con los litros cargados, el gasto total en soles y la cantidad de consumos anómalos
-- Escenario 2: Eliminación con recálculo
-    - Dado un registro de combustible existente
-    - Cuando se solicita su eliminación
-    - Entonces retorna el código 204 (Sin contenido) y recalcula el rendimiento y el resumen
-- Escenario 3: Registro inexistente
-    - Dado un identificador que no corresponde a ningún registro
-    - Cuando se solicita su eliminación
-    - Entonces retorna el código 404 (No encontrado)
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `DELETE /api/v1/fuel-records/{id}`
-- **Nota:** Cubre la eliminación (escenarios 2 sin recálculo y 3); falta el resumen.
+### TS011 — Delete a vehicle
+As a frontend developer, I want to delete a vehicle through the API so that I can implement the vehicle removal feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful delete
+    - Given a request `DELETE /api/v1/vehicles/{id}` is received
+    - When the API finds and removes the resource
+    - Then the API responds with `204 No Content`.
+- Scenario: Not found
+    - Given a request `DELETE /api/v1/vehicles/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Vehicle with related records
+    - Given a request `DELETE /api/v1/vehicles/{id}` for a vehicle that still has fuel records, maintenance requests, incidents, an IoT device or alerts is received
+    - When the API detects the related records during persistence confirmation
+    - Then the API responds with `409 Conflict` and a localized error message; the resource is not removed.
 ---
-### TS12 — Implementar creación y consulta de solicitudes de mantenimiento vía API
-Como Developer, Quiero implementar los endpoints de creación y consulta de solicitudes de mantenimiento, con opción de dirigirlas a un taller elegido, Para que el Dueño pueda iniciar y dar seguimiento a cada servicio.
-**Relacionado con:** EP03
-#### Criterios de aceptación:
-- Escenario 1: Creación exitosa
-    - Dado un vehículo existente y la descripción de la falla
-    - Cuando se envían al servicio de creación
-    - Entonces retorna el código 201 (Creado) con la solicitud en estado "Pendiente", asignada al taller cuando se indica uno
-- Escenario 2: Taller inexistente
-    - Dado un identificador que no corresponde a ningún taller afiliado
-    - Cuando se envía la solicitud
-    - Entonces retorna el código 404 (No encontrado)
-- Escenario 3: Consulta de solicitudes
-    - Dado que existen solicitudes
-    - Cuando se solicita la lista
-    - Entonces retorna el código 200 (OK) con vehículo, falla, taller, presupuesto y estado de cada una, junto con las solicitudes abiertas, en reparación y completadas
-- Escenario 4: Sin solicitudes
-    - Dado que no existen solicitudes
-    - Cuando se solicita la lista
-    - Entonces retorna el código 200 (OK) con una lista vacía y los contadores en cero
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `POST /api/v1/maintenance-requests`, `GET /api/v1/maintenance-requests`
-- **Nota:** La solicitud se dirige a un mecánico (`mechanicId`) y retorna 404 si no existe; faltan los contadores de la consulta.
+### TS012 — List fuel records by `vehicleId` or `driverId`
+As a frontend developer, I want to request the API to list fuel records, optionally filtered by `{vehicleId}` or `{driverId}`, so that I can implement the fuel record listing feature in my application.
+#### Acceptance criteria:
+- Scenario: Returns one or more fuel records
+    - Given a request `GET /api/v1/fuel-records?vehicleId={vehicleId}&driverId={driverId}` is received
+    - When the API finds one or more matching fuel record resources
+    - Then the API responds with `200 OK` and returns a non-empty array of fuel record resources, with each resource including `id`, `vehicleId`, `driverId`, `liters`, `cost`, `mileageAtRefill`, `recordedDate`.
+- Scenario: Returns no fuel records
+    - Given a request `GET /api/v1/fuel-records?vehicleId={vehicleId}&driverId={driverId}` is received
+    - When the API finds no matching resources
+    - Then the API responds with `200 OK` and returns an empty array.
 ---
-### TS13 — Implementar sincronización del estado del vehículo con el mantenimiento
-Como Developer, Quiero implementar la actualización automática del estado del vehículo según el avance de la reparación, Para que la disponibilidad de la flota refleje los servicios en curso.
-**Relacionado con:** EP03
-#### Criterios de aceptación:
-- Escenario 1: Inicio de reparación
-    - Dada una solicitud en estado "Aprobado"
-    - Cuando se registra el inicio de la reparación
-    - Entonces la solicitud pasa a "En reparación" y el vehículo a "En mantenimiento" dentro de la misma operación
-- Escenario 2: Finalización de reparación
-    - Dada una solicitud en estado "En reparación"
-    - Cuando se registra la finalización
-    - Entonces la solicitud pasa a "Completado" y el vehículo a "Disponible" dentro de la misma operación
-- Escenario 3: Transición no permitida
-    - Dada una solicitud en estado "Pendiente"
-    - Cuando se intenta iniciar la reparación
-    - Entonces retorna el código 409 (Conflicto) y el estado del vehículo no cambia
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `POST /api/v1/maintenance-requests/{id}/repair-start`, `/completion`
-- **Nota:** Cubre las transiciones de la solicitud y el escenario 3; falta sincronizar el estado del vehículo.
+### TS013 — Retrieve a fuel record by id
+As a frontend developer, I want to request a fuel record by its `{id}` so that I can implement the details view in my application.
+#### Acceptance criteria:
+- Scenario: Found
+    - Given a request `GET /api/v1/fuel-records/{id}` is received
+    - When the API finds the resource
+    - Then the API responds with `200 OK` and returns the fuel record resource (`id`, `vehicleId`, `driverId`, `liters`, `cost`, `mileageAtRefill`, `recordedDate`).
+- Scenario: Not found
+    - Given a request `GET /api/v1/fuel-records/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found`.
 ---
-### TS14 — Implementar consulta y búsqueda de talleres afiliados
-Como Developer, Quiero implementar el endpoint de consulta de talleres afiliados con filtro de búsqueda, Para que el Dueño pueda elegir el taller más adecuado para su vehículo.
-**Relacionado con:** EP03
-#### Criterios de aceptación:
-- Escenario 1: Lista de talleres
-    - Dado que existen talleres afiliados
-    - Cuando se solicita la lista sin filtro
-    - Entonces retorna el código 200 (OK) con nombre, ciudad, dirección, teléfono, calificación y especialidades de cada taller, junto con la cantidad de talleres disponibles
-- Escenario 2: Búsqueda con resultados
-    - Dado un texto de búsqueda
-    - Cuando coincide con el nombre o la ciudad de un taller
-    - Entonces retorna el código 200 (OK) solo con los talleres que coinciden
-- Escenario 3: Búsqueda sin resultados
-    - Dado un texto de búsqueda que no coincide con ningún taller
-    - Cuando se procesa
-    - Entonces retorna el código 200 (OK) con una lista vacía
-#### Implementación en el backend
-- **Estado:** ⏳ Pendiente
-- **Nota:** El diseño de base de datos del informe (4.8) no incluye una tabla de talleres.
+### TS014 — Register a fuel record
+As a frontend developer, I want to register a refuel of a vehicle through the API so that I can implement the fuel record creation feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful create
+    - Given a request `POST /api/v1/fuel-records` that includes required fields (`vehicleId`, `driverId`, `liters`, `cost`, `mileageAtRefill`, `recordedDate`) is received
+    - When the API validates and persists the new resource successfully
+    - Then the API responds with `201 Created`, and returns the created resource representation (`id`, `vehicleId`, `driverId`, `liters`, `cost`, `mileageAtRefill`, `recordedDate`).
+- Scenario: Validation error
+    - Given a request `POST /api/v1/fuel-records` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Referenced resource not found
+    - Given a request `POST /api/v1/fuel-records` with a `vehicleId` or `driverId` that does not exist is received
+    - When the API cannot find the referenced resource during persistence confirmation
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Unexpected server error
+    - Given a request `POST /api/v1/fuel-records` is received
+    - When an unexpected error occurs during persistence
+    - Then the API responds with `500 Internal Server Error` and a `ProblemDetails` payload.
 ---
-### TS15 — Implementar eliminación de solicitudes de mantenimiento vía API
-Como Developer, Quiero implementar el endpoint de eliminación de solicitudes de mantenimiento, Para que el Dueño pueda retirar solicitudes registradas por error.
-**Relacionado con:** EP03
-#### Criterios de aceptación:
-- Escenario 1: Eliminación exitosa
-    - Dada una solicitud existente
-    - Cuando se solicita su eliminación
-    - Entonces retorna el código 204 (Sin contenido) y la solicitud deja de figurar en la consulta
-- Escenario 2: Solicitud inexistente
-    - Dado un identificador que no corresponde a ninguna solicitud
-    - Cuando se solicita su eliminación
-    - Entonces retorna el código 404 (No encontrado)
-#### Implementación en el backend
-- **Estado:** ✅ Implementada en Sprint 3
-- **Endpoints:** `DELETE /api/v1/maintenance-requests/{id}`
+### TS015 — Update a fuel record
+As a frontend developer, I want to update a fuel record through the API so that I can implement the fuel record edition feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful update
+    - Given a request `PUT /api/v1/fuel-records/{id}` that includes required fields (`liters`, `cost`, `mileageAtRefill`, `recordedDate`) is received
+    - When the API validates and persists the changes successfully
+    - Then the API responds with `200 OK` and returns the updated resource representation (`id`, `vehicleId`, `driverId`, `liters`, `cost`, `mileageAtRefill`, `recordedDate`).
+- Scenario: Validation error
+    - Given a request `PUT /api/v1/fuel-records/{id}` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Not found
+    - Given a request `PUT /api/v1/fuel-records/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
 ---
-### TS16 — Implementar registro de incidencias y generación de notificación
-Como Developer, Quiero implementar el endpoint de registro de incidencias que notifica al Dueño, Para que las fallas reportadas por los Conductores se atiendan a tiempo.
-**Relacionado con:** EP04
-#### Criterios de aceptación:
-- Escenario 1: Registro exitoso
-    - Dado un vehículo existente y la descripción del problema
-    - Cuando se envían al servicio de registro
-    - Entonces retorna el código 201 (Creado) con la incidencia en estado "Abierto" y genera la notificación para el Dueño de la flota
-- Escenario 2: Datos incompletos
-    - Dado que falta la descripción o el vehículo
-    - Cuando se procesan
-    - Entonces retorna el código 400 (Solicitud incorrecta) con el detalle del error
-- Escenario 3: Vehículo inexistente
-    - Dado un identificador que no corresponde a ningún vehículo
-    - Cuando se solicita el registro
-    - Entonces retorna el código 404 (No encontrado)
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `POST /api/v1/incidents`
-- **Nota:** Cubre los escenarios de registro, datos incompletos y vehículo inexistente; falta generar la notificación al Dueño.
+### TS016 — Delete a fuel record
+As a frontend developer, I want to delete a fuel record through the API so that I can implement the fuel record removal feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful delete
+    - Given a request `DELETE /api/v1/fuel-records/{id}` is received
+    - When the API finds and removes the resource
+    - Then the API responds with `204 No Content`.
+- Scenario: Not found
+    - Given a request `DELETE /api/v1/fuel-records/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
 ---
-### TS17 — Implementar ciclo de vida de incidencias
-Como Developer, Quiero implementar los endpoints que cambian el estado de una incidencia entre Abierto, En revisión y Resuelto, Para que el Dueño pueda dar seguimiento ordenado a cada problema.
-**Relacionado con:** EP04
-#### Criterios de aceptación:
-- Escenario 1: Paso a revisión
-    - Dada una incidencia en estado "Abierto"
-    - Cuando se solicita iniciar su revisión
-    - Entonces retorna el código 200 (OK) con la incidencia en estado "En revisión"
-- Escenario 2: Resolución
-    - Dada una incidencia en estado "En revisión"
-    - Cuando se solicita marcarla como resuelta
-    - Entonces retorna el código 200 (OK) con la incidencia en estado "Resuelto"
-- Escenario 3: Transición inválida
-    - Dada una incidencia en estado "Abierto"
-    - Cuando se solicita marcarla como resuelta
-    - Entonces retorna el código 409 (Conflicto) indicando que primero debe pasar a "En revisión"
-#### Implementación en el backend
-- **Estado:** ⏳ Pendiente
-- **Nota:** Hoy `PUT /api/v1/incidents/{id}` permite cambiar el estado sin validar el ciclo de vida.
+### TS017 — List maintenance requests by `vehicleId` or `mechanicId`
+As a frontend developer, I want to request the API to list maintenance requests, optionally filtered by `{vehicleId}` or `{mechanicId}`, so that I can implement the maintenance request listing feature in my application.
+#### Acceptance criteria:
+- Scenario: Returns one or more maintenance requests
+    - Given a request `GET /api/v1/maintenance-requests?vehicleId={vehicleId}&mechanicId={mechanicId}` is received
+    - When the API finds one or more matching maintenance request resources
+    - Then the API responds with `200 OK` and returns a non-empty array of maintenance request resources, with each resource including `id`, `vehicleId`, `mechanicId`, `description`, `estimatedCost`, `status`, `requestDate`.
+- Scenario: Returns no maintenance requests
+    - Given a request `GET /api/v1/maintenance-requests?vehicleId={vehicleId}&mechanicId={mechanicId}` is received
+    - When the API finds no matching resources
+    - Then the API responds with `200 OK` and returns an empty array.
 ---
-### TS18 — Implementar consulta y eliminación de incidencias
-Como Developer, Quiero implementar los endpoints de consulta y eliminación de incidencias, Para que el Dueño pueda revisar el estado de los problemas y retirar reportes duplicados o erróneos.
-**Relacionado con:** EP04
-#### Criterios de aceptación:
-- Escenario 1: Consulta de incidencias
-    - Dado que existen incidencias
-    - Cuando se solicita la lista
-    - Entonces retorna el código 200 (OK) con vehículo, descripción, fecha y estado de cada una, junto con el total, las abiertas y las resueltas
-- Escenario 2: Eliminación exitosa
-    - Dada una incidencia existente
-    - Cuando se solicita su eliminación
-    - Entonces retorna el código 204 (Sin contenido)
-- Escenario 3: Incidencia inexistente
-    - Dado un identificador que no corresponde a ninguna incidencia
-    - Cuando se solicita su eliminación
-    - Entonces retorna el código 404 (No encontrado)
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `GET /api/v1/incidents`, `DELETE /api/v1/incidents/{id}`
-- **Nota:** Faltan los contadores de la consulta.
+### TS018 — Retrieve a maintenance request by id
+As a frontend developer, I want to request a maintenance request by its `{id}` so that I can implement the details view in my application.
+#### Acceptance criteria:
+- Scenario: Found
+    - Given a request `GET /api/v1/maintenance-requests/{id}` is received
+    - When the API finds the resource
+    - Then the API responds with `200 OK` and returns the maintenance request resource (`id`, `vehicleId`, `mechanicId`, `description`, `estimatedCost`, `status`, `requestDate`).
+- Scenario: Not found
+    - Given a request `GET /api/v1/maintenance-requests/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found`.
 ---
-### TS19 — Implementar vinculación de dispositivos IoT con vehículos
-Como Developer, Quiero implementar el endpoint que asocia un dispositivo IoT a un vehículo de la flota, Para que la telemetría recibida se atribuya a la unidad correcta.
-**Relacionado con:** EP05
-#### Criterios de aceptación:
-- Escenario 1: Vinculación exitosa
-    - Dado un dispositivo con identificador único y un vehículo existente
-    - Cuando se solicita la vinculación
-    - Entonces retorna el código 201 (Creado) con el vínculo registrado
-- Escenario 2: Dispositivo ya vinculado
-    - Dado un dispositivo asociado a otro vehículo
-    - Cuando se solicita la vinculación
-    - Entonces retorna el código 409 (Conflicto)
-- Escenario 3: Telemetría de dispositivo no vinculado
-    - Dado un paquete de telemetría de un dispositivo sin vínculo
-    - Cuando el servicio de ingesta lo procesa
-    - Entonces lo descarta y registra el evento en el registro de errores
-#### Implementación en el backend
-- **Estado:** ✅ Implementada en Sprint 3
-- **Endpoints:** `POST /api/v1/iot-devices`
-- **Nota:** Un vehículo admite un solo dispositivo y un número de serie un solo vínculo (409); la telemetría de dispositivos sin vínculo se descarta y se registra (TS02).
+### TS019 — Submit a maintenance request
+As a frontend developer, I want to submit a maintenance request of a vehicle to a mechanic through the API so that I can implement the maintenance request creation feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful create
+    - Given a request `POST /api/v1/maintenance-requests` that includes required fields (`vehicleId`, `mechanicId`, `description`) is received
+    - When the API validates and persists the new resource successfully
+    - Then the API responds with `201 Created`, and returns the created resource representation (`id`, `vehicleId`, `mechanicId`, `description`, `estimatedCost`, `status`, `requestDate`).
+- Scenario: Validation error
+    - Given a request `POST /api/v1/maintenance-requests` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Referenced resource not found
+    - Given a request `POST /api/v1/maintenance-requests` with a `vehicleId` or `mechanicId` that does not exist is received
+    - When the API cannot find the referenced resource during persistence confirmation
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Unexpected server error
+    - Given a request `POST /api/v1/maintenance-requests` is received
+    - When an unexpected error occurs during persistence
+    - Then the API responds with `500 Internal Server Error` and a `ProblemDetails` payload.
 ---
-### TS20 — Implementar consulta de posición e indicadores de monitoreo
-Como Developer, Quiero implementar el endpoint que retorna la última posición, la velocidad y los indicadores de monitoreo de la flota, Para que el Dueño supervise su operación en tiempo real.
-**Relacionado con:** EP05
-#### Criterios de aceptación:
-- Escenario 1: Estado actual de la flota
-    - Dado que existen dispositivos conectados con telemetría recibida
-    - Cuando se solicita el estado de monitoreo
-    - Entonces retorna el código 200 (OK) con la última posición y velocidad de cada vehículo, la cantidad de dispositivos conectados, la velocidad promedio y la cantidad de paquetes recibidos
-- Escenario 2: Lectura más reciente
-    - Dado que el servicio recibe un nuevo paquete de un dispositivo
-    - Cuando se solicita nuevamente el estado de monitoreo
-    - Entonces la respuesta incluye la lectura más reciente de ese dispositivo
-- Escenario 3: Sin dispositivos conectados
-    - Dado que no existen dispositivos conectados
-    - Cuando se solicita el estado de monitoreo
-    - Entonces retorna el código 200 (OK) con una lista vacía y los indicadores en cero
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `GET /api/v1/telemetry-data?deviceId={id}`, hub `/hubs/monitoring`
-- **Nota:** Retorna las lecturas de la más reciente a la más antigua y publica cada nueva ubicación; faltan los indicadores consolidados.
+### TS020 — Register the diagnostic and quote of a maintenance request
+As a frontend developer, I want to register the diagnostic and estimated cost of a maintenance request so that I can implement the mechanic quotation feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful transition
+    - Given a request `POST /api/v1/maintenance-requests/{id}/diagnostic-and-quote` with `estimatedCost` for a maintenance request in `Pendiente` status is received
+    - When the API applies the transition to the maintenance request
+    - Then the API responds with `200 OK` and returns the maintenance request resource with status `Presupuestado`.
+- Scenario: Validation error
+    - Given a request `POST /api/v1/maintenance-requests/{id}/diagnostic-and-quote` with a negative or missing `estimatedCost` is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Invalid transition
+    - Given a request `POST /api/v1/maintenance-requests/{id}/diagnostic-and-quote` for a maintenance request that is not in `Pendiente` status is received
+    - When the API rejects the transition
+    - Then the API responds with `409 Conflict` and a localized error message.
+- Scenario: Not found
+    - Given a request `POST /api/v1/maintenance-requests/{id}/diagnostic-and-quote` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
 ---
-### TS21 — Implementar generación de alertas de exceso de velocidad
-Como Developer, Quiero implementar la regla que evalúa la velocidad de cada lectura de telemetría y genera alertas, Para que el Dueño pueda corregir conductas de riesgo.
-**Relacionado con:** EP06
-#### Criterios de aceptación:
-- Escenario 1: Límite superado
-    - Dado que un paquete de telemetría registra una velocidad mayor a 90 km/h
-    - Cuando el servicio evalúa la lectura
-    - Entonces registra una alerta de exceso de velocidad con la placa y la velocidad, y genera la notificación para el Dueño
-- Escenario 2: Velocidad dentro del límite
-    - Dado que la velocidad registrada es de 90 km/h o menos
-    - Cuando el servicio evalúa la lectura
-    - Entonces no registra alerta ni genera notificación
-#### Implementación en el backend
-- **Estado:** ⏳ Pendiente
+### TS021 — Approve or reject the budget of a maintenance request
+As a frontend developer, I want to approve or reject the quoted budget of a maintenance request so that I can implement the owner budget decision feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful transition
+    - Given a request `POST /api/v1/maintenance-requests/{id}/budget-decision` with `isApproved` for a maintenance request in `Presupuestado` status is received
+    - When the API applies the transition to the maintenance request
+    - Then the API responds with `200 OK` and returns the maintenance request resource with status `Aprobado` or `Rechazado`.
+- Scenario: Invalid transition
+    - Given a request `POST /api/v1/maintenance-requests/{id}/budget-decision` for a maintenance request that is not in `Presupuestado` status is received
+    - When the API rejects the transition
+    - Then the API responds with `409 Conflict` and a localized error message.
+- Scenario: Not found
+    - Given a request `POST /api/v1/maintenance-requests/{id}/budget-decision` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
 ---
-### TS22 — Implementar consulta de alertas y notificaciones
-Como Developer, Quiero implementar los endpoints de consulta de alertas y notificaciones del Dueño, Para que pueda revisar los eventos críticos de su flota.
-**Relacionado con:** EP06
-#### Criterios de aceptación:
-- Escenario 1: Alertas y notificaciones
-    - Dado que existen alertas y notificaciones
-    - Cuando se solicita la consulta
-    - Entonces retorna el código 200 (OK) con el tipo, vehículo y fecha de cada alerta, el mensaje de cada notificación y la cantidad de alertas activas, notificaciones y notificaciones sin leer
-- Escenario 2: Sin eventos
-    - Dado que no existen alertas ni notificaciones
-    - Cuando se solicita la consulta
-    - Entonces retorna el código 200 (OK) con listas vacías y los contadores en cero
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `GET /api/v1/alerts`, `GET /api/v1/notifications?userId={id}`
-- **Nota:** Faltan los contadores.
+### TS022 — Start the repair of a maintenance request
+As a frontend developer, I want to start the repair of an approved maintenance request so that I can implement the repair tracking feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful transition
+    - Given a request `POST /api/v1/maintenance-requests/{id}/repair-start` for a maintenance request in `Aprobado` status is received
+    - When the API applies the transition to the maintenance request
+    - Then the API responds with `200 OK` and returns the maintenance request resource with status `En reparación`.
+- Scenario: Invalid transition
+    - Given a request `POST /api/v1/maintenance-requests/{id}/repair-start` for a maintenance request that is not in `Aprobado` status is received
+    - When the API rejects the transition
+    - Then the API responds with `409 Conflict` and a localized error message.
+- Scenario: Not found
+    - Given a request `POST /api/v1/maintenance-requests/{id}/repair-start` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
 ---
-### TS23 — Implementar marcado de notificaciones como leídas
-Como Developer, Quiero implementar el endpoint que actualiza el estado de lectura de una notificación, Para que el Dueño distinga las notificaciones que ya revisó.
-**Relacionado con:** EP06
-#### Criterios de aceptación:
-- Escenario 1: Marcado exitoso
-    - Dada una notificación sin leer
-    - Cuando se solicita marcarla como leída
-    - Entonces retorna el código 200 (OK) con la notificación leída y el contador de notificaciones sin leer disminuye en uno
-- Escenario 2: Notificación ya leída
-    - Dada una notificación que ya está leída
-    - Cuando se solicita marcarla nuevamente
-    - Entonces retorna el código 200 (OK) sin modificar el contador
-- Escenario 3: Notificación inexistente
-    - Dado un identificador que no corresponde a ninguna notificación
-    - Cuando se solicita marcarla como leída
-    - Entonces retorna el código 404 (No encontrado)
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `PUT /api/v1/notifications/{id}`
-- **Nota:** Marca la notificación como leída y retorna 404 si no existe; falta el contador de no leídas.
+### TS023 — Complete a maintenance request
+As a frontend developer, I want to complete a maintenance request under repair so that I can implement the repair completion feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful transition
+    - Given a request `POST /api/v1/maintenance-requests/{id}/completion` for a maintenance request in `En reparación` status is received
+    - When the API applies the transition to the maintenance request
+    - Then the API responds with `200 OK` and returns the maintenance request resource with status `Completado`.
+- Scenario: Invalid transition
+    - Given a request `POST /api/v1/maintenance-requests/{id}/completion` for a maintenance request that is not in `En reparación` status is received
+    - When the API rejects the transition
+    - Then the API responds with `409 Conflict` and a localized error message.
+- Scenario: Not found
+    - Given a request `POST /api/v1/maintenance-requests/{id}/completion` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
 ---
-### TS24 — Implementar catálogo de dispositivos IoT vía API
-Como Developer, Quiero implementar los endpoints de consulta del catálogo de dispositivos IoT, Para que el Dueño pueda elegir el equipamiento de su flota.
-**Relacionado con:** EP07
-#### Criterios de aceptación:
-- Escenario 1: Catálogo disponible
-    - Dado que existen dispositivos en el catálogo
-    - Cuando se solicita la lista
-    - Entonces retorna el código 200 (OK) con el Rastreador GPS Flotix (S/ 149.90), el Odómetro digital Flotix (S/ 89.90) y el Sensor de combustible Flotix (S/ 119.90)
-- Escenario 2: Producto inexistente
-    - Dado un identificador que no corresponde a ningún dispositivo
-    - Cuando se solicita su detalle
-    - Entonces retorna el código 404 (No encontrado)
-#### Implementación en el backend
-- **Estado:** ⏳ Pendiente
-- **Nota:** El diseño de base de datos del informe (4.8) no incluye una tabla de catálogo.
+### TS024 — Delete a maintenance request
+As a frontend developer, I want to delete a maintenance request through the API so that I can implement the maintenance request removal feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful delete
+    - Given a request `DELETE /api/v1/maintenance-requests/{id}` is received
+    - When the API finds and removes the resource
+    - Then the API responds with `204 No Content`.
+- Scenario: Not found
+    - Given a request `DELETE /api/v1/maintenance-requests/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
 ---
-### TS25 — Implementar creación de pedidos y confirmación de pago
-Como Developer, Quiero implementar los endpoints de creación de pedidos de dispositivos IoT y de recepción de la confirmación de pago, Para que el Dueño pueda completar la compra de su equipamiento.
-**Relacionado con:** EP07
-#### Criterios de aceptación:
-- Escenario 1: Creación exitosa
-    - Dado un dispositivo existente y una cantidad entera mayor a cero
-    - Cuando se envían al servicio de pedidos
-    - Entonces retorna el código 201 (Creado) con el pedido en estado "Pendiente de pago" y un total igual al precio unitario por la cantidad
-- Escenario 2: Cantidad inválida
-    - Dado que la cantidad es menor o igual a cero
-    - Cuando se procesa
-    - Entonces retorna el código 400 (Solicitud incorrecta) con el detalle del error
-- Escenario 3: Pago confirmado
-    - Dado un pedido en estado "Pendiente de pago"
-    - Cuando el servicio recibe la confirmación del pago
-    - Entonces el pedido pasa automáticamente al estado "En preparación"
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `POST /api/v1/iot-orders`
-- **Nota:** Crea el pedido en "Pendiente de pago" y valida la cantidad; el total por precio unitario depende del catálogo (TS24) y falta la confirmación de pago.
+### TS025 — List incidents by `vehicleId` or `driverId`
+As a frontend developer, I want to request the API to list incidents, optionally filtered by `{vehicleId}` or `{driverId}`, so that I can implement the incident listing feature in my application.
+#### Acceptance criteria:
+- Scenario: Returns one or more incidents
+    - Given a request `GET /api/v1/incidents?vehicleId={vehicleId}&driverId={driverId}` is received
+    - When the API finds one or more matching incident resources
+    - Then the API responds with `200 OK` and returns a non-empty array of incident resources, with each resource including `id`, `vehicleId`, `driverId`, `description`, `status`, `reportedDate`.
+- Scenario: Returns no incidents
+    - Given a request `GET /api/v1/incidents?vehicleId={vehicleId}&driverId={driverId}` is received
+    - When the API finds no matching resources
+    - Then the API responds with `200 OK` and returns an empty array.
 ---
-### TS26 — Implementar consulta del historial de pedidos
-Como Developer, Quiero implementar el endpoint de consulta de pedidos de dispositivos IoT del Dueño, Para que pueda hacer seguimiento a sus compras.
-**Relacionado con:** EP07
-#### Criterios de aceptación:
-- Escenario 1: Pedidos registrados
-    - Dado que el Dueño realizó compras
-    - Cuando se solicita el historial
-    - Entonces retorna el código 200 (OK) con producto, cantidad, total, fecha y estado de cada pedido
-- Escenario 2: Sin pedidos
-    - Dado que el Dueño no realizó compras
-    - Cuando se solicita el historial
-    - Entonces retorna el código 200 (OK) con una lista vacía
-#### Implementación en el backend
-- **Estado:** ✅ Implementada
-- **Endpoints:** `GET /api/v1/iot-orders?ownerId={id}`
+### TS026 — Retrieve an incident by id
+As a frontend developer, I want to request an incident by its `{id}` so that I can implement the details view in my application.
+#### Acceptance criteria:
+- Scenario: Found
+    - Given a request `GET /api/v1/incidents/{id}` is received
+    - When the API finds the resource
+    - Then the API responds with `200 OK` and returns the incident resource (`id`, `vehicleId`, `driverId`, `description`, `status`, `reportedDate`).
+- Scenario: Not found
+    - Given a request `GET /api/v1/incidents/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found`.
 ---
-### TS27 — Implementar avance de estado de pedidos
-Como Developer, Quiero implementar el endpoint que avanza el estado de un pedido hasta su entrega, Para que el seguimiento de la compra se mantenga actualizado.
-**Relacionado con:** EP07
-#### Criterios de aceptación:
-- Escenario 1: Avance de estado
-    - Dado un pedido en estado "Pendiente de pago" o "En preparación"
-    - Cuando se solicita avanzar su estado
-    - Entonces retorna el código 200 (OK) con el pedido en el siguiente estado del flujo hasta "Entregado"
-- Escenario 2: Pedido finalizado
-    - Dado un pedido en estado "Entregado" o "Cancelado"
-    - Cuando se solicita avanzar su estado
-    - Entonces retorna el código 409 (Conflicto) y el estado no cambia
-- Escenario 3: Pedido inexistente
-    - Dado un identificador que no corresponde a ningún pedido
-    - Cuando se solicita avanzar su estado
-    - Entonces retorna el código 404 (No encontrado)
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `PUT /api/v1/iot-orders/{id}`
-- **Nota:** Los pedidos entregados o cancelados retornan 409; falta el avance automático al siguiente estado.
+### TS027 — Report an incident
+As a frontend developer, I want to report an incident of a vehicle through the API so that I can implement the incident creation feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful create
+    - Given a request `POST /api/v1/incidents` that includes required fields (`vehicleId`, `driverId`, `description`, `status`) is received
+    - When the API validates and persists the new resource successfully
+    - Then the API responds with `201 Created`, and returns the created resource representation (`id`, `vehicleId`, `driverId`, `description`, `status`, `reportedDate`).
+- Scenario: Validation error
+    - Given a request `POST /api/v1/incidents` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Referenced resource not found
+    - Given a request `POST /api/v1/incidents` with a `vehicleId` or `driverId` that does not exist is received
+    - When the API cannot find the referenced resource during persistence confirmation
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Unexpected server error
+    - Given a request `POST /api/v1/incidents` is received
+    - When an unexpected error occurs during persistence
+    - Then the API responds with `500 Internal Server Error` and a `ProblemDetails` payload.
 ---
-### TS28 — Implementar panel general de operación
-Como Developer, Quiero implementar el endpoint que consolida los indicadores operativos de la flota, Para que el Dueño identifique de inmediato lo que requiere su atención.
-**Relacionado con:** EP08
-#### Criterios de aceptación:
-- Escenario 1: Resumen operativo
-    - Dado que existen registros de la flota
-    - Cuando se solicita el panel general
-    - Entonces retorna el código 200 (OK) con los vehículos disponibles, los vehículos en mantenimiento, el gasto de combustible, las alertas abiertas, el estado de la flota y los mantenimientos pendientes
-- Escenario 2: Incidencia urgente
-    - Dado que existe al menos una incidencia en estado "Abierto"
-    - Cuando se solicita el panel general
-    - Entonces la respuesta marca esa incidencia como urgente
-- Escenario 3: Sin mantenimientos pendientes
-    - Dado que no existen solicitudes abiertas
-    - Cuando se solicita el panel general
-    - Entonces la respuesta indica cero mantenimientos pendientes
-#### Implementación en el backend
-- **Estado:** ⏳ Pendiente
+### TS028 — Update an incident
+As a frontend developer, I want to update an incident through the API so that I can implement the incident edition feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful update
+    - Given a request `PUT /api/v1/incidents/{id}` that includes required fields (`description`, `status`) is received
+    - When the API validates and persists the changes successfully
+    - Then the API responds with `200 OK` and returns the updated resource representation (`id`, `vehicleId`, `driverId`, `description`, `status`, `reportedDate`).
+- Scenario: Validation error
+    - Given a request `PUT /api/v1/incidents/{id}` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Not found
+    - Given a request `PUT /api/v1/incidents/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
 ---
-### TS29 — Implementar resumen consolidado y comparativo de rendimiento
-Como Developer, Quiero implementar los endpoints del resumen consolidado de la flota y del comparativo de rendimiento por vehículo, Para que el Dueño conozca el costo total de su operación e identifique las unidades menos eficientes.
-**Relacionado con:** EP08
-#### Criterios de aceptación:
-- Escenario 1: Datos consolidados
-    - Dado que existen registros en la flota
-    - Cuando se solicita el resumen consolidado
-    - Entonces retorna el código 200 (OK) con la cantidad de vehículos, el gasto total en combustible, el gasto total en mantenimiento y los mantenimientos completados
-- Escenario 2: Comparativo generado
-    - Dado que existen vehículos con al menos dos recargas registradas
-    - Cuando se solicita el comparativo
-    - Entonces retorna el código 200 (OK) con la placa, el gasto total y el rendimiento promedio en km/L de cada vehículo
-- Escenario 3: Historial insuficiente
-    - Dado un vehículo con menos de dos recargas registradas
-    - Cuando se genera el comparativo
-    - Entonces el servicio excluye ese vehículo de la respuesta
-#### Implementación en el backend
-- **Estado:** ⏳ Pendiente
+### TS029 — Delete an incident
+As a frontend developer, I want to delete an incident through the API so that I can implement the incident removal feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful delete
+    - Given a request `DELETE /api/v1/incidents/{id}` is received
+    - When the API finds and removes the resource
+    - Then the API responds with `204 No Content`.
+- Scenario: Not found
+    - Given a request `DELETE /api/v1/incidents/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
 ---
-### TS30 — Implementar exportación e historial de reportes
-Como Developer, Quiero implementar los endpoints de exportación de reportes de rendimiento y de consulta de los reportes exportados, Para que el Dueño pueda compartir, archivar y llevar control de sus reportes.
-**Relacionado con:** EP08
-#### Criterios de aceptación:
-- Escenario 1: Exportación exitosa
-    - Dado un tipo de reporte válido
-    - Cuando se solicita la exportación
-    - Entonces retorna el código 200 (OK) con un archivo que contiene el resumen consolidado y el detalle por vehículo, y registra la exportación con su tipo y fecha
-- Escenario 2: Tipo no soportado
-    - Dado un tipo de reporte que la plataforma no genera
-    - Cuando se solicita la exportación
-    - Entonces retorna el código 400 (Solicitud incorrecta)
-- Escenario 3: Historial de exportaciones
-    - Dado que el Dueño exportó reportes
-    - Cuando se solicita el historial
-    - Entonces retorna el código 200 (OK) con el tipo y la fecha de generación de cada reporte
-#### Implementación en el backend
-- **Estado:** 🟡 Parcial
-- **Endpoints:** `GET /api/v1/reports`
-- **Nota:** Cubre el historial de reportes generados (TS04); falta la exportación a archivo.
+### TS030 — List IoT devices by `vehicleId`
+As a frontend developer, I want to request the API to list IoT devices, optionally filtered by `{vehicleId}`, so that I can implement the IoT device listing feature in my application.
+#### Acceptance criteria:
+- Scenario: Returns one or more IoT devices
+    - Given a request `GET /api/v1/iot-devices?vehicleId={vehicleId}` is received
+    - When the API finds one or more matching IoT device resources
+    - Then the API responds with `200 OK` and returns a non-empty array of IoT device resources, with each resource including `id`, `vehicleId`, `serialNumber`, `isConnected`.
+- Scenario: Returns no IoT devices
+    - Given a request `GET /api/v1/iot-devices?vehicleId={vehicleId}` is received
+    - When the API finds no matching resources
+    - Then the API responds with `200 OK` and returns an empty array.
 ---
-### TS31 — Documentar el RESTful API con OpenAPI
-Como Developer, Quiero documentar los endpoints del Backend con la especificación OpenAPI mediante Scalar, Para que el equipo y el Frontend consuman la API sin ambigüedad.
-**Relacionado con:** EP01 a EP08
-#### Criterios de aceptación:
-- Escenario 1: Documentación disponible
-    - Dado que el servicio está desplegado
-    - Cuando se solicita la especificación
-    - Entonces retorna el código 200 (OK) con los endpoints, parámetros, esquemas y códigos de respuesta de cada bounded context
-- Escenario 2: Documentación actualizada
-    - Dado que un endpoint se agrega o se modifica
-    - Cuando se genera la especificación
-    - Entonces la especificación refleja el cambio
-#### Implementación en el backend
-- **Estado:** ✅ Implementada en Sprint 3
-- **Endpoints:** `/openapi/v1.json`, `/scalar`
-- **Nota:** La especificación OpenAPI se documenta con Scalar (sin Swagger) y se localiza en inglés y español.
+### TS031 — Retrieve an IoT device by id
+As a frontend developer, I want to request an IoT device by its `{id}` so that I can implement the details view in my application.
+#### Acceptance criteria:
+- Scenario: Found
+    - Given a request `GET /api/v1/iot-devices/{id}` is received
+    - When the API finds the resource
+    - Then the API responds with `200 OK` and returns the IoT device resource (`id`, `vehicleId`, `serialNumber`, `isConnected`).
+- Scenario: Not found
+    - Given a request `GET /api/v1/iot-devices/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found`.
 ---
+### TS032 — Link an IoT device to a vehicle
+As a frontend developer, I want to link an IoT device to a vehicle through the API so that I can implement the IoT device creation feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful create
+    - Given a request `POST /api/v1/iot-devices` that includes required fields (`vehicleId`, `serialNumber`, `isConnected`) is received
+    - When the API validates and persists the new resource successfully
+    - Then the API responds with `201 Created`, and returns the created resource representation (`id`, `vehicleId`, `serialNumber`, `isConnected`).
+- Scenario: Validation error
+    - Given a request `POST /api/v1/iot-devices` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Vehicle already equipped
+    - Given a request `POST /api/v1/iot-devices` for a `vehicleId` that already has an IoT device is received
+    - When the API detects the duplicate vehicle before persistence or during persistence confirmation
+    - Then the API responds with `409 Conflict` and a localized error message.
+- Scenario: Duplicate serial number
+    - Given a request `POST /api/v1/iot-devices` for a `serialNumber` that already exists is received
+    - When the API detects the duplicate serial number before persistence or during persistence confirmation
+    - Then the API responds with `409 Conflict` and a localized error message.
+- Scenario: Referenced resource not found
+    - Given a request `POST /api/v1/iot-devices` with a `vehicleId` that does not exist is received
+    - When the API cannot find the referenced resource during persistence confirmation
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Unexpected server error
+    - Given a request `POST /api/v1/iot-devices` is received
+    - When an unexpected error occurs during persistence
+    - Then the API responds with `500 Internal Server Error` and a `ProblemDetails` payload.
+---
+### TS033 — Update an IoT device
+As a frontend developer, I want to update an IoT device through the API so that I can implement the IoT device edition feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful update
+    - Given a request `PUT /api/v1/iot-devices/{id}` that includes required fields (`vehicleId`, `isConnected`) is received
+    - When the API validates and persists the changes successfully
+    - Then the API responds with `200 OK` and returns the updated resource representation (`id`, `vehicleId`, `serialNumber`, `isConnected`).
+- Scenario: Validation error
+    - Given a request `PUT /api/v1/iot-devices/{id}` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Not found
+    - Given a request `PUT /api/v1/iot-devices/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Vehicle already equipped
+    - Given a request `PUT /api/v1/iot-devices/{id}` with a `vehicleId` that already has another IoT device is received
+    - When the API detects the duplicate vehicle
+    - Then the API responds with `409 Conflict` and a localized error message.
+- Scenario: Referenced resource not found
+    - Given a request `PUT /api/v1/iot-devices/{id}` with a `vehicleId` that does not exist is received
+    - When the API cannot find the referenced resource during persistence confirmation
+    - Then the API responds with `404 Not Found` and a localized error message.
+---
+### TS034 — Delete an IoT device
+As a frontend developer, I want to delete an IoT device through the API so that I can implement the IoT device removal feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful delete
+    - Given a request `DELETE /api/v1/iot-devices/{id}` is received
+    - When the API finds and removes the resource
+    - Then the API responds with `204 No Content`.
+- Scenario: Not found
+    - Given a request `DELETE /api/v1/iot-devices/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: IoT device with related records
+    - Given a request `DELETE /api/v1/iot-devices/{id}` for an IoT device that still has telemetry data is received
+    - When the API detects the related records during persistence confirmation
+    - Then the API responds with `409 Conflict` and a localized error message; the resource is not removed.
+---
+### TS035 — Receive IoT telemetry data
+As a frontend developer, I want to send the telemetry packets of an IoT device to the API so that I can feed the real-time monitoring of the fleet.
+#### Acceptance criteria:
+- Scenario: Packet accepted
+    - Given a request `POST /api/v1/telemetry-data` that includes required fields (`deviceId`, `latitude`, `longitude`, `speed`, `recordedAt`) is received
+    - When the API validates the packet and queues it for processing
+    - Then the API responds with `202 Accepted` without a body.
+- Scenario: Packet processed
+    - Given a queued telemetry packet of an IoT device linked to a vehicle
+    - When the IoT Telemetry Processor processes the packet
+    - Then the API stores the reading, marks the IoT device as connected and sends `VehicleLocationUpdated` (`vehicleId`, `deviceId`, `latitude`, `longitude`, `speed`, `recordedAt`) to the clients of `/hubs/monitoring`.
+- Scenario: Corrupt packet
+    - Given a request `POST /api/v1/telemetry-data` with missing fields or out-of-range coordinates or speed is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request`, discards the packet and writes it to the error log.
+- Scenario: Unlinked device
+    - Given a queued telemetry packet of a `deviceId` that is not linked to a vehicle
+    - When the IoT Telemetry Processor processes the packet
+    - Then the API discards the packet and writes it to the error log.
+---
+### TS036 — List telemetry data records by `deviceId`
+As a frontend developer, I want to request the API to list telemetry data records, optionally filtered by `{deviceId}`, so that I can implement the telemetry data record listing feature in my application.
+#### Acceptance criteria:
+- Scenario: Returns one or more telemetry data records
+    - Given a request `GET /api/v1/telemetry-data?deviceId={deviceId}` is received
+    - When the API finds one or more matching telemetry data record resources
+    - Then the API responds with `200 OK` and returns a non-empty array of telemetry data record resources ordered from the most recent to the oldest `recordedAt`, with each resource including `id`, `deviceId`, `latitude`, `longitude`, `speed`, `recordedAt`.
+- Scenario: Returns no telemetry data records
+    - Given a request `GET /api/v1/telemetry-data?deviceId={deviceId}` is received
+    - When the API finds no matching resources
+    - Then the API responds with `200 OK` and returns an empty array.
+---
+### TS037 — Retrieve a telemetry data record by id
+As a frontend developer, I want to request a telemetry data record by its `{id}` so that I can implement the details view in my application.
+#### Acceptance criteria:
+- Scenario: Found
+    - Given a request `GET /api/v1/telemetry-data/{id}` is received
+    - When the API finds the resource
+    - Then the API responds with `200 OK` and returns the telemetry data record resource (`id`, `deviceId`, `latitude`, `longitude`, `speed`, `recordedAt`).
+- Scenario: Not found
+    - Given a request `GET /api/v1/telemetry-data/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found`.
+---
+### TS038 — List alerts by `vehicleId`
+As a frontend developer, I want to request the API to list alerts, optionally filtered by `{vehicleId}`, so that I can implement the alert listing feature in my application.
+#### Acceptance criteria:
+- Scenario: Returns one or more alerts
+    - Given a request `GET /api/v1/alerts?vehicleId={vehicleId}` is received
+    - When the API finds one or more matching alert resources
+    - Then the API responds with `200 OK` and returns a non-empty array of alert resources, with each resource including `id`, `vehicleId`, `alertType`, `triggerDate`.
+- Scenario: Returns no alerts
+    - Given a request `GET /api/v1/alerts?vehicleId={vehicleId}` is received
+    - When the API finds no matching resources
+    - Then the API responds with `200 OK` and returns an empty array.
+---
+### TS039 — Retrieve an alert by id
+As a frontend developer, I want to request an alert by its `{id}` so that I can implement the details view in my application.
+#### Acceptance criteria:
+- Scenario: Found
+    - Given a request `GET /api/v1/alerts/{id}` is received
+    - When the API finds the resource
+    - Then the API responds with `200 OK` and returns the alert resource (`id`, `vehicleId`, `alertType`, `triggerDate`).
+- Scenario: Not found
+    - Given a request `GET /api/v1/alerts/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found`.
+---
+### TS040 — Create an alert
+As a frontend developer, I want to create an alert of a vehicle through the API so that I can implement the alert creation feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful create
+    - Given a request `POST /api/v1/alerts` that includes required fields (`vehicleId`, `alertType`) is received
+    - When the API validates and persists the new resource successfully
+    - Then the API responds with `201 Created`, and returns the created resource representation (`id`, `vehicleId`, `alertType`, `triggerDate`).
+- Scenario: Validation error
+    - Given a request `POST /api/v1/alerts` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Referenced resource not found
+    - Given a request `POST /api/v1/alerts` with a `vehicleId` that does not exist is received
+    - When the API cannot find the referenced resource during persistence confirmation
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Unexpected server error
+    - Given a request `POST /api/v1/alerts` is received
+    - When an unexpected error occurs during persistence
+    - Then the API responds with `500 Internal Server Error` and a `ProblemDetails` payload.
+---
+### TS041 — List notifications by `userId`
+As a frontend developer, I want to request the API to list notifications, optionally filtered by `{userId}`, so that I can implement the notification listing feature in my application.
+#### Acceptance criteria:
+- Scenario: Returns one or more notifications
+    - Given a request `GET /api/v1/notifications?userId={userId}` is received
+    - When the API finds one or more matching notification resources
+    - Then the API responds with `200 OK` and returns a non-empty array of notification resources, with each resource including `id`, `userId`, `alertId`, `message`, `isRead`, `sentDate`.
+- Scenario: Returns no notifications
+    - Given a request `GET /api/v1/notifications?userId={userId}` is received
+    - When the API finds no matching resources
+    - Then the API responds with `200 OK` and returns an empty array.
+---
+### TS042 — Retrieve a notification by id
+As a frontend developer, I want to request a notification by its `{id}` so that I can implement the details view in my application.
+#### Acceptance criteria:
+- Scenario: Found
+    - Given a request `GET /api/v1/notifications/{id}` is received
+    - When the API finds the resource
+    - Then the API responds with `200 OK` and returns the notification resource (`id`, `userId`, `alertId`, `message`, `isRead`, `sentDate`).
+- Scenario: Not found
+    - Given a request `GET /api/v1/notifications/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found`.
+---
+### TS043 — Create a notification
+As a frontend developer, I want to create a notification for a user through the API so that I can implement the notification creation feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful create
+    - Given a request `POST /api/v1/notifications` that includes required fields (`userId`, `message`) is received
+    - When the API validates and persists the new resource successfully
+    - Then the API responds with `201 Created`, and returns the created resource representation (`id`, `userId`, `alertId`, `message`, `isRead`, `sentDate`).
+- Scenario: Validation error
+    - Given a request `POST /api/v1/notifications` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Referenced resource not found
+    - Given a request `POST /api/v1/notifications` with a `userId` or `alertId` that does not exist is received
+    - When the API cannot find the referenced resource during persistence confirmation
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Unexpected server error
+    - Given a request `POST /api/v1/notifications` is received
+    - When an unexpected error occurs during persistence
+    - Then the API responds with `500 Internal Server Error` and a `ProblemDetails` payload.
+---
+### TS044 — Update a notification
+As a frontend developer, I want to update a notification through the API so that I can implement the notification edition feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful update
+    - Given a request `PUT /api/v1/notifications/{id}` that includes required fields (`isRead`) is received
+    - When the API validates and persists the changes successfully
+    - Then the API responds with `200 OK` and returns the updated resource representation (`id`, `userId`, `alertId`, `message`, `isRead`, `sentDate`).
+- Scenario: Validation error
+    - Given a request `PUT /api/v1/notifications/{id}` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Not found
+    - Given a request `PUT /api/v1/notifications/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
+---
+### TS045 — Delete a notification
+As a frontend developer, I want to delete a notification through the API so that I can implement the notification removal feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful delete
+    - Given a request `DELETE /api/v1/notifications/{id}` is received
+    - When the API finds and removes the resource
+    - Then the API responds with `204 No Content`.
+- Scenario: Not found
+    - Given a request `DELETE /api/v1/notifications/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
+---
+### TS046 — Receive alerts and notifications in real time
+As a frontend developer, I want to connect to the notifications hub so that I can show new alerts and notifications in my application without polling.
+#### Acceptance criteria:
+- Scenario: Alert created
+    - Given a client connected to `/hubs/notifications`
+    - When an alert is created
+    - Then the API sends `AlertActivated` with the alert resource to the connected clients.
+- Scenario: Notification created
+    - Given a client connected to `/hubs/notifications` as the recipient user
+    - When a notification is created
+    - Then the API sends `NotificationReceived` with the notification resource only to the recipient user.
+---
+### TS047 — List IoT orders by `ownerId`
+As a frontend developer, I want to request the API to list IoT orders, optionally filtered by `{ownerId}`, so that I can implement the IoT order listing feature in my application.
+#### Acceptance criteria:
+- Scenario: Returns one or more IoT orders
+    - Given a request `GET /api/v1/iot-orders?ownerId={ownerId}` is received
+    - When the API finds one or more matching IoT order resources
+    - Then the API responds with `200 OK` and returns a non-empty array of IoT order resources, with each resource including `id`, `ownerId`, `quantity`, `totalAmount`, `status`, `orderDate`.
+- Scenario: Returns no IoT orders
+    - Given a request `GET /api/v1/iot-orders?ownerId={ownerId}` is received
+    - When the API finds no matching resources
+    - Then the API responds with `200 OK` and returns an empty array.
+---
+### TS048 — Retrieve an IoT order by id
+As a frontend developer, I want to request an IoT order by its `{id}` so that I can implement the details view in my application.
+#### Acceptance criteria:
+- Scenario: Found
+    - Given a request `GET /api/v1/iot-orders/{id}` is received
+    - When the API finds the resource
+    - Then the API responds with `200 OK` and returns the IoT order resource (`id`, `ownerId`, `quantity`, `totalAmount`, `status`, `orderDate`).
+- Scenario: Not found
+    - Given a request `GET /api/v1/iot-orders/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found`.
+---
+### TS049 — Place an IoT order
+As a frontend developer, I want to place an order of IoT devices through the API so that I can implement the IoT order creation feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful create
+    - Given a request `POST /api/v1/iot-orders` that includes required fields (`ownerId`, `quantity`, `totalAmount`) is received
+    - When the API validates and persists the new resource successfully
+    - Then the API responds with `201 Created`, and returns the created resource representation (`id`, `ownerId`, `quantity`, `totalAmount`, `status`, `orderDate`).
+- Scenario: Validation error
+    - Given a request `POST /api/v1/iot-orders` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Referenced resource not found
+    - Given a request `POST /api/v1/iot-orders` with a `ownerId` that does not exist is received
+    - When the API cannot find the referenced resource during persistence confirmation
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Unexpected server error
+    - Given a request `POST /api/v1/iot-orders` is received
+    - When an unexpected error occurs during persistence
+    - Then the API responds with `500 Internal Server Error` and a `ProblemDetails` payload.
+---
+### TS050 — Update an IoT order
+As a frontend developer, I want to update an IoT order through the API so that I can implement the IoT order edition feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful update
+    - Given a request `PUT /api/v1/iot-orders/{id}` that includes required fields (`status`) is received
+    - When the API validates and persists the changes successfully
+    - Then the API responds with `200 OK` and returns the updated resource representation (`id`, `ownerId`, `quantity`, `totalAmount`, `status`, `orderDate`).
+- Scenario: Validation error
+    - Given a request `PUT /api/v1/iot-orders/{id}` with missing required fields or invalid values is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Not found
+    - Given a request `PUT /api/v1/iot-orders/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Closed order
+    - Given a request `PUT /api/v1/iot-orders/{id}` for an order in `Entregado` or `Cancelado` status is received
+    - When the API applies the order rules
+    - Then the API responds with `409 Conflict` and a localized error message.
+---
+### TS051 — Generate a report
+As a frontend developer, I want to generate a fuel consumption or maintenance cost report of my fleet for a date range so that I can implement the reports feature in my application.
+#### Acceptance criteria:
+- Scenario: Report with records
+    - Given a request `POST /api/v1/reports` that includes required fields (`ownerId`, `reportType`, `from`, `to`) is received
+    - When the API finds fuel records or maintenance requests of the owner vehicles within the period
+    - Then the API responds with `201 Created` and returns the generated report (`id`, `ownerId`, `reportType`, `generatedDate`, `filterParams`, `lines`, `totalRecords`, `totalQuantity`, `totalCost`), with one line per vehicle.
+- Scenario: Report without records
+    - Given a request `POST /api/v1/reports` for a period without records is received
+    - When the API finds no records
+    - Then the API responds with `201 Created`, an empty `lines` array and a localized informative `message`.
+- Scenario: Validation error
+    - Given a request `POST /api/v1/reports` with an unsupported `reportType` or `from` after `to` is received
+    - When the API validation fails
+    - Then the API responds with `400 Bad Request` and a localized error message describing the validation failure.
+- Scenario: Referenced resource not found
+    - Given a request `POST /api/v1/reports` with a `ownerId` that does not exist is received
+    - When the API cannot find the referenced resource during persistence confirmation
+    - Then the API responds with `404 Not Found` and a localized error message.
+- Scenario: Unexpected server error
+    - Given a request `POST /api/v1/reports` is received
+    - When an unexpected error occurs during persistence
+    - Then the API responds with `500 Internal Server Error` and a `ProblemDetails` payload.
+---
+### TS052 — List reports by `ownerId`
+As a frontend developer, I want to request the API to list reports, optionally filtered by `{ownerId}`, so that I can implement the report listing feature in my application.
+#### Acceptance criteria:
+- Scenario: Returns one or more reports
+    - Given a request `GET /api/v1/reports?ownerId={ownerId}` is received
+    - When the API finds one or more matching report resources
+    - Then the API responds with `200 OK` and returns a non-empty array of report resources, with each resource including `id`, `ownerId`, `reportType`, `generatedDate`, `filterParams`.
+- Scenario: Returns no reports
+    - Given a request `GET /api/v1/reports?ownerId={ownerId}` is received
+    - When the API finds no matching resources
+    - Then the API responds with `200 OK` and returns an empty array.
+---
+### TS053 — Retrieve a report by id
+As a frontend developer, I want to request a report by its `{id}` so that I can implement the details view in my application.
+#### Acceptance criteria:
+- Scenario: Found
+    - Given a request `GET /api/v1/reports/{id}` is received
+    - When the API finds the resource
+    - Then the API responds with `200 OK` and returns the report resource (`id`, `ownerId`, `reportType`, `generatedDate`, `filterParams`).
+- Scenario: Not found
+    - Given a request `GET /api/v1/reports/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found`.
+---
+### TS054 — Delete a report
+As a frontend developer, I want to delete a report through the API so that I can implement the report removal feature in my application.
+#### Acceptance criteria:
+- Scenario: Successful delete
+    - Given a request `DELETE /api/v1/reports/{id}` is received
+    - When the API finds and removes the resource
+    - Then the API responds with `204 No Content`.
+- Scenario: Not found
+    - Given a request `DELETE /api/v1/reports/{id}` for a non-existent `{id}` is received
+    - When the API does not find the resource
+    - Then the API responds with `404 Not Found` and a localized error message.
+---
+### TS055 — Read the API description in my language
+As a frontend developer, I want the API description document to be served in my preferred language so that I can understand the endpoints and their responses without translating them.
+#### Acceptance criteria:
+- Scenario: Supported language requested
+    - Given a request `GET /openapi/v1.json` with an `Accept-Language` header for a supported culture (`en`, `en-US`, `es`, `es-PE`) is received
+    - When the API builds the description document
+    - Then the API responds with `200 OK` and the operation summaries, descriptions, response descriptions and resource property descriptions are in that language.
+- Scenario: Unsupported or missing language
+    - Given a request `GET /openapi/v1.json` without an `Accept-Language` header, or with an unsupported one, is received
+    - When the API builds the description document
+    - Then the API responds with `200 OK` and the texts are in the default language.
