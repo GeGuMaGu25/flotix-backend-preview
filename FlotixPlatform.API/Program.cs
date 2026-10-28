@@ -18,6 +18,11 @@ using FlotixPlatform.API.IAM.Infrastructure.Hashing.AspNetCore.Services;
 using FlotixPlatform.API.IAM.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using FlotixPlatform.API.IAM.Infrastructure.Pipeline.Middleware.Extensions;
 using FlotixPlatform.API.IAM.Infrastructure.Tokens.DataProtection.Services;
+using FlotixPlatform.API.Incidents.Application.Internal.CommandServices;
+using FlotixPlatform.API.Incidents.Application.Internal.QueryServices;
+using FlotixPlatform.API.Incidents.Application.Services;
+using FlotixPlatform.API.Incidents.Domain.Repositories;
+using FlotixPlatform.API.Incidents.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using FlotixPlatform.API.Maintenance.Application.Internal.CommandServices;
 using FlotixPlatform.API.Maintenance.Application.Internal.QueryServices;
 using FlotixPlatform.API.Maintenance.Application.Services;
@@ -37,6 +42,7 @@ using IAMLocalizedOpenApiAssembler = FlotixPlatform.API.IAM.Interfaces.Rest.Tran
 using FleetLocalizedOpenApiAssembler = FlotixPlatform.API.Fleet.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 using FuelLocalizedOpenApiAssembler = FlotixPlatform.API.Fuel.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 using MaintenanceLocalizedOpenApiAssembler = FlotixPlatform.API.Maintenance.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
+using IncidentsLocalizedOpenApiAssembler = FlotixPlatform.API.Incidents.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -101,6 +107,8 @@ builder.Services.AddOpenApi(options =>
     options.AddSchemaTransformer(FuelLocalizedOpenApiAssembler.TransformSchemaAsync);
     options.AddOperationTransformer(MaintenanceLocalizedOpenApiAssembler.TransformOperationAsync);
     options.AddSchemaTransformer(MaintenanceLocalizedOpenApiAssembler.TransformSchemaAsync);
+    options.AddOperationTransformer(IncidentsLocalizedOpenApiAssembler.TransformOperationAsync);
+    options.AddSchemaTransformer(IncidentsLocalizedOpenApiAssembler.TransformSchemaAsync);
 });
 
 // Real-time communication with SignalR.
@@ -167,6 +175,11 @@ builder.Services.AddScoped<IWorkshopQueryService, WorkshopQueryService>();
 builder.Services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
 builder.Services.AddScoped<IMaintenanceRequestCommandService, MaintenanceRequestCommandService>();
 builder.Services.AddScoped<IMaintenanceRequestQueryService, MaintenanceRequestQueryService>();
+
+// Incident Management Bounded Context Injection Configuration
+builder.Services.AddScoped<IIncidentRepository, IncidentRepository>();
+builder.Services.AddScoped<IIncidentCommandService, IncidentCommandService>();
+builder.Services.AddScoped<IIncidentQueryService, IncidentQueryService>();
 
 // IAM token protection keys (persist the key ring in production, e.g. PersistKeysToFileSystem).
 builder.Services.AddDataProtection();
