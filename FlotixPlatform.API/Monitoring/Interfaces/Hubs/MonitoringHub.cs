@@ -6,6 +6,7 @@ namespace FlotixPlatform.API.Monitoring.Interfaces.Hubs;
 ///     SignalR hub of the Real-Time Monitoring / Fleet Tracking bounded context, mapped at <c>/hubs/monitoring</c>.
 /// </summary>
 /// <remarks>
-///     Clients only listen: events are pushed by the REST controllers after a successful command.
+///     Clients only listen: the IoT Telemetry Processor publishes the location of a vehicle after storing
+///     each telemetry packet.
 /// </remarks>
 public class MonitoringHub : Hub<IMonitoringClient>;

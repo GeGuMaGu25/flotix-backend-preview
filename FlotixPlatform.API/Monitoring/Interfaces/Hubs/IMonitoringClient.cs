@@ -8,9 +8,10 @@ namespace FlotixPlatform.API.Monitoring.Interfaces.Hubs;
 public interface IMonitoringClient
 {
     /// <summary>
-    ///     Receives a telemetry record as soon as it is created; sent to every connected client.
+    ///     Receives the latest location of a vehicle as soon as a telemetry packet is processed; sent to every
+    ///     connected client.
     /// </summary>
-    /// <param name="telemetryData">The created telemetry record.</param>
+    /// <param name="vehicleLocation">The updated location of the vehicle.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task TelemetryDataReceived(TelemetryDataResource telemetryData);
+    Task VehicleLocationUpdated(VehicleLocationResource vehicleLocation);
 }
