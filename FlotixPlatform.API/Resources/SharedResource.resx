@@ -360,12 +360,6 @@
     <data name="FuelRecordReferencedResourceNotFound" xml:space="preserve">
         <value>A vehicle, user or other resource referenced by the fuel record does not exist.</value>
     </data>
-    <data name="CreateMaintenanceRequestSummary" xml:space="preserve">
-        <value>Create a maintenance request</value>
-    </data>
-    <data name="CreateMaintenanceRequestDescription" xml:space="preserve">
-        <value>Registers a new maintenance request.</value>
-    </data>
     <data name="GetAllMaintenanceRequestsSummary" xml:space="preserve">
         <value>Get all maintenance requests</value>
     </data>
@@ -378,23 +372,11 @@
     <data name="GetMaintenanceRequestByIdDescription" xml:space="preserve">
         <value>Retrieves a maintenance request using its identifier.</value>
     </data>
-    <data name="UpdateMaintenanceRequestSummary" xml:space="preserve">
-        <value>Update a maintenance request</value>
-    </data>
-    <data name="UpdateMaintenanceRequestDescription" xml:space="preserve">
-        <value>Updates the data of a maintenance request.</value>
-    </data>
     <data name="DeleteMaintenanceRequestSummary" xml:space="preserve">
         <value>Delete a maintenance request</value>
     </data>
     <data name="DeleteMaintenanceRequestDescription" xml:space="preserve">
         <value>Deletes a maintenance request using its identifier.</value>
-    </data>
-    <data name="CreateMaintenanceRequestSchema" xml:space="preserve">
-        <value>Request payload for creating a maintenance request.</value>
-    </data>
-    <data name="UpdateMaintenanceRequestSchema" xml:space="preserve">
-        <value>Request payload for updating a maintenance request.</value>
     </data>
     <data name="MaintenanceRequestSchema" xml:space="preserve">
         <value>A maintenance request returned by the API.</value>
@@ -426,17 +408,11 @@
     <data name="MaintenanceRequestNotFound" xml:space="preserve">
         <value>The maintenance request was not found.</value>
     </data>
-    <data name="UnexpectedErrorCreatingMaintenanceRequest" xml:space="preserve">
-        <value>An unexpected error occurred while creating the maintenance request.</value>
-    </data>
     <data name="UnexpectedErrorUpdatingMaintenanceRequest" xml:space="preserve">
         <value>An unexpected error occurred while updating the maintenance request.</value>
     </data>
     <data name="UnexpectedErrorDeletingMaintenanceRequest" xml:space="preserve">
         <value>An unexpected error occurred while deleting the maintenance request.</value>
-    </data>
-    <data name="MaintenanceRequestAlreadyClosed" xml:space="preserve">
-        <value>A completed or rejected maintenance request cannot change its status.</value>
     </data>
     <data name="MaintenanceRequestReferencedResourceNotFound" xml:space="preserve">
         <value>A vehicle, user or other resource referenced by the maintenance request does not exist.</value>
@@ -953,5 +929,53 @@
     </data>
     <data name="VehicleLocationRecordedAt" xml:space="preserve">
         <value>The moment the reading was taken by the device.</value>
+    </data>
+    <data name="SubmitMaintenanceRequestSummary" xml:space="preserve">
+        <value>Submit a maintenance request</value>
+    </data>
+    <data name="SubmitMaintenanceRequestDescription" xml:space="preserve">
+        <value>Submits a maintenance request for a vehicle to a mechanic; the request starts in "Pendiente" status.</value>
+    </data>
+    <data name="RegisterDiagnosticAndQuoteSummary" xml:space="preserve">
+        <value>Register the diagnostic and quote</value>
+    </data>
+    <data name="RegisterDiagnosticAndQuoteDescription" xml:space="preserve">
+        <value>The workshop registers the estimated cost of a pending request, which moves to "Presupuestado".</value>
+    </data>
+    <data name="ApproveOrRejectBudgetSummary" xml:space="preserve">
+        <value>Approve or reject the budget</value>
+    </data>
+    <data name="ApproveOrRejectBudgetDescription" xml:space="preserve">
+        <value>The owner approves or rejects a quoted budget; the request moves to "Aprobado" or "Rechazado".</value>
+    </data>
+    <data name="UpdateRepairStatusSummary" xml:space="preserve">
+        <value>Start the repair</value>
+    </data>
+    <data name="UpdateRepairStatusDescription" xml:space="preserve">
+        <value>The workshop registers the start of an approved repair; the request moves to "En reparación".</value>
+    </data>
+    <data name="CompleteMaintenanceSummary" xml:space="preserve">
+        <value>Complete the maintenance</value>
+    </data>
+    <data name="CompleteMaintenanceDescription" xml:space="preserve">
+        <value>The workshop registers the completion of the repair; the request moves to "Completado".</value>
+    </data>
+    <data name="SubmitMaintenanceRequestSchema" xml:space="preserve">
+        <value>Request payload for submitting a maintenance request.</value>
+    </data>
+    <data name="RegisterDiagnosticAndQuoteSchema" xml:space="preserve">
+        <value>Diagnostic and quote registered by the workshop.</value>
+    </data>
+    <data name="ApproveOrRejectBudgetSchema" xml:space="preserve">
+        <value>Decision of the owner about the quoted budget.</value>
+    </data>
+    <data name="MaintenanceRequestIsApproved" xml:space="preserve">
+        <value>True to approve the budget, false to reject it.</value>
+    </data>
+    <data name="InvalidMaintenanceRequestStatusTransition" xml:space="preserve">
+        <value>The maintenance request is not in the status this step requires, or it is already closed.</value>
+    </data>
+    <data name="UnexpectedErrorSubmittingMaintenanceRequest" xml:space="preserve">
+        <value>An unexpected error occurred while submitting the maintenance request.</value>
     </data>
 </root>
