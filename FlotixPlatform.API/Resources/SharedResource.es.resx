@@ -1116,4 +1116,67 @@
     <data name="SkuNotFound" xml:space="preserve">
         <value>El SKU no existe en el catálogo IoT.</value>
     </data>
+    <data name="CreateReportSummary" xml:space="preserve">
+        <value>Crear un reporte</value>
+    </data>
+    <data name="CreateReportDescription" xml:space="preserve">
+        <value>Registra un nuevo reporte.</value>
+    </data>
+    <data name="GetAllReportsSummary" xml:space="preserve">
+        <value>Obtener todos los reportes</value>
+    </data>
+    <data name="GetAllReportsDescription" xml:space="preserve">
+        <value>Obtiene todos los reportes, opcionalmente filtrados por ID del propietario.</value>
+    </data>
+    <data name="GetReportByIdSummary" xml:space="preserve">
+        <value>Obtener un reporte por ID</value>
+    </data>
+    <data name="GetReportByIdDescription" xml:space="preserve">
+        <value>Obtiene un reporte mediante su identificador.</value>
+    </data>
+    <data name="DeleteReportSummary" xml:space="preserve">
+        <value>Eliminar un reporte</value>
+    </data>
+    <data name="DeleteReportDescription" xml:space="preserve">
+        <value>Elimina un reporte mediante su identificador.</value>
+    </data>
+    <data name="CreateReportSchema" xml:space="preserve">
+        <value>Datos de la solicitud para crear un reporte.</value>
+    </data>
+    <data name="ReportSchema" xml:space="preserve">
+        <value>Un reporte devuelto por la API.</value>
+    </data>
+    <data name="ReportId" xml:space="preserve">
+        <value>El identificador del reporte generado por el servidor.</value>
+    </data>
+    <data name="ReportOwnerId" xml:space="preserve">
+        <value>El identificador del usuario propietario.</value>
+    </data>
+    <data name="ReportReportType" xml:space="preserve">
+        <value>El tipo de reporte (p. ej. Reporte de incidencias).</value>
+    </data>
+    <data name="ReportFilterParams" xml:space="preserve">
+        <value>Los filtros aplicados al reporte.</value>
+    </data>
+    <data name="ReportGeneratedAt" xml:space="preserve">
+        <value>El momento en que se generó el reporte.</value>
+    </data>
+    <data name="InvalidReportRequest" xml:space="preserve">
+        <value>La solicitud de reporte contiene valores no válidos.</value>
+    </data>
+    <data name="ReportNotFound" xml:space="preserve">
+        <value>No se encontró el reporte.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingReport" xml:space="preserve">
+        <value>Ocurrió un error inesperado al crear el reporte.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingReport" xml:space="preserve">
+        <value>Ocurrió un error inesperado al actualizar el reporte.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingReport" xml:space="preserve">
+        <value>Ocurrió un error inesperado al eliminar el reporte.</value>
+    </data>
+    <data name="RequiredReportType" xml:space="preserve">
+        <value>El campo tipo de reporte es obligatorio.</value>
+    </data>
 </root>
