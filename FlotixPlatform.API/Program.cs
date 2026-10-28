@@ -1,4 +1,9 @@
 using System.Text.Json.Serialization;
+using FlotixPlatform.API.Fleet.Application.Internal.CommandServices;
+using FlotixPlatform.API.Fleet.Application.Internal.QueryServices;
+using FlotixPlatform.API.Fleet.Application.Services;
+using FlotixPlatform.API.Fleet.Domain.Repositories;
+using FlotixPlatform.API.Fleet.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using FlotixPlatform.API.IAM.Application.Internal.CommandServices;
 using FlotixPlatform.API.IAM.Application.Internal.OutboundServices;
 using FlotixPlatform.API.IAM.Application.Internal.QueryServices;
@@ -19,6 +24,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Scalar.AspNetCore;
 using IAMLocalizedOpenApiAssembler = FlotixPlatform.API.IAM.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
+using FleetLocalizedOpenApiAssembler = FlotixPlatform.API.Fleet.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +83,8 @@ builder.Services.AddOpenApi(options =>
 {
     options.AddOperationTransformer(IAMLocalizedOpenApiAssembler.TransformOperationAsync);
     options.AddSchemaTransformer(IAMLocalizedOpenApiAssembler.TransformSchemaAsync);
+    options.AddOperationTransformer(FleetLocalizedOpenApiAssembler.TransformOperationAsync);
+    options.AddSchemaTransformer(FleetLocalizedOpenApiAssembler.TransformSchemaAsync);
 });
 
 // Real-time communication with SignalR.
@@ -122,6 +130,14 @@ builder.Services.AddScoped<IUserCommandService, UserCommandService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+
+// Vehicle & Fleet Management Bounded Context Injection Configuration
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<IVehicleCommandService, VehicleCommandService>();
+builder.Services.AddScoped<IVehicleQueryService, VehicleQueryService>();
+builder.Services.AddScoped<IFleetPreferencesRepository, FleetPreferencesRepository>();
+builder.Services.AddScoped<IFleetPreferencesCommandService, FleetPreferencesCommandService>();
+builder.Services.AddScoped<IFleetPreferencesQueryService, FleetPreferencesQueryService>();
 
 // IAM token protection keys (persist the key ring in production, e.g. PersistKeysToFileSystem).
 builder.Services.AddDataProtection();
