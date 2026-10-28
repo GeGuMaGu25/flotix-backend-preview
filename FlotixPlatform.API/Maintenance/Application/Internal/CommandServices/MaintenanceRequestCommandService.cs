@@ -13,7 +13,7 @@ namespace FlotixPlatform.API.Maintenance.Application.Internal.CommandServices;
 ///     Application service for handling maintenance request commands.
 /// </summary>
 /// <remarks>
-///     This service acts as the command handler for maintenance requests.
+///     This service acts as the command handler for the lifecycle of maintenance requests.
 ///     It enforces the application rules, delegates the business rules to the aggregate,
 ///     then coordinates with the unit of work to persist changes.
 ///     Logs warnings for rejected commands and errors for persistence failures.
@@ -32,7 +32,7 @@ public class MaintenanceRequestCommandService(
     : IMaintenanceRequestCommandService
 {
     /// <inheritdoc />
-    public async Task<Result<MaintenanceRequest, CreateMaintenanceRequestError>> Handle(CreateMaintenanceRequestCommand command,
+    public async Task<Result<MaintenanceRequest, SubmitMaintenanceRequestError>> Handle(SubmitMaintenanceRequestCommand command,
         CancellationToken cancellationToken = default)
     {
         try
@@ -40,22 +40,22 @@ public class MaintenanceRequestCommandService(
             var maintenanceRequest = new MaintenanceRequest(command);
             await maintenanceRequestRepository.AddAsync(maintenanceRequest, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
-            return new Result<MaintenanceRequest, CreateMaintenanceRequestError>.Success(maintenanceRequest);
+            return new Result<MaintenanceRequest, SubmitMaintenanceRequestError>.Success(maintenanceRequest);
         }
         catch (ArgumentException ex)
         {
-            logger.LogWarning(ex, "Invalid arguments while creating maintenance request");
-            return new Result<MaintenanceRequest, CreateMaintenanceRequestError>.Failure(CreateMaintenanceRequestError.InvalidMaintenanceRequest);
+            logger.LogWarning(ex, "Invalid arguments while submitting maintenance request");
+            return new Result<MaintenanceRequest, SubmitMaintenanceRequestError>.Failure(SubmitMaintenanceRequestError.InvalidMaintenanceRequest);
         }
         catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
         {
-            logger.LogWarning(ex, "Foreign key violation creating maintenance request");
-            return new Result<MaintenanceRequest, CreateMaintenanceRequestError>.Failure(CreateMaintenanceRequestError.ReferencedResourceNotFound);
+            logger.LogWarning(ex, "Foreign key violation submitting maintenance request");
+            return new Result<MaintenanceRequest, SubmitMaintenanceRequestError>.Failure(SubmitMaintenanceRequestError.ReferencedResourceNotFound);
         }
         catch (DbUpdateException ex)
         {
-            logger.LogError(ex, "Database update failed creating maintenance request");
-            return new Result<MaintenanceRequest, CreateMaintenanceRequestError>.Failure(CreateMaintenanceRequestError.UnexpectedError);
+            logger.LogError(ex, "Database update failed submitting maintenance request");
+            return new Result<MaintenanceRequest, SubmitMaintenanceRequestError>.Failure(SubmitMaintenanceRequestError.UnexpectedError);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -63,57 +63,34 @@ public class MaintenanceRequestCommandService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unexpected error creating maintenance request");
-            return new Result<MaintenanceRequest, CreateMaintenanceRequestError>.Failure(CreateMaintenanceRequestError.UnexpectedError);
+            logger.LogError(ex, "Unexpected error submitting maintenance request");
+            return new Result<MaintenanceRequest, SubmitMaintenanceRequestError>.Failure(SubmitMaintenanceRequestError.UnexpectedError);
         }
     }
 
     /// <inheritdoc />
-    public async Task<Result<MaintenanceRequest, UpdateMaintenanceRequestError>> Handle(UpdateMaintenanceRequestCommand command,
-        CancellationToken cancellationToken = default)
-    {
-        var maintenanceRequest = await maintenanceRequestRepository.FindByIdAsync(command.MaintenanceRequestId, cancellationToken);
-        if (maintenanceRequest is null)
-            return new Result<MaintenanceRequest, UpdateMaintenanceRequestError>.Failure(
-                UpdateMaintenanceRequestError.MaintenanceRequestNotFound);
+    public Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>> Handle(RegisterDiagnosticAndQuoteCommand command,
+        CancellationToken cancellationToken = default) =>
+        ChangeStatusAsync(command.MaintenanceRequestId, request => request.SubmitQuote(command.EstimatedCost), cancellationToken);
 
-        try
+    /// <inheritdoc />
+    public Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>> Handle(ApproveOrRejectBudgetCommand command,
+        CancellationToken cancellationToken = default) =>
+        ChangeStatusAsync(command.MaintenanceRequestId, request =>
         {
-            maintenanceRequest.UpdateInformation(command);
-            maintenanceRequestRepository.Update(maintenanceRequest);
-            await unitOfWork.CompleteAsync(cancellationToken);
-            return new Result<MaintenanceRequest, UpdateMaintenanceRequestError>.Success(maintenanceRequest);
-        }
-        catch (InvalidOperationException ex)
-        {
-            logger.LogWarning(ex, "Business rule rejected updating maintenance request");
-            return new Result<MaintenanceRequest, UpdateMaintenanceRequestError>.Failure(UpdateMaintenanceRequestError.MaintenanceRequestAlreadyClosed);
-        }
-        catch (ArgumentException ex)
-        {
-            logger.LogWarning(ex, "Invalid arguments while updating maintenance request");
-            return new Result<MaintenanceRequest, UpdateMaintenanceRequestError>.Failure(UpdateMaintenanceRequestError.InvalidMaintenanceRequest);
-        }
-        catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
-        {
-            logger.LogWarning(ex, "Foreign key violation updating maintenance request");
-            return new Result<MaintenanceRequest, UpdateMaintenanceRequestError>.Failure(UpdateMaintenanceRequestError.ReferencedResourceNotFound);
-        }
-        catch (DbUpdateException ex)
-        {
-            logger.LogError(ex, "Database update failed updating maintenance request");
-            return new Result<MaintenanceRequest, UpdateMaintenanceRequestError>.Failure(UpdateMaintenanceRequestError.UnexpectedError);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Unexpected error updating maintenance request");
-            return new Result<MaintenanceRequest, UpdateMaintenanceRequestError>.Failure(UpdateMaintenanceRequestError.UnexpectedError);
-        }
-    }
+            if (command.IsApproved) request.Approve();
+            else request.Reject();
+        }, cancellationToken);
+
+    /// <inheritdoc />
+    public Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>> Handle(UpdateRepairStatusCommand command,
+        CancellationToken cancellationToken = default) =>
+        ChangeStatusAsync(command.MaintenanceRequestId, request => request.StartRepair(), cancellationToken);
+
+    /// <inheritdoc />
+    public Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>> Handle(CompleteMaintenanceCommand command,
+        CancellationToken cancellationToken = default) =>
+        ChangeStatusAsync(command.MaintenanceRequestId, request => request.Finish(), cancellationToken);
 
     /// <inheritdoc />
     public async Task<Result<MaintenanceRequest, DeleteMaintenanceRequestError>> Handle(DeleteMaintenanceRequestCommand command,
@@ -143,6 +120,60 @@ public class MaintenanceRequestCommandService(
         {
             logger.LogError(ex, "Unexpected error deleting maintenance request");
             return new Result<MaintenanceRequest, DeleteMaintenanceRequestError>.Failure(DeleteMaintenanceRequestError.UnexpectedError);
+        }
+    }
+
+    /// <summary>
+    ///     Applies a lifecycle transition to a maintenance request and persists it.
+    /// </summary>
+    /// <param name="maintenanceRequestId">The identifier of the maintenance request.</param>
+    /// <param name="transition">The aggregate behavior that performs the transition.</param>
+    /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
+    /// <returns>A Result containing the updated MaintenanceRequest on success, or the error reason on failure.</returns>
+    private async Task<Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>> ChangeStatusAsync(
+        Guid maintenanceRequestId,
+        Action<MaintenanceRequest> transition,
+        CancellationToken cancellationToken)
+    {
+        var maintenanceRequest = await maintenanceRequestRepository.FindByIdAsync(maintenanceRequestId, cancellationToken);
+        if (maintenanceRequest is null)
+            return new Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>.Failure(
+                ChangeMaintenanceRequestStatusError.MaintenanceRequestNotFound);
+
+        try
+        {
+            transition(maintenanceRequest);
+            maintenanceRequestRepository.Update(maintenanceRequest);
+            await unitOfWork.CompleteAsync(cancellationToken);
+            return new Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>.Success(maintenanceRequest);
+        }
+        catch (InvalidOperationException ex)
+        {
+            logger.LogWarning(ex, "Invalid status transition for maintenance request {MaintenanceRequestId}", maintenanceRequestId);
+            return new Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>.Failure(
+                ChangeMaintenanceRequestStatusError.InvalidStatusTransition);
+        }
+        catch (ArgumentException ex)
+        {
+            logger.LogWarning(ex, "Invalid arguments while changing maintenance request {MaintenanceRequestId}", maintenanceRequestId);
+            return new Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>.Failure(
+                ChangeMaintenanceRequestStatusError.InvalidMaintenanceRequest);
+        }
+        catch (DbUpdateException ex)
+        {
+            logger.LogError(ex, "Database update failed changing maintenance request {MaintenanceRequestId}", maintenanceRequestId);
+            return new Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>.Failure(
+                ChangeMaintenanceRequestStatusError.UnexpectedError);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unexpected error changing maintenance request {MaintenanceRequestId}", maintenanceRequestId);
+            return new Result<MaintenanceRequest, ChangeMaintenanceRequestStatusError>.Failure(
+                ChangeMaintenanceRequestStatusError.UnexpectedError);
         }
     }
 

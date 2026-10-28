@@ -1,9 +1,9 @@
 namespace FlotixPlatform.API.Maintenance.Application.Errors;
 
 /// <summary>
-/// Represents errors that can occur when creating a maintenance request.
+/// Represents errors that can occur when submitting a maintenance request.
 /// </summary>
-public enum CreateMaintenanceRequestError
+public enum SubmitMaintenanceRequestError
 {
 	/// <summary>
 	/// The provided maintenance request data is invalid.
@@ -11,7 +11,7 @@ public enum CreateMaintenanceRequestError
 	InvalidMaintenanceRequest,
 
 	/// <summary>
-	/// A resource referenced by the command does not exist.
+	/// The vehicle or the mechanic referenced by the request does not exist.
 	/// </summary>
 	ReferencedResourceNotFound,
 

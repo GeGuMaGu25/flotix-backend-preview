@@ -360,12 +360,6 @@
     <data name="FuelRecordReferencedResourceNotFound" xml:space="preserve">
         <value>No existe un vehículo, usuario u otro recurso referenciado por el registro de combustible.</value>
     </data>
-    <data name="CreateMaintenanceRequestSummary" xml:space="preserve">
-        <value>Crear una solicitud de mantenimiento</value>
-    </data>
-    <data name="CreateMaintenanceRequestDescription" xml:space="preserve">
-        <value>Registra una nueva solicitud de mantenimiento.</value>
-    </data>
     <data name="GetAllMaintenanceRequestsSummary" xml:space="preserve">
         <value>Obtener todas las solicitudes de mantenimiento</value>
     </data>
@@ -378,23 +372,11 @@
     <data name="GetMaintenanceRequestByIdDescription" xml:space="preserve">
         <value>Obtiene una solicitud de mantenimiento mediante su identificador.</value>
     </data>
-    <data name="UpdateMaintenanceRequestSummary" xml:space="preserve">
-        <value>Actualizar una solicitud de mantenimiento</value>
-    </data>
-    <data name="UpdateMaintenanceRequestDescription" xml:space="preserve">
-        <value>Actualiza los datos de una solicitud de mantenimiento.</value>
-    </data>
     <data name="DeleteMaintenanceRequestSummary" xml:space="preserve">
         <value>Eliminar una solicitud de mantenimiento</value>
     </data>
     <data name="DeleteMaintenanceRequestDescription" xml:space="preserve">
         <value>Elimina una solicitud de mantenimiento mediante su identificador.</value>
-    </data>
-    <data name="CreateMaintenanceRequestSchema" xml:space="preserve">
-        <value>Datos de la solicitud para crear una solicitud de mantenimiento.</value>
-    </data>
-    <data name="UpdateMaintenanceRequestSchema" xml:space="preserve">
-        <value>Datos de la solicitud para actualizar una solicitud de mantenimiento.</value>
     </data>
     <data name="MaintenanceRequestSchema" xml:space="preserve">
         <value>Una solicitud de mantenimiento devuelta por la API.</value>
@@ -426,17 +408,11 @@
     <data name="MaintenanceRequestNotFound" xml:space="preserve">
         <value>No se encontró la solicitud de mantenimiento.</value>
     </data>
-    <data name="UnexpectedErrorCreatingMaintenanceRequest" xml:space="preserve">
-        <value>Ocurrió un error inesperado al crear la solicitud de mantenimiento.</value>
-    </data>
     <data name="UnexpectedErrorUpdatingMaintenanceRequest" xml:space="preserve">
         <value>Ocurrió un error inesperado al actualizar la solicitud de mantenimiento.</value>
     </data>
     <data name="UnexpectedErrorDeletingMaintenanceRequest" xml:space="preserve">
         <value>Ocurrió un error inesperado al eliminar la solicitud de mantenimiento.</value>
-    </data>
-    <data name="MaintenanceRequestAlreadyClosed" xml:space="preserve">
-        <value>Una solicitud de mantenimiento completada o rechazada no puede cambiar de estado.</value>
     </data>
     <data name="MaintenanceRequestReferencedResourceNotFound" xml:space="preserve">
         <value>No existe un vehículo, usuario u otro recurso referenciado por la solicitud de mantenimiento.</value>
@@ -953,5 +929,53 @@
     </data>
     <data name="VehicleLocationRecordedAt" xml:space="preserve">
         <value>El momento en que el dispositivo tomó la lectura.</value>
+    </data>
+    <data name="SubmitMaintenanceRequestSummary" xml:space="preserve">
+        <value>Enviar una solicitud de mantenimiento</value>
+    </data>
+    <data name="SubmitMaintenanceRequestDescription" xml:space="preserve">
+        <value>Envía una solicitud de mantenimiento de un vehículo a un mecánico; la solicitud inicia en estado "Pendiente".</value>
+    </data>
+    <data name="RegisterDiagnosticAndQuoteSummary" xml:space="preserve">
+        <value>Registrar el diagnóstico y la cotización</value>
+    </data>
+    <data name="RegisterDiagnosticAndQuoteDescription" xml:space="preserve">
+        <value>El taller registra el costo estimado de una solicitud pendiente, que pasa a "Presupuestado".</value>
+    </data>
+    <data name="ApproveOrRejectBudgetSummary" xml:space="preserve">
+        <value>Aprobar o rechazar el presupuesto</value>
+    </data>
+    <data name="ApproveOrRejectBudgetDescription" xml:space="preserve">
+        <value>El dueño aprueba o rechaza un presupuesto; la solicitud pasa a "Aprobado" o "Rechazado".</value>
+    </data>
+    <data name="UpdateRepairStatusSummary" xml:space="preserve">
+        <value>Iniciar la reparación</value>
+    </data>
+    <data name="UpdateRepairStatusDescription" xml:space="preserve">
+        <value>El taller registra el inicio de una reparación aprobada; la solicitud pasa a "En reparación".</value>
+    </data>
+    <data name="CompleteMaintenanceSummary" xml:space="preserve">
+        <value>Completar el mantenimiento</value>
+    </data>
+    <data name="CompleteMaintenanceDescription" xml:space="preserve">
+        <value>El taller registra la finalización de la reparación; la solicitud pasa a "Completado".</value>
+    </data>
+    <data name="SubmitMaintenanceRequestSchema" xml:space="preserve">
+        <value>Datos de la solicitud para enviar una solicitud de mantenimiento.</value>
+    </data>
+    <data name="RegisterDiagnosticAndQuoteSchema" xml:space="preserve">
+        <value>Diagnóstico y cotización registrados por el taller.</value>
+    </data>
+    <data name="ApproveOrRejectBudgetSchema" xml:space="preserve">
+        <value>Decisión del dueño sobre el presupuesto cotizado.</value>
+    </data>
+    <data name="MaintenanceRequestIsApproved" xml:space="preserve">
+        <value>Verdadero para aprobar el presupuesto, falso para rechazarlo.</value>
+    </data>
+    <data name="InvalidMaintenanceRequestStatusTransition" xml:space="preserve">
+        <value>La solicitud de mantenimiento no está en el estado que requiere este paso, o ya está cerrada.</value>
+    </data>
+    <data name="UnexpectedErrorSubmittingMaintenanceRequest" xml:space="preserve">
+        <value>Ocurrió un error inesperado al enviar la solicitud de mantenimiento.</value>
     </data>
 </root>
