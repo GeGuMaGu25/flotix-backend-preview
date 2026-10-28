@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Fleet.Domain.Model.Queries;
 ///     Query to get all vehicles by owner ID
 /// </summary>
 /// <param name="OwnerId">The owner ID to search</param>
-public record GetAllVehiclesByOwnerIdQuery(int OwnerId);
+public record GetAllVehiclesByOwnerIdQuery(Guid OwnerId);

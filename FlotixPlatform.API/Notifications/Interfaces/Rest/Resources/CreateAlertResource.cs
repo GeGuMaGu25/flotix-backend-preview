@@ -8,8 +8,7 @@ namespace FlotixPlatform.API.Notifications.Interfaces.Rest.Resources;
 /// <param name="VehicleId">The identifier of the vehicle.</param>
 /// <param name="AlertType">The type of the alert (e.g. Exceso de velocidad). (required)</param>
 public record CreateAlertResource(
-    [Range(1, int.MaxValue, ErrorMessage = "RangeField")]
-    int VehicleId,
+    Guid VehicleId,
     [Required(ErrorMessage = "RequiredAlertType")]
-    [StringLength(120, ErrorMessage = "StringLengthField")]
+    [StringLength(50, ErrorMessage = "StringLengthField")]
     string AlertType);

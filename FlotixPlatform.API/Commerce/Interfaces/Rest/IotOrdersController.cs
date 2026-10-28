@@ -42,6 +42,7 @@ public class IotOrdersController(
     [HttpPost]
     [ProducesResponseType(typeof(IotOrderResource), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> CreateIotOrder([FromBody] CreateIotOrderResource resource,
         CancellationToken cancellationToken)
@@ -82,7 +83,7 @@ public class IotOrdersController(
     /// </returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<IotOrderResource>), StatusCodes.Status200OK)]
-    public async Task<ActionResult> GetAllIotOrders([FromQuery] int? ownerId = null,
+    public async Task<ActionResult> GetAllIotOrders([FromQuery] Guid? ownerId = null,
         CancellationToken cancellationToken = default)
     {
         var iotOrders = ownerId is not null
@@ -100,10 +101,10 @@ public class IotOrdersController(
     /// <returns>
     ///     A response as an action result containing the IoT order, or not found if the IoT order was not found.
     /// </returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(IotOrderResource), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetIotOrderById(int id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> GetIotOrderById(Guid id, CancellationToken cancellationToken = default)
     {
         var getIotOrderByIdQuery = new GetIotOrderByIdQuery(id);
         var result = await iotOrderQueryService.Handle(getIotOrderByIdQuery, cancellationToken);
@@ -122,13 +123,13 @@ public class IotOrdersController(
     ///     A response as an action result containing the updated IoT order, or an error response if the IoT order was
     ///     not updated.
     /// </returns>
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(IotOrderResource), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> UpdateIotOrder(int id, [FromBody] UpdateIotOrderResource resource,
+    public async Task<ActionResult> UpdateIotOrder(Guid id, [FromBody] UpdateIotOrderResource resource,
         CancellationToken cancellationToken)
     {
         try

@@ -17,7 +17,7 @@ public class FuelRecordRepository(AppDbContext context)
     : BaseRepository<FuelRecord>(context), IFuelRecordRepository
 {
     /// <inheritdoc />
-    public async Task<IEnumerable<FuelRecord>> FindByVehicleIdAsync(int vehicleId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<FuelRecord>> FindByVehicleIdAsync(Guid vehicleId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<FuelRecord>()
             .Where(f => f.VehicleId == vehicleId)
@@ -25,7 +25,7 @@ public class FuelRecordRepository(AppDbContext context)
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<FuelRecord>> FindByDriverIdAsync(int driverId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<FuelRecord>> FindByDriverIdAsync(Guid driverId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<FuelRecord>()
             .Where(f => f.DriverId == driverId)

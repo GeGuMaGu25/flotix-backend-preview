@@ -16,9 +16,14 @@ public enum UpdateVehicleError
 	InvalidVehicle,
 
 	/// <summary>
-	/// A vehicle with the same plate already exists.
+	/// A vehicle with the same license plate already exists.
 	/// </summary>
-	DuplicateVehiclePlate,
+	DuplicateVehicleLicensePlate,
+
+	/// <summary>
+	/// A resource referenced by the command does not exist.
+	/// </summary>
+	ReferencedResourceNotFound,
 
 	/// <summary>
 	/// The mileage of a vehicle cannot decrease.

@@ -36,8 +36,10 @@ public static class ActionResultFromCreateVehicleResultAssembler
                 {
                     CreateVehicleError.InvalidVehicle =>
                         controller.BadRequest(localizer["InvalidVehicleRequest"].Value),
-                    CreateVehicleError.DuplicateVehiclePlate =>
-                        controller.Conflict(localizer["DuplicateVehiclePlate"].Value),
+                    CreateVehicleError.DuplicateVehicleLicensePlate =>
+                        controller.Conflict(localizer["DuplicateVehicleLicensePlate"].Value),
+                    CreateVehicleError.ReferencedResourceNotFound =>
+                        controller.NotFound(localizer["VehicleReferencedResourceNotFound"].Value),
                     CreateVehicleError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,

@@ -36,6 +36,8 @@ public static class ActionResultFromCreateReportResultAssembler
                 {
                     CreateReportError.InvalidReport =>
                         controller.BadRequest(localizer["InvalidReportRequest"].Value),
+                    CreateReportError.ReferencedResourceNotFound =>
+                        controller.NotFound(localizer["ReportReferencedResourceNotFound"].Value),
                     CreateReportError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,

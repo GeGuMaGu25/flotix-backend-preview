@@ -27,36 +27,37 @@ public partial class FuelRecord
     public FuelRecord(CreateFuelRecordCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ArgumentOutOfRangeException.ThrowIfLessThan(command.VehicleId, 1);
-        ArgumentOutOfRangeException.ThrowIfLessThan(command.DriverId, 1);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.VehicleId, Guid.Empty);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.DriverId, Guid.Empty);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(command.Liters);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(command.Liters, 10000m);
-        ArgumentOutOfRangeException.ThrowIfNegative(command.TotalCost);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.TotalCost, 1000000m);
-        ArgumentOutOfRangeException.ThrowIfNegative(command.MileageAtRefuel);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(command.Cost);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.Cost, 1000000m);
+        ArgumentOutOfRangeException.ThrowIfNegative(command.MileageAtRefill);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.MileageAtRefill, 10000000m);
 
         VehicleId = command.VehicleId;
         DriverId = command.DriverId;
         Liters = command.Liters;
-        TotalCost = command.TotalCost;
-        MileageAtRefuel = command.MileageAtRefuel;
-        Date = command.Date;
+        Cost = command.Cost;
+        MileageAtRefill = command.MileageAtRefill;
+        RecordedDate = command.RecordedDate;
     }
 
     /// <summary>
     ///     Gets the server-generated identifier for this fuel record.
     /// </summary>
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     /// <summary>
     ///     Gets the identifier of the vehicle.
     /// </summary>
-    public int VehicleId { get; private set; }
+    public Guid VehicleId { get; private set; }
 
     /// <summary>
     ///     Gets the identifier of the driver user.
     /// </summary>
-    public int DriverId { get; private set; }
+    public Guid DriverId { get; private set; }
 
     /// <summary>
     ///     Gets the refueled amount in liters.
@@ -66,17 +67,17 @@ public partial class FuelRecord
     /// <summary>
     ///     Gets the total cost of the refuel.
     /// </summary>
-    public decimal TotalCost { get; private set; }
+    public decimal Cost { get; private set; }
 
     /// <summary>
     ///     Gets the vehicle mileage when refueling.
     /// </summary>
-    public int MileageAtRefuel { get; private set; }
+    public decimal MileageAtRefill { get; private set; }
 
     /// <summary>
-    ///     Gets the date of the refuel.
+    ///     Gets the date and time of the refuel.
     /// </summary>
-    public DateOnly Date { get; private set; }
+    public DateTimeOffset RecordedDate { get; private set; }
 
     /// <summary>
     ///     Updates the fuel record information from an update command.
@@ -88,13 +89,14 @@ public partial class FuelRecord
         ArgumentNullException.ThrowIfNull(command);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(command.Liters);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(command.Liters, 10000m);
-        ArgumentOutOfRangeException.ThrowIfNegative(command.TotalCost);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.TotalCost, 1000000m);
-        ArgumentOutOfRangeException.ThrowIfNegative(command.MileageAtRefuel);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(command.Cost);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.Cost, 1000000m);
+        ArgumentOutOfRangeException.ThrowIfNegative(command.MileageAtRefill);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.MileageAtRefill, 10000000m);
 
         Liters = command.Liters;
-        TotalCost = command.TotalCost;
-        MileageAtRefuel = command.MileageAtRefuel;
-        Date = command.Date;
+        Cost = command.Cost;
+        MileageAtRefill = command.MileageAtRefill;
+        RecordedDate = command.RecordedDate;
     }
 }

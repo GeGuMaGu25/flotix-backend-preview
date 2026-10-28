@@ -24,6 +24,7 @@ public static class LocalizedOpenApiAssembler
                 {
                     ["201"] = "Response201",
                     ["400"] = "Response400",
+                    ["404"] = "Response404",
                     ["409"] = "Response409",
                     ["500"] = "Response500"
                 }),
@@ -50,6 +51,7 @@ public static class LocalizedOpenApiAssembler
                     ["200"] = "Response200",
                     ["400"] = "Response400",
                     ["404"] = "Response404",
+                    ["409"] = "Response409",
                     ["500"] = "Response500"
                 }),
             ["DeleteIotDevice"] = (
@@ -59,27 +61,29 @@ public static class LocalizedOpenApiAssembler
                 {
                     ["204"] = "Response204",
                     ["404"] = "Response404",
+                    ["409"] = "Response409",
                     ["500"] = "Response500"
                 }),
-            ["CreateTelemetryRecord"] = (
-                "CreateTelemetryRecordSummary",
-                "CreateTelemetryRecordDescription",
+            ["CreateTelemetryData"] = (
+                "CreateTelemetryDataSummary",
+                "CreateTelemetryDataDescription",
                 new Dictionary<string, string>
                 {
                     ["201"] = "Response201",
                     ["400"] = "Response400",
+                    ["404"] = "Response404",
                     ["500"] = "Response500"
                 }),
-            ["GetAllTelemetryRecords"] = (
-                "GetAllTelemetryRecordsSummary",
-                "GetAllTelemetryRecordsDescription",
+            ["GetAllTelemetryData"] = (
+                "GetAllTelemetryDataSummary",
+                "GetAllTelemetryDataDescription",
                 new Dictionary<string, string>
                 {
                     ["200"] = "Response200"
                 }),
-            ["GetTelemetryRecordById"] = (
-                "GetTelemetryRecordByIdSummary",
-                "GetTelemetryRecordByIdDescription",
+            ["GetTelemetryDataById"] = (
+                "GetTelemetryDataByIdSummary",
+                "GetTelemetryDataByIdDescription",
                 new Dictionary<string, string>
                 {
                     ["200"] = "Response200",
@@ -92,8 +96,8 @@ public static class LocalizedOpenApiAssembler
             [typeof(CreateIotDeviceResource)] = ("CreateIotDeviceSchema", "IotDevice"),
             [typeof(UpdateIotDeviceResource)] = ("UpdateIotDeviceSchema", "IotDevice"),
             [typeof(IotDeviceResource)] = ("IotDeviceSchema", "IotDevice"),
-            [typeof(CreateTelemetryRecordResource)] = ("CreateTelemetryRecordSchema", "TelemetryRecord"),
-            [typeof(TelemetryRecordResource)] = ("TelemetryRecordSchema", "TelemetryRecord")
+            [typeof(CreateTelemetryDataResource)] = ("CreateTelemetryDataSchema", "TelemetryData"),
+            [typeof(TelemetryDataResource)] = ("TelemetryDataSchema", "TelemetryData")
     };
 
     /// <summary>

@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Notifications.Domain.Model.Queries;
 ///     Query to get all notifications by user ID
 /// </summary>
 /// <param name="UserId">The user ID to search</param>
-public record GetAllNotificationsByUserIdQuery(int UserId);
+public record GetAllNotificationsByUserIdQuery(Guid UserId);

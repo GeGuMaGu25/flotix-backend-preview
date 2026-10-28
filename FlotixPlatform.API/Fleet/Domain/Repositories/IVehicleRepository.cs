@@ -17,7 +17,7 @@ public interface IVehicleRepository : IBaseRepository<Vehicle>
     /// <returns>
     ///     An Enumerable containing the vehicle objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<Vehicle>> FindByOwnerIdAsync(int ownerId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Vehicle>> FindByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Find vehicles by driver ID
@@ -27,25 +27,25 @@ public interface IVehicleRepository : IBaseRepository<Vehicle>
     /// <returns>
     ///     An Enumerable containing the vehicle objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<Vehicle>> FindByDriverIdAsync(int driverId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Vehicle>> FindByDriverIdAsync(Guid driverId, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Check whether a vehicle with the given plate exists
+    ///     Check whether a vehicle with the given license plate exists
     /// </summary>
-    /// <param name="plate">The plate to search.</param>
+    /// <param name="licensePlate">The license plate to search.</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
-    ///     True if a vehicle with the plate exists, false otherwise.
+    ///     True if a vehicle with the license plate exists, false otherwise.
     /// </returns>
-    Task<bool> ExistsByPlateAsync(LicensePlate plate, CancellationToken cancellationToken = default);
+    Task<bool> ExistsByLicensePlateAsync(LicensePlate licensePlate, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Find a vehicle by plate
+    ///     Find a vehicle by license plate
     /// </summary>
-    /// <param name="plate">The plate to search.</param>
+    /// <param name="licensePlate">The license plate to search.</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
     ///     The vehicle object if found, or null otherwise.
     /// </returns>
-    Task<Vehicle?> FindByPlateAsync(LicensePlate plate, CancellationToken cancellationToken = default);
+    Task<Vehicle?> FindByLicensePlateAsync(LicensePlate licensePlate, CancellationToken cancellationToken = default);
 }

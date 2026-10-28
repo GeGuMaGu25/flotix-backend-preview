@@ -8,11 +8,11 @@ namespace FlotixPlatform.API.Notifications.Interfaces.Rest.Resources;
 /// <param name="AlertId">The identifier of the related alert, if any.</param>
 /// <param name="Message">The message of the notification.</param>
 /// <param name="IsRead">Whether the notification has been read.</param>
-/// <param name="SentAt">The moment the notification was sent.</param>
+/// <param name="SentDate">The moment the notification was sent.</param>
 public record NotificationResource(
-    int Id,
-    int UserId,
-    int? AlertId,
+    Guid Id,
+    Guid UserId,
+    Guid? AlertId,
     string Message,
     bool IsRead,
-    DateTimeOffset SentAt);
+    DateTimeOffset SentDate);

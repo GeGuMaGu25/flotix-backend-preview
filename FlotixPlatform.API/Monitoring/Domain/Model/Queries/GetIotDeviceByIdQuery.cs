@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Monitoring.Domain.Model.Queries;
 ///     Query to get an IoT device by ID
 /// </summary>
 /// <param name="Id">The IoT device ID to search</param>
-public record GetIotDeviceByIdQuery(int Id);
+public record GetIotDeviceByIdQuery(Guid Id);

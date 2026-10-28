@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Fuel.Domain.Model.Queries;
 ///     Query to get a fuel record by ID
 /// </summary>
 /// <param name="Id">The fuel record ID to search</param>
-public record GetFuelRecordByIdQuery(int Id);
+public record GetFuelRecordByIdQuery(Guid Id);

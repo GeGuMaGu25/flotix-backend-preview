@@ -1,5 +1,4 @@
 using FlotixPlatform.API.Commerce.Domain.Model.Commands;
-using FlotixPlatform.API.Commerce.Domain.Model.ValueObjects;
 using FlotixPlatform.API.Commerce.Interfaces.Rest.Resources;
 
 namespace FlotixPlatform.API.Commerce.Interfaces.Rest.Transform;
@@ -18,5 +17,5 @@ public static class CreateIotOrderCommandFromResourceAssembler
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
     public static CreateIotOrderCommand ToCommandFromResource(CreateIotOrderResource resource) =>
-        new(resource.OwnerId, new Sku(resource.Sku), resource.DeviceQuantity);
+        new(resource.OwnerId, resource.Quantity, resource.TotalAmount);
 }

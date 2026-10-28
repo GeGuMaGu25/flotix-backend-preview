@@ -36,6 +36,8 @@ public static class ActionResultFromCreateAlertResultAssembler
                 {
                     CreateAlertError.InvalidAlert =>
                         controller.BadRequest(localizer["InvalidAlertRequest"].Value),
+                    CreateAlertError.ReferencedResourceNotFound =>
+                        controller.NotFound(localizer["AlertReferencedResourceNotFound"].Value),
                     CreateAlertError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,

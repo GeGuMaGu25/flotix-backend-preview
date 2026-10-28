@@ -17,50 +17,6 @@ public static class LocalizedOpenApiAssembler
         IReadOnlyDictionary<string, string> Responses)> OperationResources =
         new Dictionary<string, (string, string, IReadOnlyDictionary<string, string>)>
         {
-            ["CreateIotCatalogItem"] = (
-                "CreateIotCatalogItemSummary",
-                "CreateIotCatalogItemDescription",
-                new Dictionary<string, string>
-                {
-                    ["201"] = "Response201",
-                    ["400"] = "Response400",
-                    ["409"] = "Response409",
-                    ["500"] = "Response500"
-                }),
-            ["GetAllIotCatalogItems"] = (
-                "GetAllIotCatalogItemsSummary",
-                "GetAllIotCatalogItemsDescription",
-                new Dictionary<string, string>
-                {
-                    ["200"] = "Response200"
-                }),
-            ["GetIotCatalogItemById"] = (
-                "GetIotCatalogItemByIdSummary",
-                "GetIotCatalogItemByIdDescription",
-                new Dictionary<string, string>
-                {
-                    ["200"] = "Response200",
-                    ["404"] = "Response404"
-                }),
-            ["UpdateIotCatalogItem"] = (
-                "UpdateIotCatalogItemSummary",
-                "UpdateIotCatalogItemDescription",
-                new Dictionary<string, string>
-                {
-                    ["200"] = "Response200",
-                    ["400"] = "Response400",
-                    ["404"] = "Response404",
-                    ["500"] = "Response500"
-                }),
-            ["DeleteIotCatalogItem"] = (
-                "DeleteIotCatalogItemSummary",
-                "DeleteIotCatalogItemDescription",
-                new Dictionary<string, string>
-                {
-                    ["204"] = "Response204",
-                    ["404"] = "Response404",
-                    ["500"] = "Response500"
-                }),
             ["CreateIotOrder"] = (
                 "CreateIotOrderSummary",
                 "CreateIotOrderDescription",
@@ -68,6 +24,7 @@ public static class LocalizedOpenApiAssembler
                 {
                     ["201"] = "Response201",
                     ["400"] = "Response400",
+                    ["404"] = "Response404",
                     ["500"] = "Response500"
                 }),
             ["GetAllIotOrders"] = (
@@ -100,9 +57,6 @@ public static class LocalizedOpenApiAssembler
 
     private static readonly Dictionary<Type, (string Schema, string Owner)> SchemaResources = new()
     {
-            [typeof(CreateIotCatalogItemResource)] = ("CreateIotCatalogItemSchema", "IotCatalogItem"),
-            [typeof(UpdateIotCatalogItemResource)] = ("UpdateIotCatalogItemSchema", "IotCatalogItem"),
-            [typeof(IotCatalogItemResource)] = ("IotCatalogItemSchema", "IotCatalogItem"),
             [typeof(CreateIotOrderResource)] = ("CreateIotOrderSchema", "IotOrder"),
             [typeof(UpdateIotOrderResource)] = ("UpdateIotOrderSchema", "IotOrder"),
             [typeof(IotOrderResource)] = ("IotOrderSchema", "IotOrder")

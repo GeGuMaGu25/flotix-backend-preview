@@ -7,12 +7,12 @@ namespace FlotixPlatform.API.IAM.Domain.Model.ValueObjects;
 /// </summary>
 public sealed partial record EmailAddress
 {
-    private const int MaxLength = 254;
+    private const int MaxLength = 150;
 
     /// <summary>
     ///     Initializes a new <see cref="EmailAddress"/> with the given raw string value.
     /// </summary>
-    /// <param name="value">The raw email address. Must be non-null, non-whitespace, at most 254 characters and match the expected format.</param>
+    /// <param name="value">The raw email address. Must be non-null, non-whitespace, at most 150 characters and match the expected format.</param>
     /// <exception cref="ArgumentException">Thrown when <paramref name="value"/> is null, whitespace, too long or malformed.</exception>
     public EmailAddress(string value)
     {

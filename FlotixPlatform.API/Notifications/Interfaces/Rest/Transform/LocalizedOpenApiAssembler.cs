@@ -24,6 +24,7 @@ public static class LocalizedOpenApiAssembler
                 {
                     ["201"] = "Response201",
                     ["400"] = "Response400",
+                    ["404"] = "Response404",
                     ["500"] = "Response500"
                 }),
             ["GetAllAlerts"] = (
@@ -48,6 +49,7 @@ public static class LocalizedOpenApiAssembler
                 {
                     ["201"] = "Response201",
                     ["400"] = "Response400",
+                    ["404"] = "Response404",
                     ["500"] = "Response500"
                 }),
             ["GetAllNotifications"] = (
@@ -83,50 +85,6 @@ public static class LocalizedOpenApiAssembler
                     ["204"] = "Response204",
                     ["404"] = "Response404",
                     ["500"] = "Response500"
-                }),
-            ["CreateNotificationPreference"] = (
-                "CreateNotificationPreferenceSummary",
-                "CreateNotificationPreferenceDescription",
-                new Dictionary<string, string>
-                {
-                    ["201"] = "Response201",
-                    ["400"] = "Response400",
-                    ["409"] = "Response409",
-                    ["500"] = "Response500"
-                }),
-            ["GetAllNotificationPreferences"] = (
-                "GetAllNotificationPreferencesSummary",
-                "GetAllNotificationPreferencesDescription",
-                new Dictionary<string, string>
-                {
-                    ["200"] = "Response200"
-                }),
-            ["GetNotificationPreferenceById"] = (
-                "GetNotificationPreferenceByIdSummary",
-                "GetNotificationPreferenceByIdDescription",
-                new Dictionary<string, string>
-                {
-                    ["200"] = "Response200",
-                    ["404"] = "Response404"
-                }),
-            ["UpdateNotificationPreference"] = (
-                "UpdateNotificationPreferenceSummary",
-                "UpdateNotificationPreferenceDescription",
-                new Dictionary<string, string>
-                {
-                    ["200"] = "Response200",
-                    ["400"] = "Response400",
-                    ["404"] = "Response404",
-                    ["500"] = "Response500"
-                }),
-            ["DeleteNotificationPreference"] = (
-                "DeleteNotificationPreferenceSummary",
-                "DeleteNotificationPreferenceDescription",
-                new Dictionary<string, string>
-                {
-                    ["204"] = "Response204",
-                    ["404"] = "Response404",
-                    ["500"] = "Response500"
                 })
         };
 
@@ -136,10 +94,7 @@ public static class LocalizedOpenApiAssembler
             [typeof(AlertResource)] = ("AlertSchema", "Alert"),
             [typeof(CreateNotificationResource)] = ("CreateNotificationSchema", "Notification"),
             [typeof(UpdateNotificationResource)] = ("UpdateNotificationSchema", "Notification"),
-            [typeof(NotificationResource)] = ("NotificationSchema", "Notification"),
-            [typeof(CreateNotificationPreferenceResource)] = ("CreateNotificationPreferenceSchema", "NotificationPreference"),
-            [typeof(UpdateNotificationPreferenceResource)] = ("UpdateNotificationPreferenceSchema", "NotificationPreference"),
-            [typeof(NotificationPreferenceResource)] = ("NotificationPreferenceSchema", "NotificationPreference")
+            [typeof(NotificationResource)] = ("NotificationSchema", "Notification")
     };
 
     /// <summary>

@@ -17,6 +17,6 @@ public static class UpdateMaintenanceRequestCommandFromResourceAssembler
     ///     An UpdateMaintenanceRequestCommand assembled from the UpdateMaintenanceRequestResource
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
-    public static UpdateMaintenanceRequestCommand ToCommandFromResource(int maintenanceRequestId, UpdateMaintenanceRequestResource resource) =>
-        new(maintenanceRequestId, resource.MechanicId, resource.FaultDescription, resource.EstimatedCost, resource.Status);
+    public static UpdateMaintenanceRequestCommand ToCommandFromResource(Guid maintenanceRequestId, UpdateMaintenanceRequestResource resource) =>
+        new(maintenanceRequestId, resource.MechanicId, resource.Description, resource.EstimatedCost, resource.Status);
 }

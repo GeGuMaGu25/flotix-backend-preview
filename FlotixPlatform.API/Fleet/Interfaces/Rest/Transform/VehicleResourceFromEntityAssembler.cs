@@ -16,5 +16,5 @@ public static class VehicleResourceFromEntityAssembler
     ///     A VehicleResource assembled from the Vehicle
     /// </returns>
     public static VehicleResource ToResourceFromEntity(Vehicle entity) =>
-        new(entity.Id, entity.OwnerId, entity.DriverId, entity.Plate.Value, entity.VehicleType, entity.CurrentMileage, entity.Status);
+        new(entity.Id, entity.OwnerId, entity.DriverId, entity.LicensePlate.Value, entity.VehicleType, entity.CurrentMileage, entity.Status);
 }

@@ -13,7 +13,7 @@ public class BaseRepository<TEntity>(AppDbContext context) : IBaseRepository<TEn
         await Context.Set<TEntity>().AddAsync(entity, cancellationToken);
     }
 
-    public async Task<TEntity?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<TEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await Context.Set<TEntity>().FindAsync([id], cancellationToken);
     }

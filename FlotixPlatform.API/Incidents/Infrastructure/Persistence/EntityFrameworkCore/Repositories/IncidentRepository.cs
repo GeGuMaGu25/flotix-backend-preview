@@ -17,7 +17,7 @@ public class IncidentRepository(AppDbContext context)
     : BaseRepository<Incident>(context), IIncidentRepository
 {
     /// <inheritdoc />
-    public async Task<IEnumerable<Incident>> FindByVehicleIdAsync(int vehicleId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Incident>> FindByVehicleIdAsync(Guid vehicleId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<Incident>()
             .Where(i => i.VehicleId == vehicleId)
@@ -25,7 +25,7 @@ public class IncidentRepository(AppDbContext context)
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<Incident>> FindByDriverIdAsync(int driverId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Incident>> FindByDriverIdAsync(Guid driverId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<Incident>()
             .Where(i => i.DriverId == driverId)

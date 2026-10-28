@@ -36,8 +36,8 @@ public static class ActionResultFromCreateIotOrderResultAssembler
                 {
                     CreateIotOrderError.InvalidIotOrder =>
                         controller.BadRequest(localizer["InvalidIotOrderRequest"].Value),
-                    CreateIotOrderError.SkuNotFound =>
-                        controller.BadRequest(localizer["SkuNotFound"].Value),
+                    CreateIotOrderError.ReferencedResourceNotFound =>
+                        controller.NotFound(localizer["IotOrderReferencedResourceNotFound"].Value),
                     CreateIotOrderError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,

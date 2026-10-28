@@ -47,6 +47,11 @@ public class MaintenanceRequestCommandService(
             logger.LogWarning(ex, "Invalid arguments while creating maintenance request");
             return new Result<MaintenanceRequest, CreateMaintenanceRequestError>.Failure(CreateMaintenanceRequestError.InvalidMaintenanceRequest);
         }
+        catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
+        {
+            logger.LogWarning(ex, "Foreign key violation creating maintenance request");
+            return new Result<MaintenanceRequest, CreateMaintenanceRequestError>.Failure(CreateMaintenanceRequestError.ReferencedResourceNotFound);
+        }
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, "Database update failed creating maintenance request");
@@ -88,6 +93,11 @@ public class MaintenanceRequestCommandService(
         {
             logger.LogWarning(ex, "Invalid arguments while updating maintenance request");
             return new Result<MaintenanceRequest, UpdateMaintenanceRequestError>.Failure(UpdateMaintenanceRequestError.InvalidMaintenanceRequest);
+        }
+        catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
+        {
+            logger.LogWarning(ex, "Foreign key violation updating maintenance request");
+            return new Result<MaintenanceRequest, UpdateMaintenanceRequestError>.Failure(UpdateMaintenanceRequestError.ReferencedResourceNotFound);
         }
         catch (DbUpdateException ex)
         {
@@ -134,5 +144,22 @@ public class MaintenanceRequestCommandService(
             logger.LogError(ex, "Unexpected error deleting maintenance request");
             return new Result<MaintenanceRequest, DeleteMaintenanceRequestError>.Failure(DeleteMaintenanceRequestError.UnexpectedError);
         }
+    }
+
+    /// <summary>
+    /// Determines whether a DbUpdateException represents a foreign key constraint violation.
+    /// </summary>
+    /// <param name="exception">The exception to inspect.</param>
+    /// <returns>True if the exception is due to a PostgreSQL foreign key violation (SQLSTATE 23503), false otherwise.</returns>
+    private static bool IsForeignKeyViolation(DbUpdateException exception)
+    {
+        for (Exception? current = exception; current is not null; current = current.InnerException)
+        {
+            if (!string.Equals(current.GetType().Name, "PostgresException", StringComparison.Ordinal)) continue;
+            var sqlStateProperty = current.GetType().GetProperty("SqlState");
+            if (sqlStateProperty?.GetValue(current) is "23503")
+                return true;
+        }
+        return false;
     }
 }

@@ -47,6 +47,11 @@ public class FuelRecordCommandService(
             logger.LogWarning(ex, "Invalid arguments while creating fuel record");
             return new Result<FuelRecord, CreateFuelRecordError>.Failure(CreateFuelRecordError.InvalidFuelRecord);
         }
+        catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
+        {
+            logger.LogWarning(ex, "Foreign key violation creating fuel record");
+            return new Result<FuelRecord, CreateFuelRecordError>.Failure(CreateFuelRecordError.ReferencedResourceNotFound);
+        }
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, "Database update failed creating fuel record");
@@ -129,5 +134,22 @@ public class FuelRecordCommandService(
             logger.LogError(ex, "Unexpected error deleting fuel record");
             return new Result<FuelRecord, DeleteFuelRecordError>.Failure(DeleteFuelRecordError.UnexpectedError);
         }
+    }
+
+    /// <summary>
+    /// Determines whether a DbUpdateException represents a foreign key constraint violation.
+    /// </summary>
+    /// <param name="exception">The exception to inspect.</param>
+    /// <returns>True if the exception is due to a PostgreSQL foreign key violation (SQLSTATE 23503), false otherwise.</returns>
+    private static bool IsForeignKeyViolation(DbUpdateException exception)
+    {
+        for (Exception? current = exception; current is not null; current = current.InnerException)
+        {
+            if (!string.Equals(current.GetType().Name, "PostgresException", StringComparison.Ordinal)) continue;
+            var sqlStateProperty = current.GetType().GetProperty("SqlState");
+            if (sqlStateProperty?.GetValue(current) is "23503")
+                return true;
+        }
+        return false;
     }
 }

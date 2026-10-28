@@ -17,7 +17,17 @@ public interface IIotDeviceRepository : IBaseRepository<IotDevice>
     /// <returns>
     ///     An Enumerable containing the IoT device objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<IotDevice>> FindByVehicleIdAsync(int vehicleId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<IotDevice>> FindByVehicleIdAsync(Guid vehicleId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Check whether an IoT device with the given vehicle ID exists
+    /// </summary>
+    /// <param name="vehicleId">The vehicle ID to search.</param>
+    /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
+    /// <returns>
+    ///     True if an IoT device with the vehicle ID exists, false otherwise.
+    /// </returns>
+    Task<bool> ExistsByVehicleIdAsync(Guid vehicleId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Check whether an IoT device with the given serial number exists

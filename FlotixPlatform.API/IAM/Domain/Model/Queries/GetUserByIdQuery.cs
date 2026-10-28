@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.IAM.Domain.Model.Queries;
 ///     Query to get a user by ID
 /// </summary>
 /// <param name="Id">The user ID to search</param>
-public record GetUserByIdQuery(int Id);
+public record GetUserByIdQuery(Guid Id);

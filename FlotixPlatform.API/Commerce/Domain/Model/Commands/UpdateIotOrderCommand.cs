@@ -7,4 +7,4 @@ namespace FlotixPlatform.API.Commerce.Domain.Model.Commands;
 /// </summary>
 /// <param name="IotOrderId">The identifier of the IoT order to update</param>
 /// <param name="Status">The current status of the IoT order.</param>
-public record UpdateIotOrderCommand(int IotOrderId, OrderStatus Status);
+public record UpdateIotOrderCommand(Guid IotOrderId, OrderStatus Status);

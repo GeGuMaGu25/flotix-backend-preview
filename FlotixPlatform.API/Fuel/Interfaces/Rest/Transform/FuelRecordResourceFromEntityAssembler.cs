@@ -16,5 +16,5 @@ public static class FuelRecordResourceFromEntityAssembler
     ///     A FuelRecordResource assembled from the FuelRecord
     /// </returns>
     public static FuelRecordResource ToResourceFromEntity(FuelRecord entity) =>
-        new(entity.Id, entity.VehicleId, entity.DriverId, entity.Liters, entity.TotalCost, entity.MileageAtRefuel, entity.Date);
+        new(entity.Id, entity.VehicleId, entity.DriverId, entity.Liters, entity.Cost, entity.MileageAtRefill, entity.RecordedDate);
 }

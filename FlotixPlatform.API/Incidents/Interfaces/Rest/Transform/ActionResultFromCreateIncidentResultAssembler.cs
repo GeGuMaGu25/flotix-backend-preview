@@ -36,6 +36,8 @@ public static class ActionResultFromCreateIncidentResultAssembler
                 {
                     CreateIncidentError.InvalidIncident =>
                         controller.BadRequest(localizer["InvalidIncidentRequest"].Value),
+                    CreateIncidentError.ReferencedResourceNotFound =>
+                        controller.NotFound(localizer["IncidentReferencedResourceNotFound"].Value),
                     CreateIncidentError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,

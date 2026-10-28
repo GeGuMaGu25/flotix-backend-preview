@@ -20,7 +20,7 @@ public interface IBaseRepository<TEntity>
     /// <param name="id">The identifier of the entity to find.</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>A task containing the entity if found, or null otherwise.</returns>
-    Task<TEntity?> FindByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<TEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Marks an entity for update.

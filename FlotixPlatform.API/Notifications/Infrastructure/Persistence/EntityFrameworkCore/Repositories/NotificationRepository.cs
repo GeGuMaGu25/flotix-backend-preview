@@ -17,7 +17,7 @@ public class NotificationRepository(AppDbContext context)
     : BaseRepository<Notification>(context), INotificationRepository
 {
     /// <inheritdoc />
-    public async Task<IEnumerable<Notification>> FindByUserIdAsync(int userId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Notification>> FindByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<Notification>()
             .Where(n => n.UserId == userId)

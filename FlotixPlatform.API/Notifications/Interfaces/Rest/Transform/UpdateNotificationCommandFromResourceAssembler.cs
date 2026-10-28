@@ -17,6 +17,6 @@ public static class UpdateNotificationCommandFromResourceAssembler
     ///     An UpdateNotificationCommand assembled from the UpdateNotificationResource
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
-    public static UpdateNotificationCommand ToCommandFromResource(int notificationId, UpdateNotificationResource resource) =>
+    public static UpdateNotificationCommand ToCommandFromResource(Guid notificationId, UpdateNotificationResource resource) =>
         new(notificationId, resource.IsRead);
 }

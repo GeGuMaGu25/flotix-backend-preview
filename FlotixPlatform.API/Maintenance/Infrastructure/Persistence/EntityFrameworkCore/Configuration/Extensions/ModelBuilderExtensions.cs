@@ -1,3 +1,5 @@
+using FlotixPlatform.API.Fleet.Domain.Model.Aggregates;
+using FlotixPlatform.API.IAM.Domain.Model.Aggregates;
 using FlotixPlatform.API.Maintenance.Domain.Model.Aggregates;
 using FlotixPlatform.API.Maintenance.Domain.Model.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +9,10 @@ namespace FlotixPlatform.API.Maintenance.Infrastructure.Persistence.EntityFramew
 /// <summary>
 ///     Entity Framework Core model configuration of the Maintenance Management bounded context.
 /// </summary>
+/// <remarks>
+///     The tables live in the <c>maintenance</c> schema and reference other bounded contexts through
+///     foreign keys with restricted deletes, as defined in the database design of the project report.
+/// </remarks>
 public static class ModelBuilderExtensions
 {
     /// <summary>
@@ -15,27 +21,25 @@ public static class ModelBuilderExtensions
     /// <param name="builder">The model builder of the application database context.</param>
     public static void ApplyMaintenanceConfiguration(this ModelBuilder builder)
     {
-        builder.Entity<Workshop>().HasKey(w => w.Id);
-        builder.Entity<Workshop>().Property(w => w.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<Workshop>().Property(w => w.MechanicId).IsRequired();
-        builder.Entity<Workshop>().Property(w => w.City).IsRequired().HasMaxLength(80);
-        builder.Entity<Workshop>().Property(w => w.District).IsRequired().HasMaxLength(80);
-        builder.Entity<Workshop>().Property(w => w.Address).IsRequired().HasMaxLength(200);
-        builder.Entity<Workshop>()
-            .Property(w => w.Phone)
-            .HasConversion(valueObject => valueObject.Value, value => new PhoneNumber(value))
-            .HasMaxLength(30)
-            .IsRequired();
-        builder.Entity<Workshop>().Property(w => w.Rating).HasPrecision(12, 2).IsRequired();
-        builder.Entity<Workshop>().Property(w => w.Tags).IsRequired();
-        builder.Entity<Workshop>().HasIndex(w => w.MechanicId);
-
+        builder.Entity<MaintenanceRequest>().ToTable(nameof(MaintenanceRequest), "maintenance");
         builder.Entity<MaintenanceRequest>().HasKey(m => m.Id);
         builder.Entity<MaintenanceRequest>().Property(m => m.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<MaintenanceRequest>().Property(m => m.VehicleId).IsRequired();
-        builder.Entity<MaintenanceRequest>().Property(m => m.FaultDescription).IsRequired().HasMaxLength(500);
-        builder.Entity<MaintenanceRequest>().Property(m => m.EstimatedCost).HasPrecision(12, 2).IsRequired();
-        builder.Entity<MaintenanceRequest>().Property(m => m.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+        builder.Entity<MaintenanceRequest>().Property(m => m.MechanicId).IsRequired();
+        builder.Entity<MaintenanceRequest>().Property(m => m.Description).IsRequired();
+        builder.Entity<MaintenanceRequest>().Property(m => m.EstimatedCost).IsRequired();
+        builder.Entity<MaintenanceRequest>().Property(m => m.Status).HasConversion<string>().HasMaxLength(50).IsRequired();
+        builder.Entity<MaintenanceRequest>().Property(m => m.RequestDate).IsRequired();
+        builder.Entity<MaintenanceRequest>()
+            .HasOne<Vehicle>()
+            .WithMany()
+            .HasForeignKey(m => m.VehicleId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<MaintenanceRequest>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(m => m.MechanicId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.Entity<MaintenanceRequest>().HasIndex(m => m.VehicleId);
         builder.Entity<MaintenanceRequest>().HasIndex(m => m.MechanicId);
     }

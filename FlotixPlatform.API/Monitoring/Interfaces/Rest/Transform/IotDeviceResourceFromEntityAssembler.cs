@@ -16,5 +16,5 @@ public static class IotDeviceResourceFromEntityAssembler
     ///     A IotDeviceResource assembled from the IotDevice
     /// </returns>
     public static IotDeviceResource ToResourceFromEntity(IotDevice entity) =>
-        new(entity.Id, entity.VehicleId, entity.SerialNumber.Value, entity.ConnectionStatus);
+        new(entity.Id, entity.VehicleId, entity.SerialNumber.Value, entity.IsConnected);
 }

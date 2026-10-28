@@ -16,7 +16,7 @@ public interface IMaintenanceRequestRepository : IBaseRepository<MaintenanceRequ
     /// <returns>
     ///     An Enumerable containing the maintenance request objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<MaintenanceRequest>> FindByVehicleIdAsync(int vehicleId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<MaintenanceRequest>> FindByVehicleIdAsync(Guid vehicleId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Find maintenance requests by mechanic ID
@@ -26,5 +26,5 @@ public interface IMaintenanceRequestRepository : IBaseRepository<MaintenanceRequ
     /// <returns>
     ///     An Enumerable containing the maintenance request objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<MaintenanceRequest>> FindByMechanicIdAsync(int mechanicId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<MaintenanceRequest>> FindByMechanicIdAsync(Guid mechanicId, CancellationToken cancellationToken = default);
 }

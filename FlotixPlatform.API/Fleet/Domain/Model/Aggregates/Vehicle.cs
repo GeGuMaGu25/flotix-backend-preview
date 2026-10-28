@@ -17,7 +17,7 @@ public partial class Vehicle
     /// </summary>
     protected Vehicle()
     {
-        Plate = null!;
+        LicensePlate = null!;
         VehicleType = string.Empty;
     }
 
@@ -30,15 +30,16 @@ public partial class Vehicle
     public Vehicle(CreateVehicleCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ArgumentOutOfRangeException.ThrowIfLessThan(command.OwnerId, 1);
-        ArgumentNullException.ThrowIfNull(command.Plate);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.OwnerId, Guid.Empty);
+        ArgumentNullException.ThrowIfNull(command.LicensePlate);
         ArgumentException.ThrowIfNullOrWhiteSpace(command.VehicleType);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.VehicleType.Length, 60);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.VehicleType.Length, 50);
         ArgumentOutOfRangeException.ThrowIfNegative(command.CurrentMileage);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.CurrentMileage, 10000000m);
 
         OwnerId = command.OwnerId;
         DriverId = command.DriverId;
-        Plate = command.Plate;
+        LicensePlate = command.LicensePlate;
         VehicleType = command.VehicleType;
         CurrentMileage = command.CurrentMileage;
         Status = command.Status;
@@ -47,22 +48,22 @@ public partial class Vehicle
     /// <summary>
     ///     Gets the server-generated identifier for this vehicle.
     /// </summary>
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     /// <summary>
     ///     Gets the identifier of the owner user.
     /// </summary>
-    public int OwnerId { get; private set; }
+    public Guid OwnerId { get; private set; }
 
     /// <summary>
     ///     Gets the identifier of the driver user.
     /// </summary>
-    public int? DriverId { get; private set; }
+    public Guid? DriverId { get; private set; }
 
     /// <summary>
     ///     Gets the license plate of the vehicle.
     /// </summary>
-    public LicensePlate Plate { get; private set; }
+    public LicensePlate LicensePlate { get; private set; }
 
     /// <summary>
     ///     Gets the type of the vehicle (e.g. Camión de carga).
@@ -72,7 +73,7 @@ public partial class Vehicle
     /// <summary>
     ///     Gets the current mileage of the vehicle in kilometers.
     /// </summary>
-    public int CurrentMileage { get; private set; }
+    public decimal CurrentMileage { get; private set; }
 
     /// <summary>
     ///     Gets the current status of the vehicle.
@@ -91,13 +92,14 @@ public partial class Vehicle
         if (command.CurrentMileage < CurrentMileage)
             throw new InvalidOperationException("The mileage of a vehicle cannot decrease.");
 
-        ArgumentNullException.ThrowIfNull(command.Plate);
+        ArgumentNullException.ThrowIfNull(command.LicensePlate);
         ArgumentException.ThrowIfNullOrWhiteSpace(command.VehicleType);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.VehicleType.Length, 60);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.VehicleType.Length, 50);
         ArgumentOutOfRangeException.ThrowIfNegative(command.CurrentMileage);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.CurrentMileage, 10000000m);
 
         DriverId = command.DriverId;
-        Plate = command.Plate;
+        LicensePlate = command.LicensePlate;
         VehicleType = command.VehicleType;
         CurrentMileage = command.CurrentMileage;
         Status = command.Status;

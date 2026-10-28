@@ -40,6 +40,7 @@ public class FuelRecordsController(
     [HttpPost]
     [ProducesResponseType(typeof(FuelRecordResource), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> CreateFuelRecord([FromBody] CreateFuelRecordResource resource,
         CancellationToken cancellationToken)
@@ -81,8 +82,8 @@ public class FuelRecordsController(
     /// </returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<FuelRecordResource>), StatusCodes.Status200OK)]
-    public async Task<ActionResult> GetAllFuelRecords([FromQuery] int? vehicleId = null,
-        [FromQuery] int? driverId = null,
+    public async Task<ActionResult> GetAllFuelRecords([FromQuery] Guid? vehicleId = null,
+        [FromQuery] Guid? driverId = null,
         CancellationToken cancellationToken = default)
     {
         var fuelRecords = vehicleId is not null
@@ -102,10 +103,10 @@ public class FuelRecordsController(
     /// <returns>
     ///     A response as an action result containing the fuel record, or not found if the fuel record was not found.
     /// </returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(FuelRecordResource), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetFuelRecordById(int id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> GetFuelRecordById(Guid id, CancellationToken cancellationToken = default)
     {
         var getFuelRecordByIdQuery = new GetFuelRecordByIdQuery(id);
         var result = await fuelRecordQueryService.Handle(getFuelRecordByIdQuery, cancellationToken);
@@ -124,12 +125,12 @@ public class FuelRecordsController(
     ///     A response as an action result containing the updated fuel record, or an error response if the fuel record was
     ///     not updated.
     /// </returns>
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(FuelRecordResource), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> UpdateFuelRecord(int id, [FromBody] UpdateFuelRecordResource resource,
+    public async Task<ActionResult> UpdateFuelRecord(Guid id, [FromBody] UpdateFuelRecordResource resource,
         CancellationToken cancellationToken)
     {
         try
@@ -165,11 +166,11 @@ public class FuelRecordsController(
     /// <returns>
     ///     A response as an action result with no content, or not found if the fuel record was not found.
     /// </returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> DeleteFuelRecord(int id, CancellationToken cancellationToken)
+    public async Task<ActionResult> DeleteFuelRecord(Guid id, CancellationToken cancellationToken)
     {
         var deleteFuelRecordCommand = new DeleteFuelRecordCommand(id);
         var result = await fuelRecordCommandService.Handle(deleteFuelRecordCommand, cancellationToken);

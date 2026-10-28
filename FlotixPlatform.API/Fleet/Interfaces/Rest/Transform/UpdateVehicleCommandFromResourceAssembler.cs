@@ -18,6 +18,6 @@ public static class UpdateVehicleCommandFromResourceAssembler
     ///     An UpdateVehicleCommand assembled from the UpdateVehicleResource
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
-    public static UpdateVehicleCommand ToCommandFromResource(int vehicleId, UpdateVehicleResource resource) =>
-        new(vehicleId, resource.DriverId, new LicensePlate(resource.Plate), resource.VehicleType, resource.CurrentMileage, resource.Status);
+    public static UpdateVehicleCommand ToCommandFromResource(Guid vehicleId, UpdateVehicleResource resource) =>
+        new(vehicleId, resource.DriverId, new LicensePlate(resource.LicensePlate), resource.VehicleType, resource.CurrentMileage, resource.Status);
 }

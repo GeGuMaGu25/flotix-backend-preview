@@ -17,6 +17,6 @@ public static class UpdateIotOrderCommandFromResourceAssembler
     ///     An UpdateIotOrderCommand assembled from the UpdateIotOrderResource
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
-    public static UpdateIotOrderCommand ToCommandFromResource(int iotOrderId, UpdateIotOrderResource resource) =>
+    public static UpdateIotOrderCommand ToCommandFromResource(Guid iotOrderId, UpdateIotOrderResource resource) =>
         new(iotOrderId, resource.Status);
 }

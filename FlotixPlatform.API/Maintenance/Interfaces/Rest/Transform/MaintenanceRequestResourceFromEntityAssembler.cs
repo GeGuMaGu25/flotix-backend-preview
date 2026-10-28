@@ -16,5 +16,5 @@ public static class MaintenanceRequestResourceFromEntityAssembler
     ///     A MaintenanceRequestResource assembled from the MaintenanceRequest
     /// </returns>
     public static MaintenanceRequestResource ToResourceFromEntity(MaintenanceRequest entity) =>
-        new(entity.Id, entity.VehicleId, entity.MechanicId, entity.FaultDescription, entity.EstimatedCost, entity.Status);
+        new(entity.Id, entity.VehicleId, entity.MechanicId, entity.Description, entity.EstimatedCost, entity.Status, entity.RequestDate);
 }

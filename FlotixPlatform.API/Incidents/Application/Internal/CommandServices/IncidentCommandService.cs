@@ -47,6 +47,11 @@ public class IncidentCommandService(
             logger.LogWarning(ex, "Invalid arguments while creating incident");
             return new Result<Incident, CreateIncidentError>.Failure(CreateIncidentError.InvalidIncident);
         }
+        catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
+        {
+            logger.LogWarning(ex, "Foreign key violation creating incident");
+            return new Result<Incident, CreateIncidentError>.Failure(CreateIncidentError.ReferencedResourceNotFound);
+        }
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, "Database update failed creating incident");
@@ -129,5 +134,22 @@ public class IncidentCommandService(
             logger.LogError(ex, "Unexpected error deleting incident");
             return new Result<Incident, DeleteIncidentError>.Failure(DeleteIncidentError.UnexpectedError);
         }
+    }
+
+    /// <summary>
+    /// Determines whether a DbUpdateException represents a foreign key constraint violation.
+    /// </summary>
+    /// <param name="exception">The exception to inspect.</param>
+    /// <returns>True if the exception is due to a PostgreSQL foreign key violation (SQLSTATE 23503), false otherwise.</returns>
+    private static bool IsForeignKeyViolation(DbUpdateException exception)
+    {
+        for (Exception? current = exception; current is not null; current = current.InnerException)
+        {
+            if (!string.Equals(current.GetType().Name, "PostgresException", StringComparison.Ordinal)) continue;
+            var sqlStateProperty = current.GetType().GetProperty("SqlState");
+            if (sqlStateProperty?.GetValue(current) is "23503")
+                return true;
+        }
+        return false;
     }
 }

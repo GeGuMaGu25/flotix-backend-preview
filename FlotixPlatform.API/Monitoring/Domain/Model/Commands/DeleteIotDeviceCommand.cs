@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Monitoring.Domain.Model.Commands;
 ///     Command to delete an IoT device
 /// </summary>
 /// <param name="IotDeviceId">The identifier of the IoT device to delete</param>
-public record DeleteIotDeviceCommand(int IotDeviceId);
+public record DeleteIotDeviceCommand(Guid IotDeviceId);

@@ -7,8 +7,8 @@ namespace FlotixPlatform.API.Fleet.Domain.Model.Commands;
 /// </summary>
 /// <param name="VehicleId">The identifier of the vehicle to update</param>
 /// <param name="DriverId">The identifier of the driver user.</param>
-/// <param name="Plate">The license plate of the vehicle.</param>
+/// <param name="LicensePlate">The license plate of the vehicle.</param>
 /// <param name="VehicleType">The type of the vehicle (e.g. Camión de carga).</param>
 /// <param name="CurrentMileage">The current mileage of the vehicle in kilometers.</param>
 /// <param name="Status">The current status of the vehicle.</param>
-public record UpdateVehicleCommand(int VehicleId, int? DriverId, LicensePlate Plate, string VehicleType, int CurrentMileage, VehicleStatus Status);
+public record UpdateVehicleCommand(Guid VehicleId, Guid? DriverId, LicensePlate LicensePlate, string VehicleType, decimal CurrentMileage, VehicleStatus Status);

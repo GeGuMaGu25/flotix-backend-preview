@@ -16,5 +16,5 @@ public static class IncidentResourceFromEntityAssembler
     ///     A IncidentResource assembled from the Incident
     /// </returns>
     public static IncidentResource ToResourceFromEntity(Incident entity) =>
-        new(entity.Id, entity.VehicleId, entity.DriverId, entity.Description, entity.Status, entity.ReportedAt);
+        new(entity.Id, entity.VehicleId, entity.DriverId, entity.Description, entity.Status, entity.ReportedDate);
 }

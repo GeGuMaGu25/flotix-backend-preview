@@ -17,7 +17,7 @@ public partial class Report
     protected Report()
     {
         ReportType = string.Empty;
-        FilterParams = [];
+        FilterParams = string.Empty;
     }
 
     /// <summary>
@@ -29,27 +29,27 @@ public partial class Report
     public Report(CreateReportCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ArgumentOutOfRangeException.ThrowIfLessThan(command.OwnerId, 1);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.OwnerId, Guid.Empty);
         ArgumentException.ThrowIfNullOrWhiteSpace(command.ReportType);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.ReportType.Length, 120);
-        ArgumentNullException.ThrowIfNull(command.FilterParams);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.FilterParams.Count, 10);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.ReportType.Length, 50);
+        ArgumentException.ThrowIfNullOrWhiteSpace(command.FilterParams);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.FilterParams.Length, 2000);
 
         OwnerId = command.OwnerId;
         ReportType = command.ReportType;
         FilterParams = command.FilterParams;
-        GeneratedAt = DateTimeOffset.UtcNow;
+        GeneratedDate = DateTimeOffset.UtcNow;
     }
 
     /// <summary>
     ///     Gets the server-generated identifier for this report.
     /// </summary>
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     /// <summary>
     ///     Gets the identifier of the owner user.
     /// </summary>
-    public int OwnerId { get; private set; }
+    public Guid OwnerId { get; private set; }
 
     /// <summary>
     ///     Gets the type of the report (e.g. Reporte de incidencias).
@@ -57,12 +57,12 @@ public partial class Report
     public string ReportType { get; private set; }
 
     /// <summary>
-    ///     Gets the filters applied to the report.
-    /// </summary>
-    public Dictionary<string, string> FilterParams { get; private set; }
-
-    /// <summary>
     ///     Gets the moment the report was generated.
     /// </summary>
-    public DateTimeOffset GeneratedAt { get; private set; }
+    public DateTimeOffset GeneratedDate { get; private set; }
+
+    /// <summary>
+    ///     Gets the filters applied to the report (e.g. date range).
+    /// </summary>
+    public string FilterParams { get; private set; }
 }

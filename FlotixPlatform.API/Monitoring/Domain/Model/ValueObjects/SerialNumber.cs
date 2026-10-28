@@ -7,12 +7,12 @@ namespace FlotixPlatform.API.Monitoring.Domain.Model.ValueObjects;
 /// </summary>
 public sealed partial record SerialNumber
 {
-    private const int MaxLength = 40;
+    private const int MaxLength = 100;
 
     /// <summary>
     ///     Initializes a new <see cref="SerialNumber"/> with the given raw string value.
     /// </summary>
-    /// <param name="value">The raw serial number. Must be non-null, non-whitespace, at most 40 characters and match the expected format.</param>
+    /// <param name="value">The raw serial number. Must be non-null, non-whitespace, at most 100 characters and match the expected format.</param>
     /// <exception cref="ArgumentException">Thrown when <paramref name="value"/> is null, whitespace, too long or malformed.</exception>
     public SerialNumber(string value)
     {

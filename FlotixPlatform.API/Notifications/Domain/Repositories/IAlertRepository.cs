@@ -16,5 +16,5 @@ public interface IAlertRepository : IBaseRepository<Alert>
     /// <returns>
     ///     An Enumerable containing the alert objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<Alert>> FindByVehicleIdAsync(int vehicleId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Alert>> FindByVehicleIdAsync(Guid vehicleId, CancellationToken cancellationToken = default);
 }

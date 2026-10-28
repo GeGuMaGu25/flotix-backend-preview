@@ -11,6 +11,11 @@ public enum DeleteVehicleError
 	VehicleNotFound,
 
 	/// <summary>
+	/// The vehicle is referenced by other records and cannot be deleted.
+	/// </summary>
+	VehicleHasDependents,
+
+	/// <summary>
 	/// An unexpected error occurred during the operation.
 	/// </summary>
 	UnexpectedError

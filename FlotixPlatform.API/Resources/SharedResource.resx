@@ -79,7 +79,7 @@
         <value>Get all users</value>
     </data>
     <data name="GetAllUsersDescription" xml:space="preserve">
-        <value>Retrieves all users, optionally filtered by role.</value>
+        <value>Retrieves all users, optionally filtered by role type.</value>
     </data>
     <data name="GetUserByIdSummary" xml:space="preserve">
         <value>Get a user by ID</value>
@@ -123,17 +123,17 @@
     <data name="UserPassword" xml:space="preserve">
         <value>The password of the user (at least 8 characters).</value>
     </data>
-    <data name="UserRole" xml:space="preserve">
+    <data name="UserRoleType" xml:space="preserve">
         <value>The role of the user: Owner, Driver or Mechanic.</value>
     </data>
-    <data name="UserFullName" xml:space="preserve">
+    <data name="UserName" xml:space="preserve">
         <value>The full name of the user.</value>
     </data>
     <data name="UserLicenseNumber" xml:space="preserve">
         <value>The driver license number (required for drivers).</value>
     </data>
-    <data name="UserLicenseExpiry" xml:space="preserve">
-        <value>The expiry date of the driver license.</value>
+    <data name="UserLicenseExpiration" xml:space="preserve">
+        <value>The expiration date of the driver license.</value>
     </data>
     <data name="UserCompanyName" xml:space="preserve">
         <value>The company name of a fleet owner.</value>
@@ -150,8 +150,8 @@
     <data name="RequiredPassword" xml:space="preserve">
         <value>Password is required.</value>
     </data>
-    <data name="RequiredFullName" xml:space="preserve">
-        <value>Full name is required.</value>
+    <data name="RequiredName" xml:space="preserve">
+        <value>Name is required.</value>
     </data>
     <data name="InvalidSignUpRequest" xml:space="preserve">
         <value>The sign-up request contains invalid values.</value>
@@ -166,7 +166,10 @@
         <value>A user with this email already exists.</value>
     </data>
     <data name="DriverLicenseRequired" xml:space="preserve">
-        <value>A driver must have a license number.</value>
+        <value>A driver must have a license number and its expiration date.</value>
+    </data>
+    <data name="UserHasDependents" xml:space="preserve">
+        <value>The user has related records and cannot be deleted.</value>
     </data>
     <data name="InvalidCredentials" xml:space="preserve">
         <value>The email or password is incorrect.</value>
@@ -185,18 +188,6 @@
     </data>
     <data name="UnexpectedErrorDeletingUser" xml:space="preserve">
         <value>An unexpected error occurred while deleting the user.</value>
-    </data>
-    <data name="GetFleetPreferencesSummary" xml:space="preserve">
-        <value>Get the fleet preferences</value>
-    </data>
-    <data name="GetFleetPreferencesDescription" xml:space="preserve">
-        <value>Retrieves the fleet-wide thresholds.</value>
-    </data>
-    <data name="UpdateFleetPreferencesSummary" xml:space="preserve">
-        <value>Update the fleet preferences</value>
-    </data>
-    <data name="UpdateFleetPreferencesDescription" xml:space="preserve">
-        <value>Updates the fleet-wide thresholds.</value>
     </data>
     <data name="CreateVehicleSummary" xml:space="preserve">
         <value>Create a vehicle</value>
@@ -228,12 +219,6 @@
     <data name="DeleteVehicleDescription" xml:space="preserve">
         <value>Deletes a vehicle using its identifier.</value>
     </data>
-    <data name="FleetPreferencesSchema" xml:space="preserve">
-        <value>The fleet preferences returned by the API.</value>
-    </data>
-    <data name="UpdateFleetPreferencesSchema" xml:space="preserve">
-        <value>Request payload for updating the fleet preferences.</value>
-    </data>
     <data name="CreateVehicleSchema" xml:space="preserve">
         <value>Request payload for creating a vehicle.</value>
     </data>
@@ -242,18 +227,6 @@
     </data>
     <data name="VehicleSchema" xml:space="preserve">
         <value>A vehicle returned by the API.</value>
-    </data>
-    <data name="FleetPreferencesId" xml:space="preserve">
-        <value>The server-generated identifier of the fleet preferences.</value>
-    </data>
-    <data name="FleetPreferencesSpeedLimitKmh" xml:space="preserve">
-        <value>The speed limit that triggers speeding alerts.</value>
-    </data>
-    <data name="FleetPreferencesMaintenanceIntervalKm" xml:space="preserve">
-        <value>The mileage interval between preventive maintenances.</value>
-    </data>
-    <data name="FleetPreferencesFuelAnomalyDropPct" xml:space="preserve">
-        <value>The fuel level drop percentage considered an anomaly.</value>
     </data>
     <data name="VehicleId" xml:space="preserve">
         <value>The server-generated identifier of the vehicle.</value>
@@ -264,7 +237,7 @@
     <data name="VehicleDriverId" xml:space="preserve">
         <value>The identifier of the driver user.</value>
     </data>
-    <data name="VehiclePlate" xml:space="preserve">
+    <data name="VehicleLicensePlate" xml:space="preserve">
         <value>The license plate of the vehicle.</value>
     </data>
     <data name="VehicleVehicleType" xml:space="preserve">
@@ -291,26 +264,23 @@
     <data name="UnexpectedErrorDeletingVehicle" xml:space="preserve">
         <value>An unexpected error occurred while deleting the vehicle.</value>
     </data>
-    <data name="DuplicateVehiclePlate" xml:space="preserve">
-        <value>A vehicle with this plate already exists.</value>
+    <data name="DuplicateVehicleLicensePlate" xml:space="preserve">
+        <value>A vehicle with this license plate already exists.</value>
     </data>
     <data name="MileageCannotDecrease" xml:space="preserve">
         <value>The mileage of a vehicle cannot decrease.</value>
     </data>
-    <data name="RequiredPlate" xml:space="preserve">
-        <value>Plate is required.</value>
+    <data name="VehicleReferencedResourceNotFound" xml:space="preserve">
+        <value>A vehicle, user or other resource referenced by the vehicle does not exist.</value>
+    </data>
+    <data name="VehicleHasDependents" xml:space="preserve">
+        <value>The vehicle has related records and cannot be deleted.</value>
+    </data>
+    <data name="RequiredLicensePlate" xml:space="preserve">
+        <value>License plate is required.</value>
     </data>
     <data name="RequiredVehicleType" xml:space="preserve">
         <value>Vehicle type is required.</value>
-    </data>
-    <data name="FleetPreferencesNotFound" xml:space="preserve">
-        <value>The fleet preferences were not found.</value>
-    </data>
-    <data name="InvalidFleetPreferencesRequest" xml:space="preserve">
-        <value>The fleet preferences request contains invalid values.</value>
-    </data>
-    <data name="UnexpectedErrorUpdatingFleetPreferences" xml:space="preserve">
-        <value>An unexpected error occurred while updating the fleet preferences.</value>
     </data>
     <data name="CreateFuelRecordSummary" xml:space="preserve">
         <value>Create a fuel record</value>
@@ -363,14 +333,14 @@
     <data name="FuelRecordLiters" xml:space="preserve">
         <value>The refueled amount in liters.</value>
     </data>
-    <data name="FuelRecordTotalCost" xml:space="preserve">
+    <data name="FuelRecordCost" xml:space="preserve">
         <value>The total cost of the refuel.</value>
     </data>
-    <data name="FuelRecordMileageAtRefuel" xml:space="preserve">
+    <data name="FuelRecordMileageAtRefill" xml:space="preserve">
         <value>The vehicle mileage when refueling.</value>
     </data>
-    <data name="FuelRecordDate" xml:space="preserve">
-        <value>The date of the refuel.</value>
+    <data name="FuelRecordRecordedDate" xml:space="preserve">
+        <value>The date and time of the refuel.</value>
     </data>
     <data name="InvalidFuelRecordRequest" xml:space="preserve">
         <value>The fuel record request contains invalid values.</value>
@@ -387,35 +357,8 @@
     <data name="UnexpectedErrorDeletingFuelRecord" xml:space="preserve">
         <value>An unexpected error occurred while deleting the fuel record.</value>
     </data>
-    <data name="CreateWorkshopSummary" xml:space="preserve">
-        <value>Create a workshop</value>
-    </data>
-    <data name="CreateWorkshopDescription" xml:space="preserve">
-        <value>Registers a new workshop.</value>
-    </data>
-    <data name="GetAllWorkshopsSummary" xml:space="preserve">
-        <value>Get all workshops</value>
-    </data>
-    <data name="GetAllWorkshopsDescription" xml:space="preserve">
-        <value>Retrieves all workshops, optionally filtered by mechanic ID.</value>
-    </data>
-    <data name="GetWorkshopByIdSummary" xml:space="preserve">
-        <value>Get a workshop by ID</value>
-    </data>
-    <data name="GetWorkshopByIdDescription" xml:space="preserve">
-        <value>Retrieves a workshop using its identifier.</value>
-    </data>
-    <data name="UpdateWorkshopSummary" xml:space="preserve">
-        <value>Update a workshop</value>
-    </data>
-    <data name="UpdateWorkshopDescription" xml:space="preserve">
-        <value>Updates the data of a workshop.</value>
-    </data>
-    <data name="DeleteWorkshopSummary" xml:space="preserve">
-        <value>Delete a workshop</value>
-    </data>
-    <data name="DeleteWorkshopDescription" xml:space="preserve">
-        <value>Deletes a workshop using its identifier.</value>
+    <data name="FuelRecordReferencedResourceNotFound" xml:space="preserve">
+        <value>A vehicle, user or other resource referenced by the fuel record does not exist.</value>
     </data>
     <data name="CreateMaintenanceRequestSummary" xml:space="preserve">
         <value>Create a maintenance request</value>
@@ -447,15 +390,6 @@
     <data name="DeleteMaintenanceRequestDescription" xml:space="preserve">
         <value>Deletes a maintenance request using its identifier.</value>
     </data>
-    <data name="CreateWorkshopSchema" xml:space="preserve">
-        <value>Request payload for creating a workshop.</value>
-    </data>
-    <data name="UpdateWorkshopSchema" xml:space="preserve">
-        <value>Request payload for updating a workshop.</value>
-    </data>
-    <data name="WorkshopSchema" xml:space="preserve">
-        <value>A workshop returned by the API.</value>
-    </data>
     <data name="CreateMaintenanceRequestSchema" xml:space="preserve">
         <value>Request payload for creating a maintenance request.</value>
     </data>
@@ -474,65 +408,17 @@
     <data name="MaintenanceRequestMechanicId" xml:space="preserve">
         <value>The identifier of the mechanic user.</value>
     </data>
-    <data name="MaintenanceRequestFaultDescription" xml:space="preserve">
+    <data name="MaintenanceRequestDescription" xml:space="preserve">
         <value>The description of the fault to repair.</value>
     </data>
     <data name="MaintenanceRequestEstimatedCost" xml:space="preserve">
-        <value>The estimated cost of the repair.</value>
+        <value>The estimated cost quoted by the workshop.</value>
     </data>
     <data name="MaintenanceRequestStatus" xml:space="preserve">
         <value>The current status of the maintenance request.</value>
     </data>
-    <data name="WorkshopId" xml:space="preserve">
-        <value>The server-generated identifier of the workshop.</value>
-    </data>
-    <data name="WorkshopMechanicId" xml:space="preserve">
-        <value>The identifier of the mechanic user.</value>
-    </data>
-    <data name="WorkshopCity" xml:space="preserve">
-        <value>The city where the workshop is located.</value>
-    </data>
-    <data name="WorkshopDistrict" xml:space="preserve">
-        <value>The district where the workshop is located.</value>
-    </data>
-    <data name="WorkshopAddress" xml:space="preserve">
-        <value>The street address of the workshop.</value>
-    </data>
-    <data name="WorkshopPhone" xml:space="preserve">
-        <value>The contact phone number of the workshop.</value>
-    </data>
-    <data name="WorkshopRating" xml:space="preserve">
-        <value>The rating of the workshop, from 0 to 5.</value>
-    </data>
-    <data name="WorkshopTags" xml:space="preserve">
-        <value>The services offered by the workshop.</value>
-    </data>
-    <data name="InvalidWorkshopRequest" xml:space="preserve">
-        <value>The workshop request contains invalid values.</value>
-    </data>
-    <data name="WorkshopNotFound" xml:space="preserve">
-        <value>The workshop was not found.</value>
-    </data>
-    <data name="UnexpectedErrorCreatingWorkshop" xml:space="preserve">
-        <value>An unexpected error occurred while creating the workshop.</value>
-    </data>
-    <data name="UnexpectedErrorUpdatingWorkshop" xml:space="preserve">
-        <value>An unexpected error occurred while updating the workshop.</value>
-    </data>
-    <data name="UnexpectedErrorDeletingWorkshop" xml:space="preserve">
-        <value>An unexpected error occurred while deleting the workshop.</value>
-    </data>
-    <data name="RequiredCity" xml:space="preserve">
-        <value>City is required.</value>
-    </data>
-    <data name="RequiredDistrict" xml:space="preserve">
-        <value>District is required.</value>
-    </data>
-    <data name="RequiredAddress" xml:space="preserve">
-        <value>Address is required.</value>
-    </data>
-    <data name="RequiredPhone" xml:space="preserve">
-        <value>Phone is required.</value>
+    <data name="MaintenanceRequestRequestDate" xml:space="preserve">
+        <value>The moment the maintenance was requested.</value>
     </data>
     <data name="InvalidMaintenanceRequestRequest" xml:space="preserve">
         <value>The maintenance request request contains invalid values.</value>
@@ -552,8 +438,11 @@
     <data name="MaintenanceRequestAlreadyClosed" xml:space="preserve">
         <value>A completed or rejected maintenance request cannot change its status.</value>
     </data>
-    <data name="RequiredFaultDescription" xml:space="preserve">
-        <value>Fault description is required.</value>
+    <data name="MaintenanceRequestReferencedResourceNotFound" xml:space="preserve">
+        <value>A vehicle, user or other resource referenced by the maintenance request does not exist.</value>
+    </data>
+    <data name="RequiredDescription" xml:space="preserve">
+        <value>Description is required.</value>
     </data>
     <data name="CreateIncidentSummary" xml:space="preserve">
         <value>Create an incident</value>
@@ -609,7 +498,7 @@
     <data name="IncidentStatus" xml:space="preserve">
         <value>The current status of the incident.</value>
     </data>
-    <data name="IncidentReportedAt" xml:space="preserve">
+    <data name="IncidentReportedDate" xml:space="preserve">
         <value>The moment the incident was reported.</value>
     </data>
     <data name="InvalidIncidentRequest" xml:space="preserve">
@@ -627,8 +516,8 @@
     <data name="UnexpectedErrorDeletingIncident" xml:space="preserve">
         <value>An unexpected error occurred while deleting the incident.</value>
     </data>
-    <data name="RequiredDescription" xml:space="preserve">
-        <value>Description is required.</value>
+    <data name="IncidentReferencedResourceNotFound" xml:space="preserve">
+        <value>A vehicle, user or other resource referenced by the incident does not exist.</value>
     </data>
     <data name="CreateIotDeviceSummary" xml:space="preserve">
         <value>Create an IoT device</value>
@@ -660,22 +549,22 @@
     <data name="DeleteIotDeviceDescription" xml:space="preserve">
         <value>Deletes an IoT device using its identifier.</value>
     </data>
-    <data name="CreateTelemetryRecordSummary" xml:space="preserve">
+    <data name="CreateTelemetryDataSummary" xml:space="preserve">
         <value>Create a telemetry record</value>
     </data>
-    <data name="CreateTelemetryRecordDescription" xml:space="preserve">
+    <data name="CreateTelemetryDataDescription" xml:space="preserve">
         <value>Registers a new telemetry record.</value>
     </data>
-    <data name="GetAllTelemetryRecordsSummary" xml:space="preserve">
+    <data name="GetAllTelemetryDataSummary" xml:space="preserve">
         <value>Get all telemetry records</value>
     </data>
-    <data name="GetAllTelemetryRecordsDescription" xml:space="preserve">
+    <data name="GetAllTelemetryDataDescription" xml:space="preserve">
         <value>Retrieves all telemetry records, optionally filtered by device ID.</value>
     </data>
-    <data name="GetTelemetryRecordByIdSummary" xml:space="preserve">
+    <data name="GetTelemetryDataByIdSummary" xml:space="preserve">
         <value>Get a telemetry record by ID</value>
     </data>
-    <data name="GetTelemetryRecordByIdDescription" xml:space="preserve">
+    <data name="GetTelemetryDataByIdDescription" xml:space="preserve">
         <value>Retrieves a telemetry record using its identifier.</value>
     </data>
     <data name="CreateIotDeviceSchema" xml:space="preserve">
@@ -687,10 +576,10 @@
     <data name="IotDeviceSchema" xml:space="preserve">
         <value>An IoT device returned by the API.</value>
     </data>
-    <data name="CreateTelemetryRecordSchema" xml:space="preserve">
+    <data name="CreateTelemetryDataSchema" xml:space="preserve">
         <value>Request payload for creating a telemetry record.</value>
     </data>
-    <data name="TelemetryRecordSchema" xml:space="preserve">
+    <data name="TelemetryDataSchema" xml:space="preserve">
         <value>A telemetry record returned by the API.</value>
     </data>
     <data name="IotDeviceId" xml:space="preserve">
@@ -702,25 +591,25 @@
     <data name="IotDeviceSerialNumber" xml:space="preserve">
         <value>The serial number of the IoT device.</value>
     </data>
-    <data name="IotDeviceConnectionStatus" xml:space="preserve">
-        <value>The connection status of the IoT device.</value>
+    <data name="IotDeviceIsConnected" xml:space="preserve">
+        <value>Whether the IoT device is connected.</value>
     </data>
-    <data name="TelemetryRecordId" xml:space="preserve">
+    <data name="TelemetryDataId" xml:space="preserve">
         <value>The server-generated identifier of the telemetry record.</value>
     </data>
-    <data name="TelemetryRecordDeviceId" xml:space="preserve">
+    <data name="TelemetryDataDeviceId" xml:space="preserve">
         <value>The identifier of the reporting IoT device.</value>
     </data>
-    <data name="TelemetryRecordLatitude" xml:space="preserve">
+    <data name="TelemetryDataLatitude" xml:space="preserve">
         <value>The latitude of the reported position.</value>
     </data>
-    <data name="TelemetryRecordLongitude" xml:space="preserve">
+    <data name="TelemetryDataLongitude" xml:space="preserve">
         <value>The longitude of the reported position.</value>
     </data>
-    <data name="TelemetryRecordSpeed" xml:space="preserve">
+    <data name="TelemetryDataSpeed" xml:space="preserve">
         <value>The reported speed in km/h.</value>
     </data>
-    <data name="TelemetryRecordTimestamp" xml:space="preserve">
+    <data name="TelemetryDataRecordedAt" xml:space="preserve">
         <value>The moment the reading was taken by the device.</value>
     </data>
     <data name="InvalidIotDeviceRequest" xml:space="preserve">
@@ -738,26 +627,38 @@
     <data name="UnexpectedErrorDeletingIotDevice" xml:space="preserve">
         <value>An unexpected error occurred while deleting the IoT device.</value>
     </data>
+    <data name="DuplicateIotDeviceVehicleId" xml:space="preserve">
+        <value>An IoT device with this vehicle ID already exists.</value>
+    </data>
     <data name="DuplicateIotDeviceSerialNumber" xml:space="preserve">
         <value>An IoT device with this serial number already exists.</value>
+    </data>
+    <data name="IotDeviceReferencedResourceNotFound" xml:space="preserve">
+        <value>A vehicle, user or other resource referenced by the IoT device does not exist.</value>
+    </data>
+    <data name="IotDeviceHasDependents" xml:space="preserve">
+        <value>The IoT device has related records and cannot be deleted.</value>
     </data>
     <data name="RequiredSerialNumber" xml:space="preserve">
         <value>Serial number is required.</value>
     </data>
-    <data name="InvalidTelemetryRecordRequest" xml:space="preserve">
+    <data name="InvalidTelemetryDataRequest" xml:space="preserve">
         <value>The telemetry record request contains invalid values.</value>
     </data>
-    <data name="TelemetryRecordNotFound" xml:space="preserve">
+    <data name="TelemetryDataNotFound" xml:space="preserve">
         <value>The telemetry record was not found.</value>
     </data>
-    <data name="UnexpectedErrorCreatingTelemetryRecord" xml:space="preserve">
+    <data name="UnexpectedErrorCreatingTelemetryData" xml:space="preserve">
         <value>An unexpected error occurred while creating the telemetry record.</value>
     </data>
-    <data name="UnexpectedErrorUpdatingTelemetryRecord" xml:space="preserve">
+    <data name="UnexpectedErrorUpdatingTelemetryData" xml:space="preserve">
         <value>An unexpected error occurred while updating the telemetry record.</value>
     </data>
-    <data name="UnexpectedErrorDeletingTelemetryRecord" xml:space="preserve">
+    <data name="UnexpectedErrorDeletingTelemetryData" xml:space="preserve">
         <value>An unexpected error occurred while deleting the telemetry record.</value>
+    </data>
+    <data name="TelemetryDataReferencedResourceNotFound" xml:space="preserve">
+        <value>A vehicle, user or other resource referenced by the telemetry record does not exist.</value>
     </data>
     <data name="CreateAlertSummary" xml:space="preserve">
         <value>Create an alert</value>
@@ -807,36 +708,6 @@
     <data name="DeleteNotificationDescription" xml:space="preserve">
         <value>Deletes a notification using its identifier.</value>
     </data>
-    <data name="CreateNotificationPreferenceSummary" xml:space="preserve">
-        <value>Create a notification preference</value>
-    </data>
-    <data name="CreateNotificationPreferenceDescription" xml:space="preserve">
-        <value>Registers a new notification preference.</value>
-    </data>
-    <data name="GetAllNotificationPreferencesSummary" xml:space="preserve">
-        <value>Get all notification preferences</value>
-    </data>
-    <data name="GetAllNotificationPreferencesDescription" xml:space="preserve">
-        <value>Retrieves all notification preferences, optionally filtered by user ID.</value>
-    </data>
-    <data name="GetNotificationPreferenceByIdSummary" xml:space="preserve">
-        <value>Get a notification preference by ID</value>
-    </data>
-    <data name="GetNotificationPreferenceByIdDescription" xml:space="preserve">
-        <value>Retrieves a notification preference using its identifier.</value>
-    </data>
-    <data name="UpdateNotificationPreferenceSummary" xml:space="preserve">
-        <value>Update a notification preference</value>
-    </data>
-    <data name="UpdateNotificationPreferenceDescription" xml:space="preserve">
-        <value>Updates the data of a notification preference.</value>
-    </data>
-    <data name="DeleteNotificationPreferenceSummary" xml:space="preserve">
-        <value>Delete a notification preference</value>
-    </data>
-    <data name="DeleteNotificationPreferenceDescription" xml:space="preserve">
-        <value>Deletes a notification preference using its identifier.</value>
-    </data>
     <data name="CreateAlertSchema" xml:space="preserve">
         <value>Request payload for creating an alert.</value>
     </data>
@@ -852,15 +723,6 @@
     <data name="NotificationSchema" xml:space="preserve">
         <value>A notification returned by the API.</value>
     </data>
-    <data name="CreateNotificationPreferenceSchema" xml:space="preserve">
-        <value>Request payload for creating a notification preference.</value>
-    </data>
-    <data name="UpdateNotificationPreferenceSchema" xml:space="preserve">
-        <value>Request payload for updating a notification preference.</value>
-    </data>
-    <data name="NotificationPreferenceSchema" xml:space="preserve">
-        <value>A notification preference returned by the API.</value>
-    </data>
     <data name="AlertId" xml:space="preserve">
         <value>The server-generated identifier of the alert.</value>
     </data>
@@ -870,8 +732,8 @@
     <data name="AlertAlertType" xml:space="preserve">
         <value>The type of the alert (e.g. Exceso de velocidad).</value>
     </data>
-    <data name="AlertActivatedAt" xml:space="preserve">
-        <value>The moment the alert was activated.</value>
+    <data name="AlertTriggerDate" xml:space="preserve">
+        <value>The moment the alert was triggered.</value>
     </data>
     <data name="NotificationId" xml:space="preserve">
         <value>The server-generated identifier of the notification.</value>
@@ -888,23 +750,8 @@
     <data name="NotificationIsRead" xml:space="preserve">
         <value>Whether the notification has been read.</value>
     </data>
-    <data name="NotificationSentAt" xml:space="preserve">
+    <data name="NotificationSentDate" xml:space="preserve">
         <value>The moment the notification was sent.</value>
-    </data>
-    <data name="NotificationPreferenceId" xml:space="preserve">
-        <value>The server-generated identifier of the notification preference.</value>
-    </data>
-    <data name="NotificationPreferenceUserId" xml:space="preserve">
-        <value>The identifier of the user.</value>
-    </data>
-    <data name="NotificationPreferenceMaintenance" xml:space="preserve">
-        <value>Whether maintenance notifications are enabled.</value>
-    </data>
-    <data name="NotificationPreferenceSpeed" xml:space="preserve">
-        <value>Whether speeding notifications are enabled.</value>
-    </data>
-    <data name="NotificationPreferenceIncidents" xml:space="preserve">
-        <value>Whether incident notifications are enabled.</value>
     </data>
     <data name="InvalidAlertRequest" xml:space="preserve">
         <value>The alert request contains invalid values.</value>
@@ -920,6 +767,12 @@
     </data>
     <data name="UnexpectedErrorDeletingAlert" xml:space="preserve">
         <value>An unexpected error occurred while deleting the alert.</value>
+    </data>
+    <data name="AlertReferencedResourceNotFound" xml:space="preserve">
+        <value>A vehicle, user or other resource referenced by the alert does not exist.</value>
+    </data>
+    <data name="AlertHasDependents" xml:space="preserve">
+        <value>The alert has related records and cannot be deleted.</value>
     </data>
     <data name="RequiredAlertType" xml:space="preserve">
         <value>Alert type is required.</value>
@@ -939,56 +792,11 @@
     <data name="UnexpectedErrorDeletingNotification" xml:space="preserve">
         <value>An unexpected error occurred while deleting the notification.</value>
     </data>
+    <data name="NotificationReferencedResourceNotFound" xml:space="preserve">
+        <value>A vehicle, user or other resource referenced by the notification does not exist.</value>
+    </data>
     <data name="RequiredMessage" xml:space="preserve">
         <value>Message is required.</value>
-    </data>
-    <data name="InvalidNotificationPreferenceRequest" xml:space="preserve">
-        <value>The notification preference request contains invalid values.</value>
-    </data>
-    <data name="NotificationPreferenceNotFound" xml:space="preserve">
-        <value>The notification preference was not found.</value>
-    </data>
-    <data name="UnexpectedErrorCreatingNotificationPreference" xml:space="preserve">
-        <value>An unexpected error occurred while creating the notification preference.</value>
-    </data>
-    <data name="UnexpectedErrorUpdatingNotificationPreference" xml:space="preserve">
-        <value>An unexpected error occurred while updating the notification preference.</value>
-    </data>
-    <data name="UnexpectedErrorDeletingNotificationPreference" xml:space="preserve">
-        <value>An unexpected error occurred while deleting the notification preference.</value>
-    </data>
-    <data name="DuplicateNotificationPreferenceUserId" xml:space="preserve">
-        <value>A notification preference with this user ID already exists.</value>
-    </data>
-    <data name="CreateIotCatalogItemSummary" xml:space="preserve">
-        <value>Create an IoT catalog item</value>
-    </data>
-    <data name="CreateIotCatalogItemDescription" xml:space="preserve">
-        <value>Registers a new IoT catalog item.</value>
-    </data>
-    <data name="GetAllIotCatalogItemsSummary" xml:space="preserve">
-        <value>Get all IoT catalog items</value>
-    </data>
-    <data name="GetAllIotCatalogItemsDescription" xml:space="preserve">
-        <value>Retrieves all IoT catalog items.</value>
-    </data>
-    <data name="GetIotCatalogItemByIdSummary" xml:space="preserve">
-        <value>Get an IoT catalog item by ID</value>
-    </data>
-    <data name="GetIotCatalogItemByIdDescription" xml:space="preserve">
-        <value>Retrieves an IoT catalog item using its identifier.</value>
-    </data>
-    <data name="UpdateIotCatalogItemSummary" xml:space="preserve">
-        <value>Update an IoT catalog item</value>
-    </data>
-    <data name="UpdateIotCatalogItemDescription" xml:space="preserve">
-        <value>Updates the data of an IoT catalog item.</value>
-    </data>
-    <data name="DeleteIotCatalogItemSummary" xml:space="preserve">
-        <value>Delete an IoT catalog item</value>
-    </data>
-    <data name="DeleteIotCatalogItemDescription" xml:space="preserve">
-        <value>Deletes an IoT catalog item using its identifier.</value>
     </data>
     <data name="CreateIotOrderSummary" xml:space="preserve">
         <value>Create an IoT order</value>
@@ -1014,15 +822,6 @@
     <data name="UpdateIotOrderDescription" xml:space="preserve">
         <value>Updates the data of an IoT order.</value>
     </data>
-    <data name="CreateIotCatalogItemSchema" xml:space="preserve">
-        <value>Request payload for creating an IoT catalog item.</value>
-    </data>
-    <data name="UpdateIotCatalogItemSchema" xml:space="preserve">
-        <value>Request payload for updating an IoT catalog item.</value>
-    </data>
-    <data name="IotCatalogItemSchema" xml:space="preserve">
-        <value>An IoT catalog item returned by the API.</value>
-    </data>
     <data name="CreateIotOrderSchema" xml:space="preserve">
         <value>Request payload for creating an IoT order.</value>
     </data>
@@ -1032,31 +831,13 @@
     <data name="IotOrderSchema" xml:space="preserve">
         <value>An IoT order returned by the API.</value>
     </data>
-    <data name="IotCatalogItemId" xml:space="preserve">
-        <value>The server-generated identifier of the IoT catalog item.</value>
-    </data>
-    <data name="IotCatalogItemSku" xml:space="preserve">
-        <value>The stock keeping unit of the IoT product.</value>
-    </data>
-    <data name="IotCatalogItemName" xml:space="preserve">
-        <value>The name of the IoT product.</value>
-    </data>
-    <data name="IotCatalogItemUnitPrice" xml:space="preserve">
-        <value>The unit price of the IoT product.</value>
-    </data>
-    <data name="IotCatalogItemIconName" xml:space="preserve">
-        <value>The icon used to display the product.</value>
-    </data>
     <data name="IotOrderId" xml:space="preserve">
         <value>The server-generated identifier of the IoT order.</value>
     </data>
     <data name="IotOrderOwnerId" xml:space="preserve">
         <value>The identifier of the owner user.</value>
     </data>
-    <data name="IotOrderSku" xml:space="preserve">
-        <value>The stock keeping unit of the IoT product.</value>
-    </data>
-    <data name="IotOrderDeviceQuantity" xml:space="preserve">
+    <data name="IotOrderQuantity" xml:space="preserve">
         <value>The number of devices ordered.</value>
     </data>
     <data name="IotOrderTotalAmount" xml:space="preserve">
@@ -1067,33 +848,6 @@
     </data>
     <data name="IotOrderOrderDate" xml:space="preserve">
         <value>The date the order was placed.</value>
-    </data>
-    <data name="InvalidIotCatalogItemRequest" xml:space="preserve">
-        <value>The IoT catalog item request contains invalid values.</value>
-    </data>
-    <data name="IotCatalogItemNotFound" xml:space="preserve">
-        <value>The IoT catalog item was not found.</value>
-    </data>
-    <data name="UnexpectedErrorCreatingIotCatalogItem" xml:space="preserve">
-        <value>An unexpected error occurred while creating the IoT catalog item.</value>
-    </data>
-    <data name="UnexpectedErrorUpdatingIotCatalogItem" xml:space="preserve">
-        <value>An unexpected error occurred while updating the IoT catalog item.</value>
-    </data>
-    <data name="UnexpectedErrorDeletingIotCatalogItem" xml:space="preserve">
-        <value>An unexpected error occurred while deleting the IoT catalog item.</value>
-    </data>
-    <data name="DuplicateIotCatalogItemSku" xml:space="preserve">
-        <value>An IoT catalog item with this SKU already exists.</value>
-    </data>
-    <data name="RequiredSku" xml:space="preserve">
-        <value>SKU is required.</value>
-    </data>
-    <data name="RequiredName" xml:space="preserve">
-        <value>Name is required.</value>
-    </data>
-    <data name="RequiredIconName" xml:space="preserve">
-        <value>Icon name is required.</value>
     </data>
     <data name="InvalidIotOrderRequest" xml:space="preserve">
         <value>The IoT order request contains invalid values.</value>
@@ -1113,8 +867,8 @@
     <data name="IotOrderAlreadyClosed" xml:space="preserve">
         <value>A delivered or cancelled order cannot change its status.</value>
     </data>
-    <data name="SkuNotFound" xml:space="preserve">
-        <value>The SKU is not in the IoT catalog.</value>
+    <data name="IotOrderReferencedResourceNotFound" xml:space="preserve">
+        <value>A vehicle, user or other resource referenced by the IoT order does not exist.</value>
     </data>
     <data name="CreateReportSummary" xml:space="preserve">
         <value>Create a report</value>
@@ -1155,11 +909,11 @@
     <data name="ReportReportType" xml:space="preserve">
         <value>The type of the report (e.g. Reporte de incidencias).</value>
     </data>
-    <data name="ReportFilterParams" xml:space="preserve">
-        <value>The filters applied to the report.</value>
-    </data>
-    <data name="ReportGeneratedAt" xml:space="preserve">
+    <data name="ReportGeneratedDate" xml:space="preserve">
         <value>The moment the report was generated.</value>
+    </data>
+    <data name="ReportFilterParams" xml:space="preserve">
+        <value>The filters applied to the report (e.g. date range).</value>
     </data>
     <data name="InvalidReportRequest" xml:space="preserve">
         <value>The report request contains invalid values.</value>
@@ -1176,7 +930,13 @@
     <data name="UnexpectedErrorDeletingReport" xml:space="preserve">
         <value>An unexpected error occurred while deleting the report.</value>
     </data>
+    <data name="ReportReferencedResourceNotFound" xml:space="preserve">
+        <value>A vehicle, user or other resource referenced by the report does not exist.</value>
+    </data>
     <data name="RequiredReportType" xml:space="preserve">
         <value>Report type is required.</value>
+    </data>
+    <data name="RequiredFilterParams" xml:space="preserve">
+        <value>Filter params is required.</value>
     </data>
 </root>

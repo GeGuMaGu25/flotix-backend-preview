@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Maintenance.Domain.Model.Queries;
 ///     Query to get a maintenance request by ID
 /// </summary>
 /// <param name="Id">The maintenance request ID to search</param>
-public record GetMaintenanceRequestByIdQuery(int Id);
+public record GetMaintenanceRequestByIdQuery(Guid Id);

@@ -16,6 +16,11 @@ public enum UpdateMaintenanceRequestError
 	InvalidMaintenanceRequest,
 
 	/// <summary>
+	/// A resource referenced by the command does not exist.
+	/// </summary>
+	ReferencedResourceNotFound,
+
+	/// <summary>
 	/// A completed or rejected maintenance request cannot change its status.
 	/// </summary>
 	MaintenanceRequestAlreadyClosed,

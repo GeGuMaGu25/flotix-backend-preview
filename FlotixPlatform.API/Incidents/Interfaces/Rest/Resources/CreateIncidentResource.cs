@@ -11,10 +11,8 @@ namespace FlotixPlatform.API.Incidents.Interfaces.Rest.Resources;
 /// <param name="Description">The description of the incident. (required)</param>
 /// <param name="Status">The current status of the incident.</param>
 public record CreateIncidentResource(
-    [Range(1, int.MaxValue, ErrorMessage = "RangeField")]
-    int VehicleId,
-    [Range(1, int.MaxValue, ErrorMessage = "RangeField")]
-    int DriverId,
+    Guid VehicleId,
+    Guid DriverId,
     [Required(ErrorMessage = "RequiredDescription")]
     [StringLength(500, ErrorMessage = "StringLengthField")]
     string Description,

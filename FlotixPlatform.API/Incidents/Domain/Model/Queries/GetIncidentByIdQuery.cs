@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Incidents.Domain.Model.Queries;
 ///     Query to get an incident by ID
 /// </summary>
 /// <param name="Id">The incident ID to search</param>
-public record GetIncidentByIdQuery(int Id);
+public record GetIncidentByIdQuery(Guid Id);

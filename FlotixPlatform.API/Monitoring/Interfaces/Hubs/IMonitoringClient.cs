@@ -10,7 +10,7 @@ public interface IMonitoringClient
     /// <summary>
     ///     Receives a telemetry record as soon as it is created; sent to every connected client.
     /// </summary>
-    /// <param name="telemetryRecord">The created telemetry record.</param>
+    /// <param name="telemetryData">The created telemetry record.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task TelemetryRecordReceived(TelemetryRecordResource telemetryRecord);
+    Task TelemetryDataReceived(TelemetryDataResource telemetryData);
 }

@@ -29,8 +29,8 @@ public partial class Incident
     public Incident(CreateIncidentCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ArgumentOutOfRangeException.ThrowIfLessThan(command.VehicleId, 1);
-        ArgumentOutOfRangeException.ThrowIfLessThan(command.DriverId, 1);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.VehicleId, Guid.Empty);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.DriverId, Guid.Empty);
         ArgumentException.ThrowIfNullOrWhiteSpace(command.Description);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(command.Description.Length, 500);
 
@@ -38,23 +38,23 @@ public partial class Incident
         DriverId = command.DriverId;
         Description = command.Description;
         Status = command.Status;
-        ReportedAt = DateTimeOffset.UtcNow;
+        ReportedDate = DateTimeOffset.UtcNow;
     }
 
     /// <summary>
     ///     Gets the server-generated identifier for this incident.
     /// </summary>
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     /// <summary>
     ///     Gets the identifier of the vehicle.
     /// </summary>
-    public int VehicleId { get; private set; }
+    public Guid VehicleId { get; private set; }
 
     /// <summary>
     ///     Gets the identifier of the driver user.
     /// </summary>
-    public int DriverId { get; private set; }
+    public Guid DriverId { get; private set; }
 
     /// <summary>
     ///     Gets the description of the incident.
@@ -69,7 +69,7 @@ public partial class Incident
     /// <summary>
     ///     Gets the moment the incident was reported.
     /// </summary>
-    public DateTimeOffset ReportedAt { get; private set; }
+    public DateTimeOffset ReportedDate { get; private set; }
 
     /// <summary>
     ///     Updates the incident information from an update command.

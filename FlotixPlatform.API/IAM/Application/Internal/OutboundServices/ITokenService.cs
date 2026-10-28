@@ -19,5 +19,5 @@ public interface ITokenService
     /// </summary>
     /// <param name="token">The bearer token.</param>
     /// <returns>The identifier of the token owner, or null when the token is tampered or expired.</returns>
-    int? ValidateToken(string token);
+    Guid? ValidateToken(string token);
 }

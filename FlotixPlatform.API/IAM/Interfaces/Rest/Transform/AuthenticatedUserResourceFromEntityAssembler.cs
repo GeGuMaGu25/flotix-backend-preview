@@ -17,5 +17,5 @@ public static class AuthenticatedUserResourceFromEntityAssembler
     ///     An AuthenticatedUserResource assembled from the User and the token
     /// </returns>
     public static AuthenticatedUserResource ToResourceFromEntity(User entity, string token) =>
-        new(entity.Id, entity.Email.Value, entity.Role, entity.FullName, token);
+        new(entity.Id, entity.Email.Value, entity.RoleType, entity.Name, token);
 }

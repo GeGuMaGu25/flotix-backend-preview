@@ -46,6 +46,7 @@ public class AlertsController(
     [HttpPost]
     [ProducesResponseType(typeof(AlertResource), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> CreateAlert([FromBody] CreateAlertResource resource,
         CancellationToken cancellationToken)
@@ -89,7 +90,7 @@ public class AlertsController(
     /// </returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<AlertResource>), StatusCodes.Status200OK)]
-    public async Task<ActionResult> GetAllAlerts([FromQuery] int? vehicleId = null,
+    public async Task<ActionResult> GetAllAlerts([FromQuery] Guid? vehicleId = null,
         CancellationToken cancellationToken = default)
     {
         var alerts = vehicleId is not null
@@ -107,10 +108,10 @@ public class AlertsController(
     /// <returns>
     ///     A response as an action result containing the alert, or not found if the alert was not found.
     /// </returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(AlertResource), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetAlertById(int id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> GetAlertById(Guid id, CancellationToken cancellationToken = default)
     {
         var getAlertByIdQuery = new GetAlertByIdQuery(id);
         var result = await alertQueryService.Handle(getAlertByIdQuery, cancellationToken);

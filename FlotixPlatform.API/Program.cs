@@ -193,9 +193,6 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<IVehicleCommandService, VehicleCommandService>();
 builder.Services.AddScoped<IVehicleQueryService, VehicleQueryService>();
-builder.Services.AddScoped<IFleetPreferencesRepository, FleetPreferencesRepository>();
-builder.Services.AddScoped<IFleetPreferencesCommandService, FleetPreferencesCommandService>();
-builder.Services.AddScoped<IFleetPreferencesQueryService, FleetPreferencesQueryService>();
 
 // Fuel Control Bounded Context Injection Configuration
 builder.Services.AddScoped<IFuelRecordRepository, FuelRecordRepository>();
@@ -203,9 +200,6 @@ builder.Services.AddScoped<IFuelRecordCommandService, FuelRecordCommandService>(
 builder.Services.AddScoped<IFuelRecordQueryService, FuelRecordQueryService>();
 
 // Maintenance Management Bounded Context Injection Configuration
-builder.Services.AddScoped<IWorkshopRepository, WorkshopRepository>();
-builder.Services.AddScoped<IWorkshopCommandService, WorkshopCommandService>();
-builder.Services.AddScoped<IWorkshopQueryService, WorkshopQueryService>();
 builder.Services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
 builder.Services.AddScoped<IMaintenanceRequestCommandService, MaintenanceRequestCommandService>();
 builder.Services.AddScoped<IMaintenanceRequestQueryService, MaintenanceRequestQueryService>();
@@ -219,9 +213,9 @@ builder.Services.AddScoped<IIncidentQueryService, IncidentQueryService>();
 builder.Services.AddScoped<IIotDeviceRepository, IotDeviceRepository>();
 builder.Services.AddScoped<IIotDeviceCommandService, IotDeviceCommandService>();
 builder.Services.AddScoped<IIotDeviceQueryService, IotDeviceQueryService>();
-builder.Services.AddScoped<ITelemetryRecordRepository, TelemetryRecordRepository>();
-builder.Services.AddScoped<ITelemetryRecordCommandService, TelemetryRecordCommandService>();
-builder.Services.AddScoped<ITelemetryRecordQueryService, TelemetryRecordQueryService>();
+builder.Services.AddScoped<ITelemetryDataRepository, TelemetryDataRepository>();
+builder.Services.AddScoped<ITelemetryDataCommandService, TelemetryDataCommandService>();
+builder.Services.AddScoped<ITelemetryDataQueryService, TelemetryDataQueryService>();
 
 // Alerts & Notifications Bounded Context Injection Configuration
 builder.Services.AddScoped<IAlertRepository, AlertRepository>();
@@ -230,14 +224,8 @@ builder.Services.AddScoped<IAlertQueryService, AlertQueryService>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<INotificationCommandService, NotificationCommandService>();
 builder.Services.AddScoped<INotificationQueryService, NotificationQueryService>();
-builder.Services.AddScoped<INotificationPreferenceRepository, NotificationPreferenceRepository>();
-builder.Services.AddScoped<INotificationPreferenceCommandService, NotificationPreferenceCommandService>();
-builder.Services.AddScoped<INotificationPreferenceQueryService, NotificationPreferenceQueryService>();
 
 // Digital Experience / IoT Commerce Bounded Context Injection Configuration
-builder.Services.AddScoped<IIotCatalogItemRepository, IotCatalogItemRepository>();
-builder.Services.AddScoped<IIotCatalogItemCommandService, IotCatalogItemCommandService>();
-builder.Services.AddScoped<IIotCatalogItemQueryService, IotCatalogItemQueryService>();
 builder.Services.AddScoped<IIotOrderRepository, IotOrderRepository>();
 builder.Services.AddScoped<IIotOrderCommandService, IotOrderCommandService>();
 builder.Services.AddScoped<IIotOrderQueryService, IotOrderQueryService>();

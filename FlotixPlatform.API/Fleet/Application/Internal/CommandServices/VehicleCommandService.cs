@@ -35,11 +35,11 @@ public class VehicleCommandService(
     public async Task<Result<Vehicle, CreateVehicleError>> Handle(CreateVehicleCommand command,
         CancellationToken cancellationToken = default)
     {
-        if (await vehicleRepository.ExistsByPlateAsync(command.Plate, cancellationToken))
+        if (await vehicleRepository.ExistsByLicensePlateAsync(command.LicensePlate, cancellationToken))
         {
-            logger.LogWarning("Duplicate vehicle rejected for Plate {Plate}", command.Plate);
+            logger.LogWarning("Duplicate vehicle rejected for LicensePlate {LicensePlate}", command.LicensePlate);
             return new Result<Vehicle, CreateVehicleError>.Failure(
-                CreateVehicleError.DuplicateVehiclePlate);
+                CreateVehicleError.DuplicateVehicleLicensePlate);
         }
 
         try
@@ -57,7 +57,12 @@ public class VehicleCommandService(
         catch (DbUpdateException ex) when (IsDuplicateKeyViolation(ex))
         {
             logger.LogWarning(ex, "Duplicate key violation creating vehicle");
-            return new Result<Vehicle, CreateVehicleError>.Failure(CreateVehicleError.DuplicateVehiclePlate);
+            return new Result<Vehicle, CreateVehicleError>.Failure(CreateVehicleError.DuplicateVehicleLicensePlate);
+        }
+        catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
+        {
+            logger.LogWarning(ex, "Foreign key violation creating vehicle");
+            return new Result<Vehicle, CreateVehicleError>.Failure(CreateVehicleError.ReferencedResourceNotFound);
         }
         catch (DbUpdateException ex)
         {
@@ -84,12 +89,12 @@ public class VehicleCommandService(
             return new Result<Vehicle, UpdateVehicleError>.Failure(
                 UpdateVehicleError.VehicleNotFound);
 
-        if (vehicle.Plate != command.Plate &&
-            await vehicleRepository.ExistsByPlateAsync(command.Plate, cancellationToken))
+        if (vehicle.LicensePlate != command.LicensePlate &&
+            await vehicleRepository.ExistsByLicensePlateAsync(command.LicensePlate, cancellationToken))
         {
-            logger.LogWarning("Duplicate vehicle rejected for Plate {Plate}", command.Plate);
+            logger.LogWarning("Duplicate vehicle rejected for LicensePlate {LicensePlate}", command.LicensePlate);
             return new Result<Vehicle, UpdateVehicleError>.Failure(
-                UpdateVehicleError.DuplicateVehiclePlate);
+                UpdateVehicleError.DuplicateVehicleLicensePlate);
         }
 
         try
@@ -112,7 +117,12 @@ public class VehicleCommandService(
         catch (DbUpdateException ex) when (IsDuplicateKeyViolation(ex))
         {
             logger.LogWarning(ex, "Duplicate key violation updating vehicle");
-            return new Result<Vehicle, UpdateVehicleError>.Failure(UpdateVehicleError.DuplicateVehiclePlate);
+            return new Result<Vehicle, UpdateVehicleError>.Failure(UpdateVehicleError.DuplicateVehicleLicensePlate);
+        }
+        catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
+        {
+            logger.LogWarning(ex, "Foreign key violation updating vehicle");
+            return new Result<Vehicle, UpdateVehicleError>.Failure(UpdateVehicleError.ReferencedResourceNotFound);
         }
         catch (DbUpdateException ex)
         {
@@ -145,6 +155,11 @@ public class VehicleCommandService(
             await unitOfWork.CompleteAsync(cancellationToken);
             return new Result<Vehicle, DeleteVehicleError>.Success(vehicle);
         }
+        catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
+        {
+            logger.LogWarning(ex, "Foreign key violation deleting vehicle");
+            return new Result<Vehicle, DeleteVehicleError>.Failure(DeleteVehicleError.VehicleHasDependents);
+        }
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, "Database update failed deleting vehicle");
@@ -173,6 +188,23 @@ public class VehicleCommandService(
             if (!string.Equals(current.GetType().Name, "PostgresException", StringComparison.Ordinal)) continue;
             var sqlStateProperty = current.GetType().GetProperty("SqlState");
             if (sqlStateProperty?.GetValue(current) is "23505")
+                return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Determines whether a DbUpdateException represents a foreign key constraint violation.
+    /// </summary>
+    /// <param name="exception">The exception to inspect.</param>
+    /// <returns>True if the exception is due to a PostgreSQL foreign key violation (SQLSTATE 23503), false otherwise.</returns>
+    private static bool IsForeignKeyViolation(DbUpdateException exception)
+    {
+        for (Exception? current = exception; current is not null; current = current.InnerException)
+        {
+            if (!string.Equals(current.GetType().Name, "PostgresException", StringComparison.Ordinal)) continue;
+            var sqlStateProperty = current.GetType().GetProperty("SqlState");
+            if (sqlStateProperty?.GetValue(current) is "23503")
                 return true;
         }
         return false;

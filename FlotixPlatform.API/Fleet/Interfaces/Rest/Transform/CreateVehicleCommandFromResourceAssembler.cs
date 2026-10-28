@@ -18,5 +18,5 @@ public static class CreateVehicleCommandFromResourceAssembler
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
     public static CreateVehicleCommand ToCommandFromResource(CreateVehicleResource resource) =>
-        new(resource.OwnerId, resource.DriverId, new LicensePlate(resource.Plate), resource.VehicleType, resource.CurrentMileage, resource.Status);
+        new(resource.OwnerId, resource.DriverId, new LicensePlate(resource.LicensePlate), resource.VehicleType, resource.CurrentMileage, resource.Status);
 }

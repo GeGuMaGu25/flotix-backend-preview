@@ -43,7 +43,7 @@ public class UserCommandService(
 
         try
         {
-            var user = new User(command, hashingService.HashPassword(command.Password));
+            var user = User.Create(command, hashingService.HashPassword(command.Password));
             await userRepository.AddAsync(user, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
             return new Result<User, SignUpError>.Success(user);
@@ -160,6 +160,11 @@ public class UserCommandService(
             await unitOfWork.CompleteAsync(cancellationToken);
             return new Result<User, DeleteUserError>.Success(user);
         }
+        catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
+        {
+            logger.LogWarning(ex, "Foreign key violation deleting user");
+            return new Result<User, DeleteUserError>.Failure(DeleteUserError.UserHasDependents);
+        }
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, "Database update failed deleting user");
@@ -188,6 +193,23 @@ public class UserCommandService(
             if (!string.Equals(current.GetType().Name, "PostgresException", StringComparison.Ordinal)) continue;
             var sqlStateProperty = current.GetType().GetProperty("SqlState");
             if (sqlStateProperty?.GetValue(current) is "23505")
+                return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Determines whether a DbUpdateException represents a foreign key constraint violation.
+    /// </summary>
+    /// <param name="exception">The exception to inspect.</param>
+    /// <returns>True if the exception is due to a PostgreSQL foreign key violation (SQLSTATE 23503), false otherwise.</returns>
+    private static bool IsForeignKeyViolation(DbUpdateException exception)
+    {
+        for (Exception? current = exception; current is not null; current = current.InnerException)
+        {
+            if (!string.Equals(current.GetType().Name, "PostgresException", StringComparison.Ordinal)) continue;
+            var sqlStateProperty = current.GetType().GetProperty("SqlState");
+            if (sqlStateProperty?.GetValue(current) is "23503")
                 return true;
         }
         return false;

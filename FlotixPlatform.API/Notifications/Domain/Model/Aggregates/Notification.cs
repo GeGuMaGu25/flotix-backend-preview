@@ -28,7 +28,7 @@ public partial class Notification
     public Notification(CreateNotificationCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ArgumentOutOfRangeException.ThrowIfLessThan(command.UserId, 1);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.UserId, Guid.Empty);
         ArgumentException.ThrowIfNullOrWhiteSpace(command.Message);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(command.Message.Length, 500);
 
@@ -36,23 +36,23 @@ public partial class Notification
         AlertId = command.AlertId;
         Message = command.Message;
         IsRead = false;
-        SentAt = DateTimeOffset.UtcNow;
+        SentDate = DateTimeOffset.UtcNow;
     }
 
     /// <summary>
     ///     Gets the server-generated identifier for this notification.
     /// </summary>
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     /// <summary>
     ///     Gets the identifier of the recipient user.
     /// </summary>
-    public int UserId { get; private set; }
+    public Guid UserId { get; private set; }
 
     /// <summary>
     ///     Gets the identifier of the related alert, if any.
     /// </summary>
-    public int? AlertId { get; private set; }
+    public Guid? AlertId { get; private set; }
 
     /// <summary>
     ///     Gets the message of the notification.
@@ -67,7 +67,7 @@ public partial class Notification
     /// <summary>
     ///     Gets the moment the notification was sent.
     /// </summary>
-    public DateTimeOffset SentAt { get; private set; }
+    public DateTimeOffset SentDate { get; private set; }
 
     /// <summary>
     ///     Updates the notification information from an update command.

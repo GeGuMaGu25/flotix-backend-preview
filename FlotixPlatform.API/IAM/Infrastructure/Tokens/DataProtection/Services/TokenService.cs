@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Security.Cryptography;
 using FlotixPlatform.API.IAM.Application.Internal.OutboundServices;
 using FlotixPlatform.API.IAM.Domain.Model.Aggregates;
@@ -25,15 +24,15 @@ public class TokenService(IDataProtectionProvider dataProtectionProvider) : ITok
 
     /// <inheritdoc />
     public string GenerateToken(User user) =>
-        _protector.Protect(user.Id.ToString(CultureInfo.InvariantCulture), TokenLifetime);
+        _protector.Protect(user.Id.ToString(), TokenLifetime);
 
     /// <inheritdoc />
-    public int? ValidateToken(string token)
+    public Guid? ValidateToken(string token)
     {
         if (string.IsNullOrWhiteSpace(token)) return null;
         try
         {
-            return int.TryParse(_protector.Unprotect(token), NumberStyles.None, CultureInfo.InvariantCulture, out var userId)
+            return Guid.TryParse(_protector.Unprotect(token), out var userId)
                 ? userId
                 : null;
         }

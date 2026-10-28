@@ -17,5 +17,5 @@ public static class CreateMaintenanceRequestCommandFromResourceAssembler
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
     public static CreateMaintenanceRequestCommand ToCommandFromResource(CreateMaintenanceRequestResource resource) =>
-        new(resource.VehicleId, resource.MechanicId, resource.FaultDescription, resource.EstimatedCost, resource.Status);
+        new(resource.VehicleId, resource.MechanicId, resource.Description);
 }

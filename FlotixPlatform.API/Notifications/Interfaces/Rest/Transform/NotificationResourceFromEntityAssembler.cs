@@ -16,5 +16,5 @@ public static class NotificationResourceFromEntityAssembler
     ///     A NotificationResource assembled from the Notification
     /// </returns>
     public static NotificationResource ToResourceFromEntity(Notification entity) =>
-        new(entity.Id, entity.UserId, entity.AlertId, entity.Message, entity.IsRead, entity.SentAt);
+        new(entity.Id, entity.UserId, entity.AlertId, entity.Message, entity.IsRead, entity.SentDate);
 }

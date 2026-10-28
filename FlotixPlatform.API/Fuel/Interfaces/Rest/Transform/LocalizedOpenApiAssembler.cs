@@ -24,6 +24,7 @@ public static class LocalizedOpenApiAssembler
                 {
                     ["201"] = "Response201",
                     ["400"] = "Response400",
+                    ["404"] = "Response404",
                     ["500"] = "Response500"
                 }),
             ["GetAllFuelRecords"] = (
