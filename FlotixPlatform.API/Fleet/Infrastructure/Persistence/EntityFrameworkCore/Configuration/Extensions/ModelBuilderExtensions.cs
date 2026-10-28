@@ -29,18 +29,5 @@ public static class ModelBuilderExtensions
         builder.Entity<Vehicle>().HasIndex(v => v.OwnerId);
         builder.Entity<Vehicle>().HasIndex(v => v.DriverId);
         builder.Entity<Vehicle>().HasIndex(v => v.Plate).IsUnique();
-
-        builder.Entity<FleetPreferences>().HasKey(f => f.Id);
-        builder.Entity<FleetPreferences>().Property(f => f.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<FleetPreferences>().Property(f => f.SpeedLimitKmh).IsRequired();
-        builder.Entity<FleetPreferences>().Property(f => f.MaintenanceIntervalKm).IsRequired();
-        builder.Entity<FleetPreferences>().Property(f => f.FuelAnomalyDropPct).IsRequired();
-        builder.Entity<FleetPreferences>().HasData(new
-        {
-            Id = FleetPreferences.DefaultId,
-            SpeedLimitKmh = 90,
-            MaintenanceIntervalKm = 10000,
-            FuelAnomalyDropPct = 30
-        });
     }
 }

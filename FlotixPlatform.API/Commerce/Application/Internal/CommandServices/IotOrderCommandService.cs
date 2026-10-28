@@ -19,7 +19,6 @@ namespace FlotixPlatform.API.Commerce.Application.Internal.CommandServices;
 ///     Logs warnings for rejected commands and errors for persistence failures.
 /// </remarks>
 /// <param name="iotOrderRepository">Repository for accessing IoT order data.</param>
-/// <param name="iotCatalogItemRepository">Repository used to price the order from the IoT catalog.</param>
 /// <param name="unitOfWork">Unit of work for managing transaction scope.</param>
 /// <param name="logger">Logger for diagnostic and error reporting.</param>
 /// See
@@ -28,7 +27,6 @@ namespace FlotixPlatform.API.Commerce.Application.Internal.CommandServices;
 /// <see cref="IUnitOfWork">IUnitOfWork</see>
 public class IotOrderCommandService(
     IIotOrderRepository iotOrderRepository,
-    IIotCatalogItemRepository iotCatalogItemRepository,
     IUnitOfWork unitOfWork,
     ILogger<IotOrderCommandService> logger)
     : IIotOrderCommandService
@@ -37,17 +35,9 @@ public class IotOrderCommandService(
     public async Task<Result<IotOrder, CreateIotOrderError>> Handle(CreateIotOrderCommand command,
         CancellationToken cancellationToken = default)
     {
-        var iotCatalogItem = await iotCatalogItemRepository.FindBySkuAsync(command.Sku, cancellationToken);
-        if (iotCatalogItem is null)
-        {
-            logger.LogWarning("IoT order rejected for unknown Sku {Sku}", command.Sku);
-            return new Result<IotOrder, CreateIotOrderError>.Failure(
-                CreateIotOrderError.SkuNotFound);
-        }
-
         try
         {
-            var iotOrder = new IotOrder(command, iotCatalogItem.UnitPrice);
+            var iotOrder = new IotOrder(command);
             await iotOrderRepository.AddAsync(iotOrder, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
             return new Result<IotOrder, CreateIotOrderError>.Success(iotOrder);

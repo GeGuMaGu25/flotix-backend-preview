@@ -11,11 +11,6 @@ public enum CreateIotOrderError
 	InvalidIotOrder,
 
 	/// <summary>
-	/// The SKU is not in the IoT catalog.
-	/// </summary>
-	SkuNotFound,
-
-	/// <summary>
 	/// An unexpected error occurred during the operation.
 	/// </summary>
 	UnexpectedError

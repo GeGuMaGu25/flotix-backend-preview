@@ -17,24 +17,6 @@ public static class LocalizedOpenApiAssembler
         IReadOnlyDictionary<string, string> Responses)> OperationResources =
         new Dictionary<string, (string, string, IReadOnlyDictionary<string, string>)>
         {
-            ["GetFleetPreferences"] = (
-                "GetFleetPreferencesSummary",
-                "GetFleetPreferencesDescription",
-                new Dictionary<string, string>
-                {
-                    ["200"] = "Response200",
-                    ["404"] = "Response404"
-                }),
-            ["UpdateFleetPreferences"] = (
-                "UpdateFleetPreferencesSummary",
-                "UpdateFleetPreferencesDescription",
-                new Dictionary<string, string>
-                {
-                    ["200"] = "Response200",
-                    ["400"] = "Response400",
-                    ["404"] = "Response404",
-                    ["500"] = "Response500"
-                }),
             ["CreateVehicle"] = (
                 "CreateVehicleSummary",
                 "CreateVehicleDescription",
@@ -84,8 +66,6 @@ public static class LocalizedOpenApiAssembler
 
     private static readonly Dictionary<Type, (string Schema, string Owner)> SchemaResources = new()
     {
-            [typeof(FleetPreferencesResource)] = ("FleetPreferencesSchema", "FleetPreferences"),
-            [typeof(UpdateFleetPreferencesResource)] = ("UpdateFleetPreferencesSchema", "FleetPreferences"),
             [typeof(CreateVehicleResource)] = ("CreateVehicleSchema", "Vehicle"),
             [typeof(UpdateVehicleResource)] = ("UpdateVehicleSchema", "Vehicle"),
             [typeof(VehicleResource)] = ("VehicleSchema", "Vehicle")

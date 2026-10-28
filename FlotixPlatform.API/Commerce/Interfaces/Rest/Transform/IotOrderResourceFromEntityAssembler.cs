@@ -16,5 +16,5 @@ public static class IotOrderResourceFromEntityAssembler
     ///     A IotOrderResource assembled from the IotOrder
     /// </returns>
     public static IotOrderResource ToResourceFromEntity(IotOrder entity) =>
-        new(entity.Id, entity.OwnerId, entity.Sku.Value, entity.DeviceQuantity, entity.TotalAmount, entity.Status, entity.OrderDate);
+        new(entity.Id, entity.OwnerId, entity.DeviceQuantity, entity.TotalAmount, entity.Status, entity.OrderDate);
 }

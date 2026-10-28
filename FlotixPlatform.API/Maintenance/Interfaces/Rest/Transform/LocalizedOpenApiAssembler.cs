@@ -17,49 +17,6 @@ public static class LocalizedOpenApiAssembler
         IReadOnlyDictionary<string, string> Responses)> OperationResources =
         new Dictionary<string, (string, string, IReadOnlyDictionary<string, string>)>
         {
-            ["CreateWorkshop"] = (
-                "CreateWorkshopSummary",
-                "CreateWorkshopDescription",
-                new Dictionary<string, string>
-                {
-                    ["201"] = "Response201",
-                    ["400"] = "Response400",
-                    ["500"] = "Response500"
-                }),
-            ["GetAllWorkshops"] = (
-                "GetAllWorkshopsSummary",
-                "GetAllWorkshopsDescription",
-                new Dictionary<string, string>
-                {
-                    ["200"] = "Response200"
-                }),
-            ["GetWorkshopById"] = (
-                "GetWorkshopByIdSummary",
-                "GetWorkshopByIdDescription",
-                new Dictionary<string, string>
-                {
-                    ["200"] = "Response200",
-                    ["404"] = "Response404"
-                }),
-            ["UpdateWorkshop"] = (
-                "UpdateWorkshopSummary",
-                "UpdateWorkshopDescription",
-                new Dictionary<string, string>
-                {
-                    ["200"] = "Response200",
-                    ["400"] = "Response400",
-                    ["404"] = "Response404",
-                    ["500"] = "Response500"
-                }),
-            ["DeleteWorkshop"] = (
-                "DeleteWorkshopSummary",
-                "DeleteWorkshopDescription",
-                new Dictionary<string, string>
-                {
-                    ["204"] = "Response204",
-                    ["404"] = "Response404",
-                    ["500"] = "Response500"
-                }),
             ["CreateMaintenanceRequest"] = (
                 "CreateMaintenanceRequestSummary",
                 "CreateMaintenanceRequestDescription",
@@ -108,9 +65,6 @@ public static class LocalizedOpenApiAssembler
 
     private static readonly Dictionary<Type, (string Schema, string Owner)> SchemaResources = new()
     {
-            [typeof(CreateWorkshopResource)] = ("CreateWorkshopSchema", "Workshop"),
-            [typeof(UpdateWorkshopResource)] = ("UpdateWorkshopSchema", "Workshop"),
-            [typeof(WorkshopResource)] = ("WorkshopSchema", "Workshop"),
             [typeof(CreateMaintenanceRequestResource)] = ("CreateMaintenanceRequestSchema", "MaintenanceRequest"),
             [typeof(UpdateMaintenanceRequestResource)] = ("UpdateMaintenanceRequestSchema", "MaintenanceRequest"),
             [typeof(MaintenanceRequestResource)] = ("MaintenanceRequestSchema", "MaintenanceRequest")

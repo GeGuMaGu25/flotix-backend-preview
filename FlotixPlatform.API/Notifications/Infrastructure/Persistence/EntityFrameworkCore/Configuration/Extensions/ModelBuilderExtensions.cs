@@ -28,13 +28,5 @@ public static class ModelBuilderExtensions
         builder.Entity<Notification>().Property(n => n.IsRead).IsRequired();
         builder.Entity<Notification>().Property(n => n.SentAt).IsRequired();
         builder.Entity<Notification>().HasIndex(n => n.UserId);
-
-        builder.Entity<NotificationPreference>().HasKey(n => n.Id);
-        builder.Entity<NotificationPreference>().Property(n => n.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<NotificationPreference>().Property(n => n.UserId).IsRequired();
-        builder.Entity<NotificationPreference>().Property(n => n.Maintenance).IsRequired();
-        builder.Entity<NotificationPreference>().Property(n => n.Speed).IsRequired();
-        builder.Entity<NotificationPreference>().Property(n => n.Incidents).IsRequired();
-        builder.Entity<NotificationPreference>().HasIndex(n => n.UserId).IsUnique();
     }
 }

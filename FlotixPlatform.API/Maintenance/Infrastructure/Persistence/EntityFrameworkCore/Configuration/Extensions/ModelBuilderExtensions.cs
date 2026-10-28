@@ -15,21 +15,6 @@ public static class ModelBuilderExtensions
     /// <param name="builder">The model builder of the application database context.</param>
     public static void ApplyMaintenanceConfiguration(this ModelBuilder builder)
     {
-        builder.Entity<Workshop>().HasKey(w => w.Id);
-        builder.Entity<Workshop>().Property(w => w.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<Workshop>().Property(w => w.MechanicId).IsRequired();
-        builder.Entity<Workshop>().Property(w => w.City).IsRequired().HasMaxLength(80);
-        builder.Entity<Workshop>().Property(w => w.District).IsRequired().HasMaxLength(80);
-        builder.Entity<Workshop>().Property(w => w.Address).IsRequired().HasMaxLength(200);
-        builder.Entity<Workshop>()
-            .Property(w => w.Phone)
-            .HasConversion(valueObject => valueObject.Value, value => new PhoneNumber(value))
-            .HasMaxLength(30)
-            .IsRequired();
-        builder.Entity<Workshop>().Property(w => w.Rating).HasPrecision(12, 2).IsRequired();
-        builder.Entity<Workshop>().Property(w => w.Tags).IsRequired();
-        builder.Entity<Workshop>().HasIndex(w => w.MechanicId);
-
         builder.Entity<MaintenanceRequest>().HasKey(m => m.Id);
         builder.Entity<MaintenanceRequest>().Property(m => m.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<MaintenanceRequest>().Property(m => m.VehicleId).IsRequired();
