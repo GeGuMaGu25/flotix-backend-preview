@@ -1,5 +1,6 @@
 using FlotixPlatform.API.Analytics.Domain.Model.Aggregates;
 using FlotixPlatform.API.Analytics.Domain.Model.Commands;
+using FlotixPlatform.API.Analytics.Domain.Model.ValueObjects;
 using FlotixPlatform.API.Analytics.Application.Errors;
 using FlotixPlatform.API.Shared.Application.Patterns;
 
@@ -14,14 +15,14 @@ namespace FlotixPlatform.API.Analytics.Application.Services;
 public interface IReportCommandService
 {
     /// <summary>
-    ///     Handle the create report command.
+    ///     Handle the generate report command.
     /// </summary>
-    /// <param name="command">CreateReportCommand command</param>
+    /// <param name="command">GenerateReportCommand command</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
-    ///     A Result containing the created Report on success, or the error reason on failure.
+    ///     A Result containing the stored Report and the figures of each vehicle on success, or the error reason on failure.
     /// </returns>
-    Task<Result<Report, CreateReportError>> Handle(CreateReportCommand command, CancellationToken cancellationToken = default);
+    Task<Result<(Report Report, IReadOnlyList<ReportLine> Lines), GenerateReportError>> Handle(GenerateReportCommand command, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Handle the delete report command.

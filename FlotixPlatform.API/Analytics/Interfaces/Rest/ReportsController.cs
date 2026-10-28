@@ -32,44 +32,42 @@ public class ReportsController(
     : ControllerBase
 {
     /// <summary>
-    ///     Creates a report.
+    ///     Generates a fuel or maintenance report of the fleet of an owner within a date range.
     /// </summary>
-    /// <param name="resource">CreateReportResource resource</param>
+    /// <remarks>
+    ///     The report metadata is stored; when there are no records in the period the report is returned with an
+    ///     informative message instead of an error.
+    /// </remarks>
+    /// <param name="resource">GenerateReportResource resource</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
-    ///     A response as an action result containing the created report, or an error response if the report was
-    ///     not created.
+    ///     A response as an action result containing the generated report, or an error response if it was not generated.
     /// </returns>
     [HttpPost]
-    [ProducesResponseType(typeof(ReportResource), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(GeneratedReportResource), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> CreateReport([FromBody] CreateReportResource resource,
+    public async Task<ActionResult> GenerateReport([FromBody] GenerateReportResource resource,
         CancellationToken cancellationToken)
     {
         try
         {
-            var createReportCommand = CreateReportCommandFromResourceAssembler.ToCommandFromResource(resource);
-            var result = await reportCommandService.Handle(createReportCommand, cancellationToken);
-            return ActionResultFromCreateReportResultAssembler.ToActionResultFromCreateReportResult(
+            var generateReportCommand = GenerateReportCommandFromResourceAssembler.ToCommandFromResource(resource);
+            var result = await reportCommandService.Handle(generateReportCommand, cancellationToken);
+            return ActionResultFromGenerateReportResultAssembler.ToActionResultFromGenerateReportResult(
                 result,
                 this,
                 localizer,
                 nameof(GetReportById));
         }
-        catch (ArgumentException ex)
-        {
-            logger.LogWarning(ex, "Validation failed while creating report");
-            return BadRequest(localizer["InvalidReportRequest"].Value);
-        }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unexpected error while creating report");
+            logger.LogError(ex, "Unexpected error while generating report");
 
             return Problem(
                 title: localizer["UnexpectedServerError"].Value,
-                detail: localizer["UnexpectedErrorCreatingReport"].Value,
+                detail: localizer["UnexpectedErrorGeneratingReport"].Value,
                 statusCode: 500);
         }
     }

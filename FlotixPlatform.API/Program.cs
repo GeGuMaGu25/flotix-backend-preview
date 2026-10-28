@@ -10,16 +10,20 @@ using FlotixPlatform.API.Commerce.Application.Internal.QueryServices;
 using FlotixPlatform.API.Commerce.Application.Services;
 using FlotixPlatform.API.Commerce.Domain.Repositories;
 using FlotixPlatform.API.Commerce.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using FlotixPlatform.API.Fleet.Application.ACL;
 using FlotixPlatform.API.Fleet.Application.Internal.CommandServices;
 using FlotixPlatform.API.Fleet.Application.Internal.QueryServices;
 using FlotixPlatform.API.Fleet.Application.Services;
 using FlotixPlatform.API.Fleet.Domain.Repositories;
 using FlotixPlatform.API.Fleet.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using FlotixPlatform.API.Fleet.Interfaces.ACL;
+using FlotixPlatform.API.Fuel.Application.ACL;
 using FlotixPlatform.API.Fuel.Application.Internal.CommandServices;
 using FlotixPlatform.API.Fuel.Application.Internal.QueryServices;
 using FlotixPlatform.API.Fuel.Application.Services;
 using FlotixPlatform.API.Fuel.Domain.Repositories;
 using FlotixPlatform.API.Fuel.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using FlotixPlatform.API.Fuel.Interfaces.ACL;
 using FlotixPlatform.API.IAM.Application.Internal.CommandServices;
 using FlotixPlatform.API.IAM.Application.Internal.OutboundServices;
 using FlotixPlatform.API.IAM.Application.Internal.QueryServices;
@@ -35,11 +39,13 @@ using FlotixPlatform.API.Incidents.Application.Internal.QueryServices;
 using FlotixPlatform.API.Incidents.Application.Services;
 using FlotixPlatform.API.Incidents.Domain.Repositories;
 using FlotixPlatform.API.Incidents.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using FlotixPlatform.API.Maintenance.Application.ACL;
 using FlotixPlatform.API.Maintenance.Application.Internal.CommandServices;
 using FlotixPlatform.API.Maintenance.Application.Internal.QueryServices;
 using FlotixPlatform.API.Maintenance.Application.Services;
 using FlotixPlatform.API.Maintenance.Domain.Repositories;
 using FlotixPlatform.API.Maintenance.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using FlotixPlatform.API.Maintenance.Interfaces.ACL;
 using FlotixPlatform.API.Monitoring.Application.Internal.CommandServices;
 using FlotixPlatform.API.Monitoring.Application.Internal.OutboundServices;
 using FlotixPlatform.API.Monitoring.Application.Internal.QueryServices;
@@ -199,16 +205,19 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<IVehicleCommandService, VehicleCommandService>();
 builder.Services.AddScoped<IVehicleQueryService, VehicleQueryService>();
+builder.Services.AddScoped<IFleetContextFacade, FleetContextFacade>();
 
 // Fuel Control Bounded Context Injection Configuration
 builder.Services.AddScoped<IFuelRecordRepository, FuelRecordRepository>();
 builder.Services.AddScoped<IFuelRecordCommandService, FuelRecordCommandService>();
 builder.Services.AddScoped<IFuelRecordQueryService, FuelRecordQueryService>();
+builder.Services.AddScoped<IFuelContextFacade, FuelContextFacade>();
 
 // Maintenance Management Bounded Context Injection Configuration
 builder.Services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
 builder.Services.AddScoped<IMaintenanceRequestCommandService, MaintenanceRequestCommandService>();
 builder.Services.AddScoped<IMaintenanceRequestQueryService, MaintenanceRequestQueryService>();
+builder.Services.AddScoped<IMaintenanceContextFacade, MaintenanceContextFacade>();
 
 // Incident Management Bounded Context Injection Configuration
 builder.Services.AddScoped<IIncidentRepository, IncidentRepository>();
