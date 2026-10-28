@@ -31,4 +31,13 @@ public class FuelRecordRepository(AppDbContext context)
             .Where(f => f.DriverId == driverId)
             .ToListAsync(cancellationToken);
     }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<FuelRecord>> FindByVehicleIdsAndRecordedDateRangeAsync(IReadOnlyCollection<Guid> vehicleIds,
+        DateTimeOffset from, DateTimeOffset to, CancellationToken cancellationToken = default)
+    {
+        return await Context.Set<FuelRecord>()
+            .Where(f => vehicleIds.Contains(f.VehicleId) && f.RecordedDate >= from && f.RecordedDate < to)
+            .ToListAsync(cancellationToken);
+    }
 }
