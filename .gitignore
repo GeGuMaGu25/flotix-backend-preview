@@ -1,11 +1,13 @@
-## .NET
 bin/
 obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+.idea
+.vs/
+.vscode/
 *.user
 *.suo
-.vs/
-.idea/
-.vscode/
 TestResults/
 
 ## Secrets / local environment
