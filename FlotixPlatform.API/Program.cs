@@ -18,6 +18,11 @@ using FlotixPlatform.API.IAM.Infrastructure.Hashing.AspNetCore.Services;
 using FlotixPlatform.API.IAM.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using FlotixPlatform.API.IAM.Infrastructure.Pipeline.Middleware.Extensions;
 using FlotixPlatform.API.IAM.Infrastructure.Tokens.DataProtection.Services;
+using FlotixPlatform.API.Maintenance.Application.Internal.CommandServices;
+using FlotixPlatform.API.Maintenance.Application.Internal.QueryServices;
+using FlotixPlatform.API.Maintenance.Application.Services;
+using FlotixPlatform.API.Maintenance.Domain.Repositories;
+using FlotixPlatform.API.Maintenance.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using FlotixPlatform.API.Resources;
 using FlotixPlatform.API.Shared.Domain.Repositories;
 using FlotixPlatform.API.Shared.Infrastructure.Interfaces.Asp.Configuration;
@@ -31,6 +36,7 @@ using Scalar.AspNetCore;
 using IAMLocalizedOpenApiAssembler = FlotixPlatform.API.IAM.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 using FleetLocalizedOpenApiAssembler = FlotixPlatform.API.Fleet.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 using FuelLocalizedOpenApiAssembler = FlotixPlatform.API.Fuel.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
+using MaintenanceLocalizedOpenApiAssembler = FlotixPlatform.API.Maintenance.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,6 +99,8 @@ builder.Services.AddOpenApi(options =>
     options.AddSchemaTransformer(FleetLocalizedOpenApiAssembler.TransformSchemaAsync);
     options.AddOperationTransformer(FuelLocalizedOpenApiAssembler.TransformOperationAsync);
     options.AddSchemaTransformer(FuelLocalizedOpenApiAssembler.TransformSchemaAsync);
+    options.AddOperationTransformer(MaintenanceLocalizedOpenApiAssembler.TransformOperationAsync);
+    options.AddSchemaTransformer(MaintenanceLocalizedOpenApiAssembler.TransformSchemaAsync);
 });
 
 // Real-time communication with SignalR.
@@ -151,6 +159,14 @@ builder.Services.AddScoped<IFleetPreferencesQueryService, FleetPreferencesQueryS
 builder.Services.AddScoped<IFuelRecordRepository, FuelRecordRepository>();
 builder.Services.AddScoped<IFuelRecordCommandService, FuelRecordCommandService>();
 builder.Services.AddScoped<IFuelRecordQueryService, FuelRecordQueryService>();
+
+// Maintenance Management Bounded Context Injection Configuration
+builder.Services.AddScoped<IWorkshopRepository, WorkshopRepository>();
+builder.Services.AddScoped<IWorkshopCommandService, WorkshopCommandService>();
+builder.Services.AddScoped<IWorkshopQueryService, WorkshopQueryService>();
+builder.Services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
+builder.Services.AddScoped<IMaintenanceRequestCommandService, MaintenanceRequestCommandService>();
+builder.Services.AddScoped<IMaintenanceRequestQueryService, MaintenanceRequestQueryService>();
 
 // IAM token protection keys (persist the key ring in production, e.g. PersistKeysToFileSystem).
 builder.Services.AddDataProtection();
