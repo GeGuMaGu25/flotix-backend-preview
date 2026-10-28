@@ -6,7 +6,8 @@ namespace FlotixPlatform.API.Monitoring.Domain.Model.Aggregates;
 ///     Represents a position and speed reading reported by an IoT device; readings are immutable.
 /// </summary>
 /// <remarks>
-///     This aggregate root is created from a CreateTelemetryDataCommand and is immutable afterwards.
+///     This aggregate root is created by the IoT Telemetry Processor from a ReceiveTelemetryDataCommand
+///     and is immutable afterwards.
 ///     Audit timestamps (CreatedAt, UpdatedAt) are managed by the persistence layer.
 /// </remarks>
 public partial class TelemetryData
@@ -19,12 +20,33 @@ public partial class TelemetryData
     }
 
     /// <summary>
-    ///     Creates a new TelemetryData from a creation command.
+    ///     Creates a new TelemetryData from a received telemetry packet.
     /// </summary>
-    /// <param name="command">The CreateTelemetryDataCommand command</param>
+    /// <param name="command">The ReceiveTelemetryDataCommand command</param>
     /// <exception cref="ArgumentNullException">Thrown when the command is null.</exception>
-    /// <exception cref="ArgumentException">Thrown when the command contains invalid values.</exception>
-    public TelemetryData(CreateTelemetryDataCommand command)
+    /// <exception cref="ArgumentException">Thrown when the packet does not follow the expected schema.</exception>
+    public TelemetryData(ReceiveTelemetryDataCommand command)
+    {
+        Validate(command);
+
+        DeviceId = command.DeviceId;
+        Latitude = command.Latitude;
+        Longitude = command.Longitude;
+        Speed = command.Speed;
+        RecordedAt = command.RecordedAt;
+    }
+
+    /// <summary>
+    ///     Validates that a received telemetry packet follows the expected schema.
+    /// </summary>
+    /// <remarks>
+    ///     Used when the packet is received, so corrupt packets are discarded before being queued,
+    ///     and again when the aggregate is created.
+    /// </remarks>
+    /// <param name="command">The ReceiveTelemetryDataCommand command</param>
+    /// <exception cref="ArgumentNullException">Thrown when the command is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when the packet does not follow the expected schema.</exception>
+    public static void Validate(ReceiveTelemetryDataCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
         ArgumentOutOfRangeException.ThrowIfEqual(command.DeviceId, Guid.Empty);
@@ -34,12 +56,7 @@ public partial class TelemetryData
         ArgumentOutOfRangeException.ThrowIfGreaterThan(command.Longitude, 180m);
         ArgumentOutOfRangeException.ThrowIfNegative(command.Speed);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(command.Speed, 400m);
-
-        DeviceId = command.DeviceId;
-        Latitude = command.Latitude;
-        Longitude = command.Longitude;
-        Speed = command.Speed;
-        RecordedAt = command.RecordedAt;
+        ArgumentOutOfRangeException.ThrowIfEqual(command.RecordedAt, default);
     }
 
     /// <summary>

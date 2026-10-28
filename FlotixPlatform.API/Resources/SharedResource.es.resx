@@ -549,17 +549,11 @@
     <data name="DeleteIotDeviceDescription" xml:space="preserve">
         <value>Elimina un dispositivo IoT mediante su identificador.</value>
     </data>
-    <data name="CreateTelemetryDataSummary" xml:space="preserve">
-        <value>Crear un registro de telemetría</value>
-    </data>
-    <data name="CreateTelemetryDataDescription" xml:space="preserve">
-        <value>Registra un nuevo registro de telemetría.</value>
-    </data>
     <data name="GetAllTelemetryDataSummary" xml:space="preserve">
         <value>Obtener todos los registros de telemetría</value>
     </data>
     <data name="GetAllTelemetryDataDescription" xml:space="preserve">
-        <value>Obtiene todos los registros de telemetría, opcionalmente filtrados por ID del dispositivo.</value>
+        <value>Obtiene todos los registros de telemetría, opcionalmente filtrados por ID del dispositivo desde la lectura más reciente.</value>
     </data>
     <data name="GetTelemetryDataByIdSummary" xml:space="preserve">
         <value>Obtener un registro de telemetría por ID</value>
@@ -575,9 +569,6 @@
     </data>
     <data name="IotDeviceSchema" xml:space="preserve">
         <value>Un dispositivo IoT devuelto por la API.</value>
-    </data>
-    <data name="CreateTelemetryDataSchema" xml:space="preserve">
-        <value>Datos de la solicitud para crear un registro de telemetría.</value>
     </data>
     <data name="TelemetryDataSchema" xml:space="preserve">
         <value>Un registro de telemetría devuelto por la API.</value>
@@ -643,22 +634,10 @@
         <value>El campo número de serie es obligatorio.</value>
     </data>
     <data name="InvalidTelemetryDataRequest" xml:space="preserve">
-        <value>La solicitud de registro de telemetría contiene valores no válidos.</value>
+        <value>El paquete de telemetría no cumple el esquema esperado y fue descartado.</value>
     </data>
     <data name="TelemetryDataNotFound" xml:space="preserve">
         <value>No se encontró el registro de telemetría.</value>
-    </data>
-    <data name="UnexpectedErrorCreatingTelemetryData" xml:space="preserve">
-        <value>Ocurrió un error inesperado al crear el registro de telemetría.</value>
-    </data>
-    <data name="UnexpectedErrorUpdatingTelemetryData" xml:space="preserve">
-        <value>Ocurrió un error inesperado al actualizar el registro de telemetría.</value>
-    </data>
-    <data name="UnexpectedErrorDeletingTelemetryData" xml:space="preserve">
-        <value>Ocurrió un error inesperado al eliminar el registro de telemetría.</value>
-    </data>
-    <data name="TelemetryDataReferencedResourceNotFound" xml:space="preserve">
-        <value>No existe un vehículo, usuario u otro recurso referenciado por el registro de telemetría.</value>
     </data>
     <data name="CreateAlertSummary" xml:space="preserve">
         <value>Crear una alerta</value>
@@ -938,5 +917,41 @@
     </data>
     <data name="RequiredFilterParams" xml:space="preserve">
         <value>El campo parámetros de filtro es obligatorio.</value>
+    </data>
+    <data name="Response202" xml:space="preserve">
+        <value>La solicitud fue aceptada para su procesamiento.</value>
+    </data>
+    <data name="ReceiveTelemetryDataSummary" xml:space="preserve">
+        <value>Recibir un paquete de telemetría</value>
+    </data>
+    <data name="ReceiveTelemetryDataDescription" xml:space="preserve">
+        <value>Recibe un paquete de telemetría de un dispositivo IoT y lo encola para el IoT Telemetry Processor, que almacena la lectura y publica la ubicación del vehículo. Los paquetes corruptos se descartan y se registran en el registro de errores.</value>
+    </data>
+    <data name="UnexpectedErrorReceivingTelemetryData" xml:space="preserve">
+        <value>Ocurrió un error inesperado al recibir el paquete de telemetría.</value>
+    </data>
+    <data name="ReceiveTelemetryDataSchema" xml:space="preserve">
+        <value>Paquete de telemetría enviado por un dispositivo IoT.</value>
+    </data>
+    <data name="VehicleLocationSchema" xml:space="preserve">
+        <value>Última ubicación de un vehículo, publicada en tiempo real.</value>
+    </data>
+    <data name="VehicleLocationVehicleId" xml:space="preserve">
+        <value>El identificador del vehículo.</value>
+    </data>
+    <data name="VehicleLocationDeviceId" xml:space="preserve">
+        <value>El identificador del dispositivo IoT que reporta.</value>
+    </data>
+    <data name="VehicleLocationLatitude" xml:space="preserve">
+        <value>La latitud del vehículo.</value>
+    </data>
+    <data name="VehicleLocationLongitude" xml:space="preserve">
+        <value>La longitud del vehículo.</value>
+    </data>
+    <data name="VehicleLocationSpeed" xml:space="preserve">
+        <value>La velocidad del vehículo en km/h.</value>
+    </data>
+    <data name="VehicleLocationRecordedAt" xml:space="preserve">
+        <value>El momento en que el dispositivo tomó la lectura.</value>
     </data>
 </root>

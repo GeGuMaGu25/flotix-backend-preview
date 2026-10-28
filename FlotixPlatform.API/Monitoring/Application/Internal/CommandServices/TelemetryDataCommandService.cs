@@ -1,5 +1,6 @@
 using FlotixPlatform.API.Monitoring.Domain.Model.Aggregates;
 using FlotixPlatform.API.Monitoring.Application.Errors;
+using FlotixPlatform.API.Monitoring.Application.Internal.OutboundServices;
 using FlotixPlatform.API.Monitoring.Application.Services;
 using FlotixPlatform.API.Monitoring.Domain.Model.Commands;
 using FlotixPlatform.API.Monitoring.Domain.Repositories;
@@ -10,52 +11,43 @@ using Microsoft.EntityFrameworkCore;
 namespace FlotixPlatform.API.Monitoring.Application.Internal.CommandServices;
 
 /// <summary>
-///     Application service for handling telemetry record commands.
+///     Application service for the ingestion of telemetry data.
 /// </summary>
 /// <remarks>
-///     This service acts as the command handler for telemetry records.
-///     It enforces the application rules, delegates the business rules to the aggregate,
-///     then coordinates with the unit of work to persist changes.
-///     Logs warnings for rejected commands and errors for persistence failures.
+///     Corrupt packets and packets of devices not linked to a vehicle are discarded and recorded in the error
+///     log. Valid packets are stored, the device is marked as connected and the new location of the vehicle
+///     is published in real time.
 /// </remarks>
 /// <param name="telemetryDataRepository">Repository for accessing telemetry record data.</param>
+/// <param name="iotDeviceRepository">Repository for accessing the IoT devices that send the packets.</param>
+/// <param name="telemetryDataQueue">Queue that hands the received packets to the IoT Telemetry Processor.</param>
+/// <param name="vehicleLocationNotifier">Outbound service that publishes the updated vehicle location.</param>
 /// <param name="unitOfWork">Unit of work for managing transaction scope.</param>
 /// <param name="logger">Logger for diagnostic and error reporting.</param>
-/// See
-/// <see cref="ITelemetryDataRepository">ITelemetryDataRepository</see>
-/// ,
-/// <see cref="IUnitOfWork">IUnitOfWork</see>
 public class TelemetryDataCommandService(
     ITelemetryDataRepository telemetryDataRepository,
+    IIotDeviceRepository iotDeviceRepository,
+    ITelemetryDataQueue telemetryDataQueue,
+    IVehicleLocationNotifier vehicleLocationNotifier,
     IUnitOfWork unitOfWork,
     ILogger<TelemetryDataCommandService> logger)
     : ITelemetryDataCommandService
 {
     /// <inheritdoc />
-    public async Task<Result<TelemetryData, CreateTelemetryDataError>> Handle(CreateTelemetryDataCommand command,
+    public async Task<Result<ReceiveTelemetryDataCommand, ReceiveTelemetryDataError>> Handle(ReceiveTelemetryDataCommand command,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            var telemetryData = new TelemetryData(command);
-            await telemetryDataRepository.AddAsync(telemetryData, cancellationToken);
-            await unitOfWork.CompleteAsync(cancellationToken);
-            return new Result<TelemetryData, CreateTelemetryDataError>.Success(telemetryData);
+            TelemetryData.Validate(command);
+            await telemetryDataQueue.EnqueueAsync(command, cancellationToken);
+            return new Result<ReceiveTelemetryDataCommand, ReceiveTelemetryDataError>.Success(command);
         }
         catch (ArgumentException ex)
         {
-            logger.LogWarning(ex, "Invalid arguments while creating telemetry record");
-            return new Result<TelemetryData, CreateTelemetryDataError>.Failure(CreateTelemetryDataError.InvalidTelemetryData);
-        }
-        catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
-        {
-            logger.LogWarning(ex, "Foreign key violation creating telemetry record");
-            return new Result<TelemetryData, CreateTelemetryDataError>.Failure(CreateTelemetryDataError.ReferencedResourceNotFound);
-        }
-        catch (DbUpdateException ex)
-        {
-            logger.LogError(ex, "Database update failed creating telemetry record");
-            return new Result<TelemetryData, CreateTelemetryDataError>.Failure(CreateTelemetryDataError.UnexpectedError);
+            logger.LogError(ex, "Corrupt telemetry packet discarded for device {DeviceId}", command.DeviceId);
+            return new Result<ReceiveTelemetryDataCommand, ReceiveTelemetryDataError>.Failure(
+                ReceiveTelemetryDataError.InvalidTelemetryData);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -63,25 +55,65 @@ public class TelemetryDataCommandService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unexpected error creating telemetry record");
-            return new Result<TelemetryData, CreateTelemetryDataError>.Failure(CreateTelemetryDataError.UnexpectedError);
+            logger.LogError(ex, "Unexpected error receiving telemetry packet for device {DeviceId}", command.DeviceId);
+            return new Result<ReceiveTelemetryDataCommand, ReceiveTelemetryDataError>.Failure(
+                ReceiveTelemetryDataError.UnexpectedError);
         }
     }
 
-    /// <summary>
-    /// Determines whether a DbUpdateException represents a foreign key constraint violation.
-    /// </summary>
-    /// <param name="exception">The exception to inspect.</param>
-    /// <returns>True if the exception is due to a PostgreSQL foreign key violation (SQLSTATE 23503), false otherwise.</returns>
-    private static bool IsForeignKeyViolation(DbUpdateException exception)
+    /// <inheritdoc />
+    public async Task<Result<TelemetryData, ProcessTelemetryDataError>> Process(ReceiveTelemetryDataCommand command,
+        CancellationToken cancellationToken = default)
     {
-        for (Exception? current = exception; current is not null; current = current.InnerException)
+        var iotDevice = await iotDeviceRepository.FindByIdAsync(command.DeviceId, cancellationToken);
+        if (iotDevice is null)
         {
-            if (!string.Equals(current.GetType().Name, "PostgresException", StringComparison.Ordinal)) continue;
-            var sqlStateProperty = current.GetType().GetProperty("SqlState");
-            if (sqlStateProperty?.GetValue(current) is "23503")
-                return true;
+            logger.LogError("Telemetry packet discarded: device {DeviceId} is not linked to a vehicle", command.DeviceId);
+            return new Result<TelemetryData, ProcessTelemetryDataError>.Failure(
+                ProcessTelemetryDataError.IotDeviceNotFound);
         }
-        return false;
+
+        TelemetryData telemetryData;
+        try
+        {
+            telemetryData = new TelemetryData(command);
+            iotDevice.Connect();
+            iotDeviceRepository.Update(iotDevice);
+            await telemetryDataRepository.AddAsync(telemetryData, cancellationToken);
+            await unitOfWork.CompleteAsync(cancellationToken);
+        }
+        catch (ArgumentException ex)
+        {
+            logger.LogError(ex, "Corrupt telemetry packet discarded for device {DeviceId}", command.DeviceId);
+            return new Result<TelemetryData, ProcessTelemetryDataError>.Failure(
+                ProcessTelemetryDataError.InvalidTelemetryData);
+        }
+        catch (DbUpdateException ex)
+        {
+            logger.LogError(ex, "Database update failed processing telemetry packet for device {DeviceId}", command.DeviceId);
+            return new Result<TelemetryData, ProcessTelemetryDataError>.Failure(
+                ProcessTelemetryDataError.UnexpectedError);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unexpected error processing telemetry packet for device {DeviceId}", command.DeviceId);
+            return new Result<TelemetryData, ProcessTelemetryDataError>.Failure(
+                ProcessTelemetryDataError.UnexpectedError);
+        }
+
+        try
+        {
+            await vehicleLocationNotifier.NotifyAsync(iotDevice.VehicleId, telemetryData, cancellationToken);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger.LogWarning(ex, "Vehicle location of {VehicleId} stored but not published", iotDevice.VehicleId);
+        }
+
+        return new Result<TelemetryData, ProcessTelemetryDataError>.Success(telemetryData);
     }
 }

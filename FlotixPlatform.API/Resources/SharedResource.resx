@@ -549,17 +549,11 @@
     <data name="DeleteIotDeviceDescription" xml:space="preserve">
         <value>Deletes an IoT device using its identifier.</value>
     </data>
-    <data name="CreateTelemetryDataSummary" xml:space="preserve">
-        <value>Create a telemetry record</value>
-    </data>
-    <data name="CreateTelemetryDataDescription" xml:space="preserve">
-        <value>Registers a new telemetry record.</value>
-    </data>
     <data name="GetAllTelemetryDataSummary" xml:space="preserve">
         <value>Get all telemetry records</value>
     </data>
     <data name="GetAllTelemetryDataDescription" xml:space="preserve">
-        <value>Retrieves all telemetry records, optionally filtered by device ID.</value>
+        <value>Retrieves all telemetry records, optionally filtered by device ID from the most recent reading.</value>
     </data>
     <data name="GetTelemetryDataByIdSummary" xml:space="preserve">
         <value>Get a telemetry record by ID</value>
@@ -575,9 +569,6 @@
     </data>
     <data name="IotDeviceSchema" xml:space="preserve">
         <value>An IoT device returned by the API.</value>
-    </data>
-    <data name="CreateTelemetryDataSchema" xml:space="preserve">
-        <value>Request payload for creating a telemetry record.</value>
     </data>
     <data name="TelemetryDataSchema" xml:space="preserve">
         <value>A telemetry record returned by the API.</value>
@@ -643,22 +634,10 @@
         <value>Serial number is required.</value>
     </data>
     <data name="InvalidTelemetryDataRequest" xml:space="preserve">
-        <value>The telemetry record request contains invalid values.</value>
+        <value>The telemetry packet does not follow the expected schema and was discarded.</value>
     </data>
     <data name="TelemetryDataNotFound" xml:space="preserve">
         <value>The telemetry record was not found.</value>
-    </data>
-    <data name="UnexpectedErrorCreatingTelemetryData" xml:space="preserve">
-        <value>An unexpected error occurred while creating the telemetry record.</value>
-    </data>
-    <data name="UnexpectedErrorUpdatingTelemetryData" xml:space="preserve">
-        <value>An unexpected error occurred while updating the telemetry record.</value>
-    </data>
-    <data name="UnexpectedErrorDeletingTelemetryData" xml:space="preserve">
-        <value>An unexpected error occurred while deleting the telemetry record.</value>
-    </data>
-    <data name="TelemetryDataReferencedResourceNotFound" xml:space="preserve">
-        <value>A vehicle, user or other resource referenced by the telemetry record does not exist.</value>
     </data>
     <data name="CreateAlertSummary" xml:space="preserve">
         <value>Create an alert</value>
@@ -938,5 +917,41 @@
     </data>
     <data name="RequiredFilterParams" xml:space="preserve">
         <value>Filter params is required.</value>
+    </data>
+    <data name="Response202" xml:space="preserve">
+        <value>The request was accepted for processing.</value>
+    </data>
+    <data name="ReceiveTelemetryDataSummary" xml:space="preserve">
+        <value>Receive a telemetry packet</value>
+    </data>
+    <data name="ReceiveTelemetryDataDescription" xml:space="preserve">
+        <value>Receives a telemetry packet from an IoT device and queues it for the IoT Telemetry Processor, which stores the reading and publishes the vehicle location. Corrupt packets are discarded and recorded in the error log.</value>
+    </data>
+    <data name="UnexpectedErrorReceivingTelemetryData" xml:space="preserve">
+        <value>An unexpected error occurred while receiving the telemetry packet.</value>
+    </data>
+    <data name="ReceiveTelemetryDataSchema" xml:space="preserve">
+        <value>Telemetry packet sent by an IoT device.</value>
+    </data>
+    <data name="VehicleLocationSchema" xml:space="preserve">
+        <value>Latest location of a vehicle, published in real time.</value>
+    </data>
+    <data name="VehicleLocationVehicleId" xml:space="preserve">
+        <value>The identifier of the vehicle.</value>
+    </data>
+    <data name="VehicleLocationDeviceId" xml:space="preserve">
+        <value>The identifier of the reporting IoT device.</value>
+    </data>
+    <data name="VehicleLocationLatitude" xml:space="preserve">
+        <value>The latitude of the vehicle.</value>
+    </data>
+    <data name="VehicleLocationLongitude" xml:space="preserve">
+        <value>The longitude of the vehicle.</value>
+    </data>
+    <data name="VehicleLocationSpeed" xml:space="preserve">
+        <value>The speed of the vehicle in km/h.</value>
+    </data>
+    <data name="VehicleLocationRecordedAt" xml:space="preserve">
+        <value>The moment the reading was taken by the device.</value>
     </data>
 </root>

@@ -64,14 +64,13 @@ public static class LocalizedOpenApiAssembler
                     ["409"] = "Response409",
                     ["500"] = "Response500"
                 }),
-            ["CreateTelemetryData"] = (
-                "CreateTelemetryDataSummary",
-                "CreateTelemetryDataDescription",
+            ["ReceiveTelemetryData"] = (
+                "ReceiveTelemetryDataSummary",
+                "ReceiveTelemetryDataDescription",
                 new Dictionary<string, string>
                 {
-                    ["201"] = "Response201",
+                    ["202"] = "Response202",
                     ["400"] = "Response400",
-                    ["404"] = "Response404",
                     ["500"] = "Response500"
                 }),
             ["GetAllTelemetryData"] = (
@@ -96,7 +95,8 @@ public static class LocalizedOpenApiAssembler
             [typeof(CreateIotDeviceResource)] = ("CreateIotDeviceSchema", "IotDevice"),
             [typeof(UpdateIotDeviceResource)] = ("UpdateIotDeviceSchema", "IotDevice"),
             [typeof(IotDeviceResource)] = ("IotDeviceSchema", "IotDevice"),
-            [typeof(CreateTelemetryDataResource)] = ("CreateTelemetryDataSchema", "TelemetryData"),
+            [typeof(ReceiveTelemetryDataResource)] = ("ReceiveTelemetryDataSchema", "TelemetryData"),
+            [typeof(VehicleLocationResource)] = ("VehicleLocationSchema", "VehicleLocation"),
             [typeof(TelemetryDataResource)] = ("TelemetryDataSchema", "TelemetryData")
     };
 

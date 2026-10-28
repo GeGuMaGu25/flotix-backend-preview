@@ -41,10 +41,14 @@ using FlotixPlatform.API.Maintenance.Application.Services;
 using FlotixPlatform.API.Maintenance.Domain.Repositories;
 using FlotixPlatform.API.Maintenance.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using FlotixPlatform.API.Monitoring.Application.Internal.CommandServices;
+using FlotixPlatform.API.Monitoring.Application.Internal.OutboundServices;
 using FlotixPlatform.API.Monitoring.Application.Internal.QueryServices;
 using FlotixPlatform.API.Monitoring.Application.Services;
 using FlotixPlatform.API.Monitoring.Domain.Repositories;
 using FlotixPlatform.API.Monitoring.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using FlotixPlatform.API.Monitoring.Infrastructure.Processing;
+using FlotixPlatform.API.Monitoring.Infrastructure.Queues.Channels;
+using FlotixPlatform.API.Monitoring.Infrastructure.Realtime.SignalR.Services;
 using FlotixPlatform.API.Monitoring.Interfaces.Hubs;
 using FlotixPlatform.API.Notifications.Application.Internal.CommandServices;
 using FlotixPlatform.API.Notifications.Application.Internal.QueryServices;
@@ -218,6 +222,9 @@ builder.Services.AddScoped<IIotDeviceQueryService, IotDeviceQueryService>();
 builder.Services.AddScoped<ITelemetryDataRepository, TelemetryDataRepository>();
 builder.Services.AddScoped<ITelemetryDataCommandService, TelemetryDataCommandService>();
 builder.Services.AddScoped<ITelemetryDataQueryService, TelemetryDataQueryService>();
+builder.Services.AddSingleton<ITelemetryDataQueue, TelemetryDataQueue>();
+builder.Services.AddScoped<IVehicleLocationNotifier, VehicleLocationNotifier>();
+builder.Services.AddHostedService<TelemetryDataProcessor>();
 
 // Alerts & Notifications Bounded Context Injection Configuration
 builder.Services.AddScoped<IAlertRepository, AlertRepository>();
