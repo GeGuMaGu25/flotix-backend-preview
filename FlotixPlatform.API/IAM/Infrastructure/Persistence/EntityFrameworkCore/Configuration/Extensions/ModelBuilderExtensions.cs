@@ -36,8 +36,8 @@ public static class ModelBuilderExtensions
             .HasValue<Owner>(Role.Owner)
             .HasValue<Driver>(Role.Driver)
             .HasValue<Mechanic>(Role.Mechanic);
-        builder.Entity<User>().HasIndex(u => u.Email).IsUnique();
-        builder.Entity<User>().HasIndex(u => u.RoleType);
+        builder.Entity<User>().HasIndex(u => u.Email).IsUnique().HasDatabaseName("IX_users_email");
+        builder.Entity<User>().HasIndex(u => u.RoleType).HasDatabaseName("IX_users_role_type");
 
         builder.Entity<Owner>().Property(o => o.CompanyName).HasMaxLength(100);
         builder.Entity<Driver>().Property(d => d.LicenseNumber).HasMaxLength(50);
