@@ -58,6 +58,14 @@ public partial class IotDevice
     public bool IsConnected { get; private set; }
 
     /// <summary>
+    ///     Marks the IoT device as connected, as it is sending telemetry to the platform.
+    /// </summary>
+    public void Connect()
+    {
+        IsConnected = true;
+    }
+
+    /// <summary>
     ///     Updates the IoT device information from an update command.
     /// </summary>
     /// <param name="command">The UpdateIotDeviceCommand command</param>
