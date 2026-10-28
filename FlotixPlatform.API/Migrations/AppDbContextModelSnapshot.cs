@@ -23,6 +23,193 @@ namespace FlotixPlatform.API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FlotixPlatform.API.Commerce.Domain.Model.Aggregates.IotCatalogItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("IconName")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("icon_name");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Sku")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("sku");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("unit_price");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_iot_catalog_items");
+
+                    b.HasIndex("Sku")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_iot_catalog_items_sku");
+
+                    b.ToTable("iot_catalog_items");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IconName = "pin",
+                            Name = "Rastreador GPS Flotix",
+                            Sku = "gps",
+                            UnitPrice = 149.9m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IconName = "signal",
+                            Name = "Odómetro digital Flotix",
+                            Sku = "odometer",
+                            UnitPrice = 89.9m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IconName = "fuel",
+                            Name = "Sensor de combustible Flotix",
+                            Sku = "fuel-sensor",
+                            UnitPrice = 119.9m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IconName = "chip",
+                            Name = "Lector de diagnóstico OBD-II Flotix",
+                            Sku = "obd-ii",
+                            UnitPrice = 99.9m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            IconName = "camera",
+                            Name = "Cámara de cabina Flotix",
+                            Sku = "dashcam",
+                            UnitPrice = 189.9m
+                        },
+                        new
+                        {
+                            Id = 6,
+                            IconName = "gear",
+                            Name = "Sensor de presión de llantas Flotix",
+                            Sku = "tpms",
+                            UnitPrice = 129.9m
+                        },
+                        new
+                        {
+                            Id = 7,
+                            IconName = "shield",
+                            Name = "Inmovilizador remoto Flotix",
+                            Sku = "immobilizer",
+                            UnitPrice = 169.9m
+                        },
+                        new
+                        {
+                            Id = 8,
+                            IconName = "bell",
+                            Name = "Botón de pánico Flotix",
+                            Sku = "panic-button",
+                            UnitPrice = 59.9m
+                        },
+                        new
+                        {
+                            Id = 9,
+                            IconName = "chart",
+                            Name = "Sensor de temperatura de carga Flotix",
+                            Sku = "temp-sensor",
+                            UnitPrice = 109.9m
+                        },
+                        new
+                        {
+                            Id = 10,
+                            IconName = "users",
+                            Name = "Lector de identificación de conductor Flotix",
+                            Sku = "driver-id",
+                            UnitPrice = 79.9m
+                        });
+                });
+
+            modelBuilder.Entity("FlotixPlatform.API.Commerce.Domain.Model.Aggregates.IotOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("DeviceQuantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("device_quantity");
+
+                    b.Property<DateOnly>("OrderDate")
+                        .HasColumnType("date")
+                        .HasColumnName("order_date");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("integer")
+                        .HasColumnName("owner_id");
+
+                    b.Property<string>("Sku")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("sku");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("status");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("total_amount");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_iot_orders");
+
+                    b.HasIndex("OwnerId")
+                        .HasDatabaseName("i_x_iot_orders_owner_id");
+
+                    b.ToTable("iot_orders");
+                });
+
             modelBuilder.Entity("FlotixPlatform.API.Fleet.Domain.Model.Aggregates.FleetPreferences", b =>
                 {
                     b.Property<int>("Id")
