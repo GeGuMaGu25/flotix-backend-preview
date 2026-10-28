@@ -1,3 +1,4 @@
+using FlotixPlatform.API.IAM.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using FlotixPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using FlotixPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Interceptors;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.ApplyIAMConfiguration();
 
         builder.UseSnakeCaseNamingConvention();
     }
