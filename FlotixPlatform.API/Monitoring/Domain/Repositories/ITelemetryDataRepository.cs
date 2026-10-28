@@ -6,7 +6,7 @@ namespace FlotixPlatform.API.Monitoring.Domain.Repositories;
 /// <summary>
 ///     The telemetry record repository contract.
 /// </summary>
-public interface ITelemetryRecordRepository : IBaseRepository<TelemetryRecord>
+public interface ITelemetryDataRepository : IBaseRepository<TelemetryData>
 {
     /// <summary>
     ///     Find telemetry records by device ID
@@ -16,5 +16,5 @@ public interface ITelemetryRecordRepository : IBaseRepository<TelemetryRecord>
     /// <returns>
     ///     An Enumerable containing the telemetry record objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<TelemetryRecord>> FindByDeviceIdAsync(int deviceId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<TelemetryData>> FindByDeviceIdAsync(Guid deviceId, CancellationToken cancellationToken = default);
 }

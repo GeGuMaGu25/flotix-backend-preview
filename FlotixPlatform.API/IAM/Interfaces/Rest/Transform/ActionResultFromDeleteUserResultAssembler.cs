@@ -34,6 +34,9 @@ public static class ActionResultFromDeleteUserResultAssembler
                     DeleteUserError.UserNotFound =>
                         controller.NotFound(localizer["UserNotFound"].Value),
 
+                    DeleteUserError.UserHasDependents =>
+                        controller.Conflict(localizer["UserHasDependents"].Value),
+
                     DeleteUserError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,

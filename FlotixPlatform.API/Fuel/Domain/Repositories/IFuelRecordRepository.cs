@@ -16,7 +16,7 @@ public interface IFuelRecordRepository : IBaseRepository<FuelRecord>
     /// <returns>
     ///     An Enumerable containing the fuel record objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<FuelRecord>> FindByVehicleIdAsync(int vehicleId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<FuelRecord>> FindByVehicleIdAsync(Guid vehicleId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Find fuel records by driver ID
@@ -26,5 +26,5 @@ public interface IFuelRecordRepository : IBaseRepository<FuelRecord>
     /// <returns>
     ///     An Enumerable containing the fuel record objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<FuelRecord>> FindByDriverIdAsync(int driverId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<FuelRecord>> FindByDriverIdAsync(Guid driverId, CancellationToken cancellationToken = default);
 }

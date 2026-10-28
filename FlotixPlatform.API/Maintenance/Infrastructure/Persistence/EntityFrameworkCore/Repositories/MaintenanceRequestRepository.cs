@@ -17,7 +17,7 @@ public class MaintenanceRequestRepository(AppDbContext context)
     : BaseRepository<MaintenanceRequest>(context), IMaintenanceRequestRepository
 {
     /// <inheritdoc />
-    public async Task<IEnumerable<MaintenanceRequest>> FindByVehicleIdAsync(int vehicleId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<MaintenanceRequest>> FindByVehicleIdAsync(Guid vehicleId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<MaintenanceRequest>()
             .Where(m => m.VehicleId == vehicleId)
@@ -25,7 +25,7 @@ public class MaintenanceRequestRepository(AppDbContext context)
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<MaintenanceRequest>> FindByMechanicIdAsync(int mechanicId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<MaintenanceRequest>> FindByMechanicIdAsync(Guid mechanicId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<MaintenanceRequest>()
             .Where(m => m.MechanicId == mechanicId)

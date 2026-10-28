@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Incidents.Domain.Model.Commands;
 ///     Command to delete an incident
 /// </summary>
 /// <param name="IncidentId">The identifier of the incident to delete</param>
-public record DeleteIncidentCommand(int IncidentId);
+public record DeleteIncidentCommand(Guid IncidentId);

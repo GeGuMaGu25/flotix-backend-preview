@@ -18,9 +18,9 @@ public static class ModelBuilderExtensions
         builder.Entity<IotOrder>().HasKey(i => i.Id);
         builder.Entity<IotOrder>().Property(i => i.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<IotOrder>().Property(i => i.OwnerId).IsRequired();
-        builder.Entity<IotOrder>().Property(i => i.DeviceQuantity).IsRequired();
-        builder.Entity<IotOrder>().Property(i => i.TotalAmount).HasPrecision(12, 2).IsRequired();
-        builder.Entity<IotOrder>().Property(i => i.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+        builder.Entity<IotOrder>().Property(i => i.Quantity).IsRequired();
+        builder.Entity<IotOrder>().Property(i => i.TotalAmount).IsRequired();
+        builder.Entity<IotOrder>().Property(i => i.Status).HasConversion<string>().HasMaxLength(50).IsRequired();
         builder.Entity<IotOrder>().Property(i => i.OrderDate).IsRequired();
         builder.Entity<IotOrder>().HasIndex(i => i.OwnerId);
     }

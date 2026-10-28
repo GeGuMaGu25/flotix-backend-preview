@@ -24,6 +24,7 @@ public static class LocalizedOpenApiAssembler
                 {
                     ["201"] = "Response201",
                     ["400"] = "Response400",
+                    ["404"] = "Response404",
                     ["409"] = "Response409",
                     ["500"] = "Response500"
                 }),
@@ -60,6 +61,7 @@ public static class LocalizedOpenApiAssembler
                 {
                     ["204"] = "Response204",
                     ["404"] = "Response404",
+                    ["409"] = "Response409",
                     ["500"] = "Response500"
                 })
         };

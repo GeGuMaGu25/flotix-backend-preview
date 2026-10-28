@@ -17,5 +17,5 @@ public static class CreateFuelRecordCommandFromResourceAssembler
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
     public static CreateFuelRecordCommand ToCommandFromResource(CreateFuelRecordResource resource) =>
-        new(resource.VehicleId, resource.DriverId, resource.Liters, resource.TotalCost, resource.MileageAtRefuel, resource.Date);
+        new(resource.VehicleId, resource.DriverId, resource.Liters, resource.Cost, resource.MileageAtRefill, resource.RecordedDate);
 }

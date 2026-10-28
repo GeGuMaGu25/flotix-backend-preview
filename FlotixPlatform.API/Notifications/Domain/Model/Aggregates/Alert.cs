@@ -28,24 +28,24 @@ public partial class Alert
     public Alert(CreateAlertCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ArgumentOutOfRangeException.ThrowIfLessThan(command.VehicleId, 1);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.VehicleId, Guid.Empty);
         ArgumentException.ThrowIfNullOrWhiteSpace(command.AlertType);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.AlertType.Length, 120);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.AlertType.Length, 50);
 
         VehicleId = command.VehicleId;
         AlertType = command.AlertType;
-        ActivatedAt = DateTimeOffset.UtcNow;
+        TriggerDate = DateTimeOffset.UtcNow;
     }
 
     /// <summary>
     ///     Gets the server-generated identifier for this alert.
     /// </summary>
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     /// <summary>
     ///     Gets the identifier of the vehicle.
     /// </summary>
-    public int VehicleId { get; private set; }
+    public Guid VehicleId { get; private set; }
 
     /// <summary>
     ///     Gets the type of the alert (e.g. Exceso de velocidad).
@@ -53,7 +53,7 @@ public partial class Alert
     public string AlertType { get; private set; }
 
     /// <summary>
-    ///     Gets the moment the alert was activated.
+    ///     Gets the moment the alert was triggered.
     /// </summary>
-    public DateTimeOffset ActivatedAt { get; private set; }
+    public DateTimeOffset TriggerDate { get; private set; }
 }

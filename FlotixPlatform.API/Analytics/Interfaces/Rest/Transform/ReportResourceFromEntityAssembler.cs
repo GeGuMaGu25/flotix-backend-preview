@@ -16,5 +16,5 @@ public static class ReportResourceFromEntityAssembler
     ///     A ReportResource assembled from the Report
     /// </returns>
     public static ReportResource ToResourceFromEntity(Report entity) =>
-        new(entity.Id, entity.OwnerId, entity.ReportType, entity.FilterParams, entity.GeneratedAt);
+        new(entity.Id, entity.OwnerId, entity.ReportType, entity.GeneratedDate, entity.FilterParams);
 }

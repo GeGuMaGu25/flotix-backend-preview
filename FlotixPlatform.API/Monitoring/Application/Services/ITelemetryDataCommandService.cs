@@ -11,15 +11,15 @@ namespace FlotixPlatform.API.Monitoring.Application.Services;
 /// <remarks>
 ///     This interface defines the contract for handling the commands that change telemetry records.
 /// </remarks>
-public interface ITelemetryRecordCommandService
+public interface ITelemetryDataCommandService
 {
     /// <summary>
     ///     Handle the create telemetry record command.
     /// </summary>
-    /// <param name="command">CreateTelemetryRecordCommand command</param>
+    /// <param name="command">CreateTelemetryDataCommand command</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
-    ///     A Result containing the created TelemetryRecord on success, or the error reason on failure.
+    ///     A Result containing the created TelemetryData on success, or the error reason on failure.
     /// </returns>
-    Task<Result<TelemetryRecord, CreateTelemetryRecordError>> Handle(CreateTelemetryRecordCommand command, CancellationToken cancellationToken = default);
+    Task<Result<TelemetryData, CreateTelemetryDataError>> Handle(CreateTelemetryDataCommand command, CancellationToken cancellationToken = default);
 }

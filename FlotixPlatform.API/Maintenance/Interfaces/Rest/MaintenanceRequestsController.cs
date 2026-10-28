@@ -40,6 +40,7 @@ public class MaintenanceRequestsController(
     [HttpPost]
     [ProducesResponseType(typeof(MaintenanceRequestResource), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> CreateMaintenanceRequest([FromBody] CreateMaintenanceRequestResource resource,
         CancellationToken cancellationToken)
@@ -81,8 +82,8 @@ public class MaintenanceRequestsController(
     /// </returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<MaintenanceRequestResource>), StatusCodes.Status200OK)]
-    public async Task<ActionResult> GetAllMaintenanceRequests([FromQuery] int? vehicleId = null,
-        [FromQuery] int? mechanicId = null,
+    public async Task<ActionResult> GetAllMaintenanceRequests([FromQuery] Guid? vehicleId = null,
+        [FromQuery] Guid? mechanicId = null,
         CancellationToken cancellationToken = default)
     {
         var maintenanceRequests = vehicleId is not null
@@ -102,10 +103,10 @@ public class MaintenanceRequestsController(
     /// <returns>
     ///     A response as an action result containing the maintenance request, or not found if the maintenance request was not found.
     /// </returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(MaintenanceRequestResource), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetMaintenanceRequestById(int id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> GetMaintenanceRequestById(Guid id, CancellationToken cancellationToken = default)
     {
         var getMaintenanceRequestByIdQuery = new GetMaintenanceRequestByIdQuery(id);
         var result = await maintenanceRequestQueryService.Handle(getMaintenanceRequestByIdQuery, cancellationToken);
@@ -124,13 +125,13 @@ public class MaintenanceRequestsController(
     ///     A response as an action result containing the updated maintenance request, or an error response if the maintenance request was
     ///     not updated.
     /// </returns>
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(MaintenanceRequestResource), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> UpdateMaintenanceRequest(int id, [FromBody] UpdateMaintenanceRequestResource resource,
+    public async Task<ActionResult> UpdateMaintenanceRequest(Guid id, [FromBody] UpdateMaintenanceRequestResource resource,
         CancellationToken cancellationToken)
     {
         try
@@ -166,11 +167,11 @@ public class MaintenanceRequestsController(
     /// <returns>
     ///     A response as an action result with no content, or not found if the maintenance request was not found.
     /// </returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> DeleteMaintenanceRequest(int id, CancellationToken cancellationToken)
+    public async Task<ActionResult> DeleteMaintenanceRequest(Guid id, CancellationToken cancellationToken)
     {
         var deleteMaintenanceRequestCommand = new DeleteMaintenanceRequestCommand(id);
         var result = await maintenanceRequestCommandService.Handle(deleteMaintenanceRequestCommand, cancellationToken);

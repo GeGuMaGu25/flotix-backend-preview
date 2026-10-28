@@ -18,7 +18,7 @@ public class VehicleRepository(AppDbContext context)
     : BaseRepository<Vehicle>(context), IVehicleRepository
 {
     /// <inheritdoc />
-    public async Task<IEnumerable<Vehicle>> FindByOwnerIdAsync(int ownerId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Vehicle>> FindByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<Vehicle>()
             .Where(v => v.OwnerId == ownerId)
@@ -26,7 +26,7 @@ public class VehicleRepository(AppDbContext context)
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<Vehicle>> FindByDriverIdAsync(int driverId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Vehicle>> FindByDriverIdAsync(Guid driverId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<Vehicle>()
             .Where(v => v.DriverId == driverId)
@@ -34,14 +34,14 @@ public class VehicleRepository(AppDbContext context)
     }
 
     /// <inheritdoc />
-    public async Task<bool> ExistsByPlateAsync(LicensePlate plate, CancellationToken cancellationToken = default)
+    public async Task<bool> ExistsByLicensePlateAsync(LicensePlate licensePlate, CancellationToken cancellationToken = default)
     {
-        return await Context.Set<Vehicle>().AnyAsync(v => v.Plate == plate, cancellationToken);
+        return await Context.Set<Vehicle>().AnyAsync(v => v.LicensePlate == licensePlate, cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<Vehicle?> FindByPlateAsync(LicensePlate plate, CancellationToken cancellationToken = default)
+    public async Task<Vehicle?> FindByLicensePlateAsync(LicensePlate licensePlate, CancellationToken cancellationToken = default)
     {
-        return await Context.Set<Vehicle>().FirstOrDefaultAsync(v => v.Plate == plate, cancellationToken);
+        return await Context.Set<Vehicle>().FirstOrDefaultAsync(v => v.LicensePlate == licensePlate, cancellationToken);
     }
 }

@@ -18,10 +18,10 @@ public static class ModelBuilderExtensions
         builder.Entity<FuelRecord>().Property(f => f.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<FuelRecord>().Property(f => f.VehicleId).IsRequired();
         builder.Entity<FuelRecord>().Property(f => f.DriverId).IsRequired();
-        builder.Entity<FuelRecord>().Property(f => f.Liters).HasPrecision(12, 2).IsRequired();
-        builder.Entity<FuelRecord>().Property(f => f.TotalCost).HasPrecision(12, 2).IsRequired();
-        builder.Entity<FuelRecord>().Property(f => f.MileageAtRefuel).IsRequired();
-        builder.Entity<FuelRecord>().Property(f => f.Date).IsRequired();
+        builder.Entity<FuelRecord>().Property(f => f.Liters).IsRequired();
+        builder.Entity<FuelRecord>().Property(f => f.Cost).IsRequired();
+        builder.Entity<FuelRecord>().Property(f => f.MileageAtRefill).IsRequired();
+        builder.Entity<FuelRecord>().Property(f => f.RecordedDate).IsRequired();
         builder.Entity<FuelRecord>().HasIndex(f => f.VehicleId);
         builder.Entity<FuelRecord>().HasIndex(f => f.DriverId);
     }

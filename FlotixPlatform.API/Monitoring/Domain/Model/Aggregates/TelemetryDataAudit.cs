@@ -3,14 +3,14 @@ using FlotixPlatform.API.Shared.Domain.Model;
 namespace FlotixPlatform.API.Monitoring.Domain.Model.Aggregates;
 
 /// <summary>
-///     Audit extension for TelemetryRecord aggregate.
+///     Audit extension for TelemetryData aggregate.
 /// </summary>
 /// <remarks>
-///     This partial class extends TelemetryRecord with audit trail properties.
+///     This partial class extends TelemetryData with audit trail properties.
 ///     CreatedAt and UpdatedAt are automatically managed by the persistence layer
 ///     via the AuditableEntityInterceptor in the Shared bounded context.
 /// </remarks>
-public partial class TelemetryRecord : IAuditableEntity
+public partial class TelemetryData : IAuditableEntity
 {
     /// <summary>
     ///     Gets the timestamp when this telemetry record was created.

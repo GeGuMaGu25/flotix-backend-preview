@@ -40,6 +40,7 @@ public class VehiclesController(
     [HttpPost]
     [ProducesResponseType(typeof(VehicleResource), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> CreateVehicle([FromBody] CreateVehicleResource resource,
@@ -82,8 +83,8 @@ public class VehiclesController(
     /// </returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<VehicleResource>), StatusCodes.Status200OK)]
-    public async Task<ActionResult> GetAllVehicles([FromQuery] int? ownerId = null,
-        [FromQuery] int? driverId = null,
+    public async Task<ActionResult> GetAllVehicles([FromQuery] Guid? ownerId = null,
+        [FromQuery] Guid? driverId = null,
         CancellationToken cancellationToken = default)
     {
         var vehicles = ownerId is not null
@@ -103,10 +104,10 @@ public class VehiclesController(
     /// <returns>
     ///     A response as an action result containing the vehicle, or not found if the vehicle was not found.
     /// </returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(VehicleResource), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetVehicleById(int id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> GetVehicleById(Guid id, CancellationToken cancellationToken = default)
     {
         var getVehicleByIdQuery = new GetVehicleByIdQuery(id);
         var result = await vehicleQueryService.Handle(getVehicleByIdQuery, cancellationToken);
@@ -125,13 +126,13 @@ public class VehiclesController(
     ///     A response as an action result containing the updated vehicle, or an error response if the vehicle was
     ///     not updated.
     /// </returns>
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(VehicleResource), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> UpdateVehicle(int id, [FromBody] UpdateVehicleResource resource,
+    public async Task<ActionResult> UpdateVehicle(Guid id, [FromBody] UpdateVehicleResource resource,
         CancellationToken cancellationToken)
     {
         try
@@ -167,11 +168,12 @@ public class VehiclesController(
     /// <returns>
     ///     A response as an action result with no content, or not found if the vehicle was not found.
     /// </returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> DeleteVehicle(int id, CancellationToken cancellationToken)
+    public async Task<ActionResult> DeleteVehicle(Guid id, CancellationToken cancellationToken)
     {
         var deleteVehicleCommand = new DeleteVehicleCommand(id);
         var result = await vehicleCommandService.Handle(deleteVehicleCommand, cancellationToken);

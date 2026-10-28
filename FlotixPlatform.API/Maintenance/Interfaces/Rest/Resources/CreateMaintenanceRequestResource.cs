@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using FlotixPlatform.API.Maintenance.Domain.Model.ValueObjects;
 
 namespace FlotixPlatform.API.Maintenance.Interfaces.Rest.Resources;
 
@@ -8,16 +7,10 @@ namespace FlotixPlatform.API.Maintenance.Interfaces.Rest.Resources;
 /// </summary>
 /// <param name="VehicleId">The identifier of the vehicle.</param>
 /// <param name="MechanicId">The identifier of the mechanic user.</param>
-/// <param name="FaultDescription">The description of the fault to repair. (required)</param>
-/// <param name="EstimatedCost">The estimated cost of the repair.</param>
-/// <param name="Status">The current status of the maintenance request.</param>
+/// <param name="Description">The description of the fault to repair. (required)</param>
 public record CreateMaintenanceRequestResource(
-    [Range(1, int.MaxValue, ErrorMessage = "RangeField")]
-    int VehicleId,
-    int? MechanicId,
-    [Required(ErrorMessage = "RequiredFaultDescription")]
+    Guid VehicleId,
+    Guid MechanicId,
+    [Required(ErrorMessage = "RequiredDescription")]
     [StringLength(500, ErrorMessage = "StringLengthField")]
-    string FaultDescription,
-    [Range(0, 1000000, ErrorMessage = "RangeField")]
-    decimal EstimatedCost,
-    MaintenanceRequestStatus Status);
+    string Description);

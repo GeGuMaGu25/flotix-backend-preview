@@ -35,6 +35,10 @@ public static class ActionResultFromUpdateIotDeviceResultAssembler
                         controller.NotFound(localizer["IotDeviceNotFound"].Value),
                     UpdateIotDeviceError.InvalidIotDevice =>
                         controller.BadRequest(localizer["InvalidIotDeviceRequest"].Value),
+                    UpdateIotDeviceError.DuplicateIotDeviceVehicleId =>
+                        controller.Conflict(localizer["DuplicateIotDeviceVehicleId"].Value),
+                    UpdateIotDeviceError.ReferencedResourceNotFound =>
+                        controller.NotFound(localizer["IotDeviceReferencedResourceNotFound"].Value),
                     UpdateIotDeviceError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,

@@ -11,9 +11,14 @@ public enum CreateVehicleError
 	InvalidVehicle,
 
 	/// <summary>
-	/// A vehicle with the same plate already exists.
+	/// A vehicle with the same license plate already exists.
 	/// </summary>
-	DuplicateVehiclePlate,
+	DuplicateVehicleLicensePlate,
+
+	/// <summary>
+	/// A resource referenced by the command does not exist.
+	/// </summary>
+	ReferencedResourceNotFound,
 
 	/// <summary>
 	/// An unexpected error occurred during the operation.

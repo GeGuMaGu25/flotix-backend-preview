@@ -1,5 +1,3 @@
-using FlotixPlatform.API.Monitoring.Domain.Model.ValueObjects;
-
 namespace FlotixPlatform.API.Monitoring.Domain.Model.Commands;
 
 /// <summary>
@@ -7,5 +5,5 @@ namespace FlotixPlatform.API.Monitoring.Domain.Model.Commands;
 /// </summary>
 /// <param name="IotDeviceId">The identifier of the IoT device to update</param>
 /// <param name="VehicleId">The identifier of the vehicle.</param>
-/// <param name="ConnectionStatus">The connection status of the IoT device.</param>
-public record UpdateIotDeviceCommand(int IotDeviceId, int VehicleId, ConnectionStatus ConnectionStatus);
+/// <param name="IsConnected">Whether the IoT device is connected.</param>
+public record UpdateIotDeviceCommand(Guid IotDeviceId, Guid VehicleId, bool IsConnected);

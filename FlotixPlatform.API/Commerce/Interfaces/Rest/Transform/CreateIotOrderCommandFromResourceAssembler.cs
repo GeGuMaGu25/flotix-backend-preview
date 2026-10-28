@@ -17,5 +17,5 @@ public static class CreateIotOrderCommandFromResourceAssembler
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
     public static CreateIotOrderCommand ToCommandFromResource(CreateIotOrderResource resource) =>
-        new(resource.OwnerId, resource.DeviceQuantity, resource.TotalAmount);
+        new(resource.OwnerId, resource.Quantity, resource.TotalAmount);
 }

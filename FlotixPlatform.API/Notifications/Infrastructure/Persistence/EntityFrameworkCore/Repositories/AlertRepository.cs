@@ -17,7 +17,7 @@ public class AlertRepository(AppDbContext context)
     : BaseRepository<Alert>(context), IAlertRepository
 {
     /// <inheritdoc />
-    public async Task<IEnumerable<Alert>> FindByVehicleIdAsync(int vehicleId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Alert>> FindByVehicleIdAsync(Guid vehicleId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<Alert>()
             .Where(a => a.VehicleId == vehicleId)

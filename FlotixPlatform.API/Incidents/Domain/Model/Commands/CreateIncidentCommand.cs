@@ -9,4 +9,4 @@ namespace FlotixPlatform.API.Incidents.Domain.Model.Commands;
 /// <param name="DriverId">The identifier of the driver user.</param>
 /// <param name="Description">The description of the incident.</param>
 /// <param name="Status">The current status of the incident.</param>
-public record CreateIncidentCommand(int VehicleId, int DriverId, string Description, IncidentStatus Status);
+public record CreateIncidentCommand(Guid VehicleId, Guid DriverId, string Description, IncidentStatus Status);

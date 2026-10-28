@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Analytics.Domain.Model.Queries;
 ///     Query to get a report by ID
 /// </summary>
 /// <param name="Id">The report ID to search</param>
-public record GetReportByIdQuery(int Id);
+public record GetReportByIdQuery(Guid Id);

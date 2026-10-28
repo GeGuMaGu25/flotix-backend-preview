@@ -16,5 +16,5 @@ public interface IIotOrderRepository : IBaseRepository<IotOrder>
     /// <returns>
     ///     An Enumerable containing the IoT order objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<IotOrder>> FindByOwnerIdAsync(int ownerId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<IotOrder>> FindByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default);
 }

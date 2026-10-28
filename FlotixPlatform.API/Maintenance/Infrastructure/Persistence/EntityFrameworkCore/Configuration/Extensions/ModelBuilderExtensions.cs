@@ -18,9 +18,11 @@ public static class ModelBuilderExtensions
         builder.Entity<MaintenanceRequest>().HasKey(m => m.Id);
         builder.Entity<MaintenanceRequest>().Property(m => m.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<MaintenanceRequest>().Property(m => m.VehicleId).IsRequired();
-        builder.Entity<MaintenanceRequest>().Property(m => m.FaultDescription).IsRequired().HasMaxLength(500);
-        builder.Entity<MaintenanceRequest>().Property(m => m.EstimatedCost).HasPrecision(12, 2).IsRequired();
-        builder.Entity<MaintenanceRequest>().Property(m => m.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+        builder.Entity<MaintenanceRequest>().Property(m => m.MechanicId).IsRequired();
+        builder.Entity<MaintenanceRequest>().Property(m => m.Description).IsRequired();
+        builder.Entity<MaintenanceRequest>().Property(m => m.EstimatedCost).IsRequired();
+        builder.Entity<MaintenanceRequest>().Property(m => m.Status).HasConversion<string>().HasMaxLength(50).IsRequired();
+        builder.Entity<MaintenanceRequest>().Property(m => m.RequestDate).IsRequired();
         builder.Entity<MaintenanceRequest>().HasIndex(m => m.VehicleId);
         builder.Entity<MaintenanceRequest>().HasIndex(m => m.MechanicId);
     }

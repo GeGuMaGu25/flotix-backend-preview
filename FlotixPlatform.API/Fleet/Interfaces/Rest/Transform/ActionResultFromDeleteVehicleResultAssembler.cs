@@ -33,6 +33,8 @@ public static class ActionResultFromDeleteVehicleResultAssembler
                 {
                     DeleteVehicleError.VehicleNotFound =>
                         controller.NotFound(localizer["VehicleNotFound"].Value),
+                    DeleteVehicleError.VehicleHasDependents =>
+                        controller.Conflict(localizer["VehicleHasDependents"].Value),
                     DeleteVehicleError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,

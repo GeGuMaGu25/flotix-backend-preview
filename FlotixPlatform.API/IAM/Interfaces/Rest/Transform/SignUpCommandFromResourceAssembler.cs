@@ -18,6 +18,6 @@ public static class SignUpCommandFromResourceAssembler
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when the email address is not valid.</exception>
     public static SignUpCommand ToCommandFromResource(SignUpResource resource) =>
-        new(new EmailAddress(resource.Email), resource.Password, resource.Role, resource.FullName,
-            resource.LicenseNumber, resource.LicenseExpiry, resource.CompanyName, resource.WorkshopName);
+        new(new EmailAddress(resource.Email), resource.Password, resource.RoleType, resource.Name,
+            resource.LicenseNumber, resource.LicenseExpiration, resource.CompanyName, resource.WorkshopName);
 }

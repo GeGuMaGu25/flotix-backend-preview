@@ -16,7 +16,7 @@ public enum SignUpError
 	DuplicateUserEmail,
 
 	/// <summary>
-	/// A driver was signed up without a license number.
+	/// A driver was signed up without a license number or its expiration date.
 	/// </summary>
 	DriverLicenseRequired,
 

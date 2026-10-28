@@ -6,12 +6,11 @@ namespace FlotixPlatform.API.Commerce.Interfaces.Rest.Resources;
 ///     Represents the data required to create an IoT order.
 /// </summary>
 /// <param name="OwnerId">The identifier of the owner user.</param>
-/// <param name="DeviceQuantity">The number of devices ordered.</param>
+/// <param name="Quantity">The number of devices ordered.</param>
 /// <param name="TotalAmount">The total amount, priced from the catalog.</param>
 public record CreateIotOrderResource(
-    [Range(1, int.MaxValue, ErrorMessage = "RangeField")]
-    int OwnerId,
+    Guid OwnerId,
     [Range(1, 1000, ErrorMessage = "RangeField")]
-    int DeviceQuantity,
+    int Quantity,
     [Range(0, 1000000, ErrorMessage = "RangeField")]
     decimal TotalAmount);

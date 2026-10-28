@@ -21,19 +21,19 @@ public static class ModelBuilderExtensions
         builder.Entity<IotDevice>()
             .Property(i => i.SerialNumber)
             .HasConversion(valueObject => valueObject.Value, value => new SerialNumber(value))
-            .HasMaxLength(40)
+            .HasMaxLength(100)
             .IsRequired();
-        builder.Entity<IotDevice>().Property(i => i.ConnectionStatus).HasConversion<string>().HasMaxLength(30).IsRequired();
-        builder.Entity<IotDevice>().HasIndex(i => i.VehicleId);
+        builder.Entity<IotDevice>().Property(i => i.IsConnected).IsRequired();
+        builder.Entity<IotDevice>().HasIndex(i => i.VehicleId).IsUnique();
         builder.Entity<IotDevice>().HasIndex(i => i.SerialNumber).IsUnique();
 
-        builder.Entity<TelemetryRecord>().HasKey(t => t.Id);
-        builder.Entity<TelemetryRecord>().Property(t => t.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<TelemetryRecord>().Property(t => t.DeviceId).IsRequired();
-        builder.Entity<TelemetryRecord>().Property(t => t.Latitude).IsRequired();
-        builder.Entity<TelemetryRecord>().Property(t => t.Longitude).IsRequired();
-        builder.Entity<TelemetryRecord>().Property(t => t.Speed).IsRequired();
-        builder.Entity<TelemetryRecord>().Property(t => t.Timestamp).IsRequired();
-        builder.Entity<TelemetryRecord>().HasIndex(t => t.DeviceId);
+        builder.Entity<TelemetryData>().HasKey(t => t.Id);
+        builder.Entity<TelemetryData>().Property(t => t.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<TelemetryData>().Property(t => t.DeviceId).IsRequired();
+        builder.Entity<TelemetryData>().Property(t => t.Latitude).IsRequired();
+        builder.Entity<TelemetryData>().Property(t => t.Longitude).IsRequired();
+        builder.Entity<TelemetryData>().Property(t => t.Speed).IsRequired();
+        builder.Entity<TelemetryData>().Property(t => t.RecordedAt).IsRequired();
+        builder.Entity<TelemetryData>().HasIndex(t => t.DeviceId);
     }
 }

@@ -17,5 +17,5 @@ public static class CreateReportCommandFromResourceAssembler
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
     public static CreateReportCommand ToCommandFromResource(CreateReportResource resource) =>
-        new(resource.OwnerId, resource.ReportType, resource.FilterParams ?? []);
+        new(resource.OwnerId, resource.ReportType, resource.FilterParams);
 }

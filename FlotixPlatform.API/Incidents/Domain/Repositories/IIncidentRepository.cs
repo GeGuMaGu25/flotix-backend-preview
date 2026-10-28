@@ -16,7 +16,7 @@ public interface IIncidentRepository : IBaseRepository<Incident>
     /// <returns>
     ///     An Enumerable containing the incident objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<Incident>> FindByVehicleIdAsync(int vehicleId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Incident>> FindByVehicleIdAsync(Guid vehicleId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Find incidents by driver ID
@@ -26,5 +26,5 @@ public interface IIncidentRepository : IBaseRepository<Incident>
     /// <returns>
     ///     An Enumerable containing the incident objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<Incident>> FindByDriverIdAsync(int driverId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Incident>> FindByDriverIdAsync(Guid driverId, CancellationToken cancellationToken = default);
 }

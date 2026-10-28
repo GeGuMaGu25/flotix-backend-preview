@@ -19,15 +19,15 @@ public static class ModelBuilderExtensions
         builder.Entity<Vehicle>().Property(v => v.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Vehicle>().Property(v => v.OwnerId).IsRequired();
         builder.Entity<Vehicle>()
-            .Property(v => v.Plate)
+            .Property(v => v.LicensePlate)
             .HasConversion(valueObject => valueObject.Value, value => new LicensePlate(value))
-            .HasMaxLength(12)
+            .HasMaxLength(15)
             .IsRequired();
-        builder.Entity<Vehicle>().Property(v => v.VehicleType).IsRequired().HasMaxLength(60);
+        builder.Entity<Vehicle>().Property(v => v.VehicleType).IsRequired().HasMaxLength(50);
         builder.Entity<Vehicle>().Property(v => v.CurrentMileage).IsRequired();
-        builder.Entity<Vehicle>().Property(v => v.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+        builder.Entity<Vehicle>().Property(v => v.Status).HasConversion<string>().HasMaxLength(50).IsRequired();
         builder.Entity<Vehicle>().HasIndex(v => v.OwnerId);
         builder.Entity<Vehicle>().HasIndex(v => v.DriverId);
-        builder.Entity<Vehicle>().HasIndex(v => v.Plate).IsUnique();
+        builder.Entity<Vehicle>().HasIndex(v => v.LicensePlate).IsUnique();
     }
 }

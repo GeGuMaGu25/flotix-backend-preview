@@ -47,6 +47,11 @@ public class NotificationCommandService(
             logger.LogWarning(ex, "Invalid arguments while creating notification");
             return new Result<Notification, CreateNotificationError>.Failure(CreateNotificationError.InvalidNotification);
         }
+        catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
+        {
+            logger.LogWarning(ex, "Foreign key violation creating notification");
+            return new Result<Notification, CreateNotificationError>.Failure(CreateNotificationError.ReferencedResourceNotFound);
+        }
         catch (DbUpdateException ex)
         {
             logger.LogError(ex, "Database update failed creating notification");
@@ -129,5 +134,22 @@ public class NotificationCommandService(
             logger.LogError(ex, "Unexpected error deleting notification");
             return new Result<Notification, DeleteNotificationError>.Failure(DeleteNotificationError.UnexpectedError);
         }
+    }
+
+    /// <summary>
+    /// Determines whether a DbUpdateException represents a foreign key constraint violation.
+    /// </summary>
+    /// <param name="exception">The exception to inspect.</param>
+    /// <returns>True if the exception is due to a PostgreSQL foreign key violation (SQLSTATE 23503), false otherwise.</returns>
+    private static bool IsForeignKeyViolation(DbUpdateException exception)
+    {
+        for (Exception? current = exception; current is not null; current = current.InnerException)
+        {
+            if (!string.Equals(current.GetType().Name, "PostgresException", StringComparison.Ordinal)) continue;
+            var sqlStateProperty = current.GetType().GetProperty("SqlState");
+            if (sqlStateProperty?.GetValue(current) is "23503")
+                return true;
+        }
+        return false;
     }
 }

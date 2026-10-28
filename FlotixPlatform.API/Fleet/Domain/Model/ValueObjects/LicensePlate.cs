@@ -7,12 +7,12 @@ namespace FlotixPlatform.API.Fleet.Domain.Model.ValueObjects;
 /// </summary>
 public sealed partial record LicensePlate
 {
-    private const int MaxLength = 12;
+    private const int MaxLength = 15;
 
     /// <summary>
     ///     Initializes a new <see cref="LicensePlate"/> with the given raw string value.
     /// </summary>
-    /// <param name="value">The raw license plate. Must be non-null, non-whitespace, at most 12 characters and match the expected format.</param>
+    /// <param name="value">The raw license plate. Must be non-null, non-whitespace, at most 15 characters and match the expected format.</param>
     /// <exception cref="ArgumentException">Thrown when <paramref name="value"/> is null, whitespace, too long or malformed.</exception>
     public LicensePlate(string value)
     {

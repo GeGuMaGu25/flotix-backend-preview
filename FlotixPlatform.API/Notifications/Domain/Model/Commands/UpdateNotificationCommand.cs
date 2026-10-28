@@ -5,4 +5,4 @@ namespace FlotixPlatform.API.Notifications.Domain.Model.Commands;
 /// </summary>
 /// <param name="NotificationId">The identifier of the notification to update</param>
 /// <param name="IsRead">Whether the notification has been read.</param>
-public record UpdateNotificationCommand(int NotificationId, bool IsRead);
+public record UpdateNotificationCommand(Guid NotificationId, bool IsRead);

@@ -18,11 +18,17 @@ public class IotDeviceRepository(AppDbContext context)
     : BaseRepository<IotDevice>(context), IIotDeviceRepository
 {
     /// <inheritdoc />
-    public async Task<IEnumerable<IotDevice>> FindByVehicleIdAsync(int vehicleId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<IotDevice>> FindByVehicleIdAsync(Guid vehicleId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<IotDevice>()
             .Where(i => i.VehicleId == vehicleId)
             .ToListAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> ExistsByVehicleIdAsync(Guid vehicleId, CancellationToken cancellationToken = default)
+    {
+        return await Context.Set<IotDevice>().AnyAsync(i => i.VehicleId == vehicleId, cancellationToken);
     }
 
     /// <inheritdoc />

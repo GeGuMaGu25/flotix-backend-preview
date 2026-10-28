@@ -10,11 +10,11 @@ namespace FlotixPlatform.API.Incidents.Interfaces.Rest.Resources;
 /// <param name="DriverId">The identifier of the driver user.</param>
 /// <param name="Description">The description of the incident.</param>
 /// <param name="Status">The current status of the incident.</param>
-/// <param name="ReportedAt">The moment the incident was reported.</param>
+/// <param name="ReportedDate">The moment the incident was reported.</param>
 public record IncidentResource(
-    int Id,
-    int VehicleId,
-    int DriverId,
+    Guid Id,
+    Guid VehicleId,
+    Guid DriverId,
     string Description,
     IncidentStatus Status,
-    DateTimeOffset ReportedAt);
+    DateTimeOffset ReportedDate);

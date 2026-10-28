@@ -16,5 +16,5 @@ public interface INotificationRepository : IBaseRepository<Notification>
     /// <returns>
     ///     An Enumerable containing the notification objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<Notification>> FindByUserIdAsync(int userId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Notification>> FindByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
 }

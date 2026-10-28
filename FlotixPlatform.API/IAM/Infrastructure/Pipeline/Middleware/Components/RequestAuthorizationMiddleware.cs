@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Security.Claims;
 using FlotixPlatform.API.IAM.Application.Internal.OutboundServices;
 using FlotixPlatform.API.IAM.Application.Services;
@@ -48,7 +47,7 @@ public class RequestAuthorizationMiddleware(RequestDelegate next)
         }
 
         if (endpoint?.Metadata.GetMetadata<AuthorizeAttribute>() is { Roles.Count: > 0 } authorize &&
-            !authorize.Roles.Contains(user.Role))
+            !authorize.Roles.Contains(user.RoleType))
         {
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
             return;
@@ -57,8 +56,8 @@ public class RequestAuthorizationMiddleware(RequestDelegate next)
         context.Items["User"] = user;
         context.User = new ClaimsPrincipal(new ClaimsIdentity(
         [
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString(CultureInfo.InvariantCulture)),
-            new Claim(ClaimTypes.Role, user.Role.ToString())
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Role, user.RoleType.ToString())
         ], "Bearer"));
 
         await next(context);

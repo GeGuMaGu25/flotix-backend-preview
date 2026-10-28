@@ -16,5 +16,5 @@ public static class AlertResourceFromEntityAssembler
     ///     A AlertResource assembled from the Alert
     /// </returns>
     public static AlertResource ToResourceFromEntity(Alert entity) =>
-        new(entity.Id, entity.VehicleId, entity.AlertType, entity.ActivatedAt);
+        new(entity.Id, entity.VehicleId, entity.AlertType, entity.TriggerDate);
 }

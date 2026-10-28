@@ -17,7 +17,7 @@ public class ReportRepository(AppDbContext context)
     : BaseRepository<Report>(context), IReportRepository
 {
     /// <inheritdoc />
-    public async Task<IEnumerable<Report>> FindByOwnerIdAsync(int ownerId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Report>> FindByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<Report>()
             .Where(r => r.OwnerId == ownerId)

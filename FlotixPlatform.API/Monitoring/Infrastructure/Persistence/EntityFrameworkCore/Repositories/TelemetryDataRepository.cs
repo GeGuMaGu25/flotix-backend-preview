@@ -13,13 +13,13 @@ namespace FlotixPlatform.API.Monitoring.Infrastructure.Persistence.EntityFramewo
 ///     This repository extends the generic BaseRepository with telemetry record-specific query methods.
 /// </remarks>
 /// <param name="context">The EF Core database context.</param>
-public class TelemetryRecordRepository(AppDbContext context)
-    : BaseRepository<TelemetryRecord>(context), ITelemetryRecordRepository
+public class TelemetryDataRepository(AppDbContext context)
+    : BaseRepository<TelemetryData>(context), ITelemetryDataRepository
 {
     /// <inheritdoc />
-    public async Task<IEnumerable<TelemetryRecord>> FindByDeviceIdAsync(int deviceId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<TelemetryData>> FindByDeviceIdAsync(Guid deviceId, CancellationToken cancellationToken = default)
     {
-        return await Context.Set<TelemetryRecord>()
+        return await Context.Set<TelemetryData>()
             .Where(t => t.DeviceId == deviceId)
             .ToListAsync(cancellationToken);
     }

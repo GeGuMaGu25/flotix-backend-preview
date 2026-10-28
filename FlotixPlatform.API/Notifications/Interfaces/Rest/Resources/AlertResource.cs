@@ -6,9 +6,9 @@ namespace FlotixPlatform.API.Notifications.Interfaces.Rest.Resources;
 /// <param name="Id">The server-generated ID of the alert</param>
 /// <param name="VehicleId">The identifier of the vehicle.</param>
 /// <param name="AlertType">The type of the alert (e.g. Exceso de velocidad).</param>
-/// <param name="ActivatedAt">The moment the alert was activated.</param>
+/// <param name="TriggerDate">The moment the alert was triggered.</param>
 public record AlertResource(
-    int Id,
-    int VehicleId,
+    Guid Id,
+    Guid VehicleId,
     string AlertType,
-    DateTimeOffset ActivatedAt);
+    DateTimeOffset TriggerDate);

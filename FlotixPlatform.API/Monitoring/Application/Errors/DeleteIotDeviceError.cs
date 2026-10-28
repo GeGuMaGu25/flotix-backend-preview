@@ -11,6 +11,11 @@ public enum DeleteIotDeviceError
 	IotDeviceNotFound,
 
 	/// <summary>
+	/// The IoT device is referenced by other records and cannot be deleted.
+	/// </summary>
+	IotDeviceHasDependents,
+
+	/// <summary>
 	/// An unexpected error occurred during the operation.
 	/// </summary>
 	UnexpectedError

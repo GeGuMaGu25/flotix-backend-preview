@@ -17,8 +17,8 @@ namespace FlotixPlatform.API.Monitoring.Interfaces.Rest;
 /// <summary>
 ///     Telemetry records' controller.
 /// </summary>
-/// <param name="telemetryRecordCommandService">The TelemetryRecord Command Service</param>
-/// <param name="telemetryRecordQueryService">The TelemetryRecord Query Service</param>
+/// <param name="telemetryDataCommandService">The TelemetryData Command Service</param>
+/// <param name="telemetryDataQueryService">The TelemetryData Query Service</param>
 /// <param name="monitoringHub">The SignalR hub used to push real-time events</param>
 /// <param name="localizer">String localizer for response messages</param>
 /// <param name="logger">Logger for diagnostics and error reporting</param>
@@ -27,8 +27,8 @@ namespace FlotixPlatform.API.Monitoring.Interfaces.Rest;
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Telemetry Data")]
 public class TelemetryDataController(
-    ITelemetryRecordCommandService telemetryRecordCommandService,
-    ITelemetryRecordQueryService telemetryRecordQueryService,
+    ITelemetryDataCommandService telemetryDataCommandService,
+    ITelemetryDataQueryService telemetryDataQueryService,
     IHubContext<MonitoringHub, IMonitoringClient> monitoringHub,
     IStringLocalizer<SharedResource> localizer,
     ILogger<TelemetryDataController> logger)
@@ -37,36 +37,37 @@ public class TelemetryDataController(
     /// <summary>
     ///     Creates a telemetry record.
     /// </summary>
-    /// <param name="resource">CreateTelemetryRecordResource resource</param>
+    /// <param name="resource">CreateTelemetryDataResource resource</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
     ///     A response as an action result containing the created telemetry record, or an error response if the telemetry record was
     ///     not created.
     /// </returns>
     [HttpPost]
-    [ProducesResponseType(typeof(TelemetryRecordResource), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(TelemetryDataResource), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> CreateTelemetryRecord([FromBody] CreateTelemetryRecordResource resource,
+    public async Task<ActionResult> CreateTelemetryData([FromBody] CreateTelemetryDataResource resource,
         CancellationToken cancellationToken)
     {
         try
         {
-            var createTelemetryRecordCommand = CreateTelemetryRecordCommandFromResourceAssembler.ToCommandFromResource(resource);
-            var result = await telemetryRecordCommandService.Handle(createTelemetryRecordCommand, cancellationToken);
-            if (result is Result<TelemetryRecord, CreateTelemetryRecordError>.Success success)
-                await monitoringHub.Clients.All.TelemetryRecordReceived(
-                    TelemetryRecordResourceFromEntityAssembler.ToResourceFromEntity(success.Value));
-            return ActionResultFromCreateTelemetryRecordResultAssembler.ToActionResultFromCreateTelemetryRecordResult(
+            var createTelemetryDataCommand = CreateTelemetryDataCommandFromResourceAssembler.ToCommandFromResource(resource);
+            var result = await telemetryDataCommandService.Handle(createTelemetryDataCommand, cancellationToken);
+            if (result is Result<TelemetryData, CreateTelemetryDataError>.Success success)
+                await monitoringHub.Clients.All.TelemetryDataReceived(
+                    TelemetryDataResourceFromEntityAssembler.ToResourceFromEntity(success.Value));
+            return ActionResultFromCreateTelemetryDataResultAssembler.ToActionResultFromCreateTelemetryDataResult(
                 result,
                 this,
                 localizer,
-                nameof(GetTelemetryRecordById));
+                nameof(GetTelemetryDataById));
         }
         catch (ArgumentException ex)
         {
             logger.LogWarning(ex, "Validation failed while creating telemetry record");
-            return BadRequest(localizer["InvalidTelemetryRecordRequest"].Value);
+            return BadRequest(localizer["InvalidTelemetryDataRequest"].Value);
         }
         catch (Exception ex)
         {
@@ -74,7 +75,7 @@ public class TelemetryDataController(
 
             return Problem(
                 title: localizer["UnexpectedServerError"].Value,
-                detail: localizer["UnexpectedErrorCreatingTelemetryRecord"].Value,
+                detail: localizer["UnexpectedErrorCreatingTelemetryData"].Value,
                 statusCode: 500);
         }
     }
@@ -88,34 +89,34 @@ public class TelemetryDataController(
     ///     A response as an action result containing the matching telemetry records (an empty list if none exist).
     /// </returns>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<TelemetryRecordResource>), StatusCodes.Status200OK)]
-    public async Task<ActionResult> GetAllTelemetryRecords([FromQuery] int? deviceId = null,
+    [ProducesResponseType(typeof(IEnumerable<TelemetryDataResource>), StatusCodes.Status200OK)]
+    public async Task<ActionResult> GetAllTelemetryData([FromQuery] Guid? deviceId = null,
         CancellationToken cancellationToken = default)
     {
-        var telemetryRecords = deviceId is not null
-            ? await telemetryRecordQueryService.Handle(new GetAllTelemetryRecordsByDeviceIdQuery(deviceId.Value), cancellationToken)
-            : await telemetryRecordQueryService.Handle(new GetAllTelemetryRecordsQuery(), cancellationToken);
-        var resources = telemetryRecords.Select(TelemetryRecordResourceFromEntityAssembler.ToResourceFromEntity);
+        var telemetryData = deviceId is not null
+            ? await telemetryDataQueryService.Handle(new GetAllTelemetryDataByDeviceIdQuery(deviceId.Value), cancellationToken)
+            : await telemetryDataQueryService.Handle(new GetAllTelemetryDataQuery(), cancellationToken);
+        var resources = telemetryData.Select(TelemetryDataResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(resources);
     }
 
     /// <summary>
     ///     Gets a telemetry record by id.
     /// </summary>
-    /// <param name="id">The TelemetryRecord ID</param>
+    /// <param name="id">The TelemetryData ID</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
     ///     A response as an action result containing the telemetry record, or not found if the telemetry record was not found.
     /// </returns>
-    [HttpGet("{id}")]
-    [ProducesResponseType(typeof(TelemetryRecordResource), StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(TelemetryDataResource), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetTelemetryRecordById(int id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> GetTelemetryDataById(Guid id, CancellationToken cancellationToken = default)
     {
-        var getTelemetryRecordByIdQuery = new GetTelemetryRecordByIdQuery(id);
-        var result = await telemetryRecordQueryService.Handle(getTelemetryRecordByIdQuery, cancellationToken);
+        var getTelemetryDataByIdQuery = new GetTelemetryDataByIdQuery(id);
+        var result = await telemetryDataQueryService.Handle(getTelemetryDataByIdQuery, cancellationToken);
         if (result is null) return NotFound();
-        var resource = TelemetryRecordResourceFromEntityAssembler.ToResourceFromEntity(result);
+        var resource = TelemetryDataResourceFromEntityAssembler.ToResourceFromEntity(result);
         return Ok(resource);
     }
 }

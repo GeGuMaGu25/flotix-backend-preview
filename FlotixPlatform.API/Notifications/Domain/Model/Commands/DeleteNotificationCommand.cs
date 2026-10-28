@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Notifications.Domain.Model.Commands;
 ///     Command to delete a notification
 /// </summary>
 /// <param name="NotificationId">The identifier of the notification to delete</param>
-public record DeleteNotificationCommand(int NotificationId);
+public record DeleteNotificationCommand(Guid NotificationId);

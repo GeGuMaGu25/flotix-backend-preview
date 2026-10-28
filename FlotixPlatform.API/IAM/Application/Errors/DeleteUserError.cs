@@ -11,6 +11,11 @@ public enum DeleteUserError
 	UserNotFound,
 
 	/// <summary>
+	/// The user is referenced by vehicles, records or orders and cannot be deleted.
+	/// </summary>
+	UserHasDependents,
+
+	/// <summary>
 	/// An unexpected error occurred during the operation.
 	/// </summary>
 	UnexpectedError

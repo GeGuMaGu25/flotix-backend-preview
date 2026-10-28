@@ -10,7 +10,7 @@ namespace FlotixPlatform.API.IAM.Domain.Model.Aggregates;
 ///     CreatedAt and UpdatedAt are automatically managed by the persistence layer
 ///     via the AuditableEntityInterceptor in the Shared bounded context.
 /// </remarks>
-public partial class User : IAuditableEntity
+public abstract partial class User : IAuditableEntity
 {
     /// <summary>
     ///     Gets the timestamp when this user was created.

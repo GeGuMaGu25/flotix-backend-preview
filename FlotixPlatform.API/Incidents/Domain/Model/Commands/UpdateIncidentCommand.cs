@@ -8,4 +8,4 @@ namespace FlotixPlatform.API.Incidents.Domain.Model.Commands;
 /// <param name="IncidentId">The identifier of the incident to update</param>
 /// <param name="Description">The description of the incident.</param>
 /// <param name="Status">The current status of the incident.</param>
-public record UpdateIncidentCommand(int IncidentId, string Description, IncidentStatus Status);
+public record UpdateIncidentCommand(Guid IncidentId, string Description, IncidentStatus Status);

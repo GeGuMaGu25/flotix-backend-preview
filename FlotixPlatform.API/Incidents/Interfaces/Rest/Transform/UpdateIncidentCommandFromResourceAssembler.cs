@@ -17,6 +17,6 @@ public static class UpdateIncidentCommandFromResourceAssembler
     ///     An UpdateIncidentCommand assembled from the UpdateIncidentResource
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
-    public static UpdateIncidentCommand ToCommandFromResource(int incidentId, UpdateIncidentResource resource) =>
+    public static UpdateIncidentCommand ToCommandFromResource(Guid incidentId, UpdateIncidentResource resource) =>
         new(incidentId, resource.Description, resource.Status);
 }

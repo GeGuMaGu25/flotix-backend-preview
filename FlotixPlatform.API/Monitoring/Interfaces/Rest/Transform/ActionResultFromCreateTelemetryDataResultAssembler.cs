@@ -10,7 +10,7 @@ namespace FlotixPlatform.API.Monitoring.Interfaces.Rest.Transform;
 /// <summary>
 ///     Assembles an HTTP action result from the result of the command handling to create a telemetry record in the application layer.
 /// </summary>
-public static class ActionResultFromCreateTelemetryRecordResultAssembler
+public static class ActionResultFromCreateTelemetryDataResultAssembler
 {
     /// <summary>
     ///     Assembles an <see cref="ActionResult" /> from the result of a create telemetry record operation.
@@ -18,28 +18,30 @@ public static class ActionResultFromCreateTelemetryRecordResultAssembler
     /// <param name="result">The application result produced by the application layer after handling the command to create a telemetry record.</param>
     /// <param name="controller">The controller used to produce HTTP-specific action results.</param>
     /// <param name="localizer">The string localizer used for API response messages.</param>
-    /// <param name="getTelemetryRecordByIdActionName">The name of the action used to generate the location header.</param>
+    /// <param name="getTelemetryDataByIdActionName">The name of the action used to generate the location header.</param>
     /// <returns>The HTTP action result corresponding to the application outcome.</returns>
-    public static ActionResult ToActionResultFromCreateTelemetryRecordResult(
-        Result<TelemetryRecord, CreateTelemetryRecordError> result,
+    public static ActionResult ToActionResultFromCreateTelemetryDataResult(
+        Result<TelemetryData, CreateTelemetryDataError> result,
         ControllerBase controller,
         IStringLocalizer<SharedResource> localizer,
-        string getTelemetryRecordByIdActionName) =>
+        string getTelemetryDataByIdActionName) =>
         result switch
         {
-            Result<TelemetryRecord, CreateTelemetryRecordError>.Success success =>
-                controller.CreatedAtAction(getTelemetryRecordByIdActionName, new { id = success.Value.Id },
-                    TelemetryRecordResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+            Result<TelemetryData, CreateTelemetryDataError>.Success success =>
+                controller.CreatedAtAction(getTelemetryDataByIdActionName, new { id = success.Value.Id },
+                    TelemetryDataResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
 
-            Result<TelemetryRecord, CreateTelemetryRecordError>.Failure failure =>
+            Result<TelemetryData, CreateTelemetryDataError>.Failure failure =>
                 failure.Error switch
                 {
-                    CreateTelemetryRecordError.InvalidTelemetryRecord =>
-                        controller.BadRequest(localizer["InvalidTelemetryRecordRequest"].Value),
-                    CreateTelemetryRecordError.UnexpectedError =>
+                    CreateTelemetryDataError.InvalidTelemetryData =>
+                        controller.BadRequest(localizer["InvalidTelemetryDataRequest"].Value),
+                    CreateTelemetryDataError.ReferencedResourceNotFound =>
+                        controller.NotFound(localizer["TelemetryDataReferencedResourceNotFound"].Value),
+                    CreateTelemetryDataError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,
-                            detail: localizer["UnexpectedErrorCreatingTelemetryRecord"].Value,
+                            detail: localizer["UnexpectedErrorCreatingTelemetryData"].Value,
                             statusCode: 500),
 
                     _ => controller.Problem(

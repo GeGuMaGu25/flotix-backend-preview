@@ -27,10 +27,10 @@ public class UserRepository(AppDbContext context)
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<User>> FindByRoleAsync(Role role, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<User>> FindByRoleTypeAsync(Role roleType, CancellationToken cancellationToken = default)
     {
         return await Context.Set<User>()
-            .Where(u => u.Role == role)
+            .Where(u => u.RoleType == roleType)
             .ToListAsync(cancellationToken);
     }
 }

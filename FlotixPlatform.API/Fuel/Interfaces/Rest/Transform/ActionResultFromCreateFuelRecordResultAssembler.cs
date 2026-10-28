@@ -36,6 +36,8 @@ public static class ActionResultFromCreateFuelRecordResultAssembler
                 {
                     CreateFuelRecordError.InvalidFuelRecord =>
                         controller.BadRequest(localizer["InvalidFuelRecordRequest"].Value),
+                    CreateFuelRecordError.ReferencedResourceNotFound =>
+                        controller.NotFound(localizer["FuelRecordReferencedResourceNotFound"].Value),
                     CreateFuelRecordError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,

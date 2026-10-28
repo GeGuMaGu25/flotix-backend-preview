@@ -43,6 +43,7 @@ public class ReportsController(
     [HttpPost]
     [ProducesResponseType(typeof(ReportResource), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> CreateReport([FromBody] CreateReportResource resource,
         CancellationToken cancellationToken)
@@ -83,7 +84,7 @@ public class ReportsController(
     /// </returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ReportResource>), StatusCodes.Status200OK)]
-    public async Task<ActionResult> GetAllReports([FromQuery] int? ownerId = null,
+    public async Task<ActionResult> GetAllReports([FromQuery] Guid? ownerId = null,
         CancellationToken cancellationToken = default)
     {
         var reports = ownerId is not null
@@ -101,10 +102,10 @@ public class ReportsController(
     /// <returns>
     ///     A response as an action result containing the report, or not found if the report was not found.
     /// </returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ReportResource), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetReportById(int id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> GetReportById(Guid id, CancellationToken cancellationToken = default)
     {
         var getReportByIdQuery = new GetReportByIdQuery(id);
         var result = await reportQueryService.Handle(getReportByIdQuery, cancellationToken);
@@ -121,11 +122,11 @@ public class ReportsController(
     /// <returns>
     ///     A response as an action result with no content, or not found if the report was not found.
     /// </returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> DeleteReport(int id, CancellationToken cancellationToken)
+    public async Task<ActionResult> DeleteReport(Guid id, CancellationToken cancellationToken)
     {
         var deleteReportCommand = new DeleteReportCommand(id);
         var result = await reportCommandService.Handle(deleteReportCommand, cancellationToken);

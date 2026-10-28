@@ -16,7 +16,7 @@ public static class UpdateUserProfileCommandFromResourceAssembler
     /// <returns>
     ///     An UpdateUserProfileCommand assembled from the UpdateUserProfileResource
     /// </returns>
-    public static UpdateUserProfileCommand ToCommandFromResource(int userId, UpdateUserProfileResource resource) =>
-        new(userId, resource.FullName, resource.LicenseNumber, resource.LicenseExpiry, resource.CompanyName,
+    public static UpdateUserProfileCommand ToCommandFromResource(Guid userId, UpdateUserProfileResource resource) =>
+        new(userId, resource.Name, resource.LicenseNumber, resource.LicenseExpiration, resource.CompanyName,
             resource.WorkshopName);
 }

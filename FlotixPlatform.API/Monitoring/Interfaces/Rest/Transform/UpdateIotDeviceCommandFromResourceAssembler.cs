@@ -17,6 +17,6 @@ public static class UpdateIotDeviceCommandFromResourceAssembler
     ///     An UpdateIotDeviceCommand assembled from the UpdateIotDeviceResource
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
-    public static UpdateIotDeviceCommand ToCommandFromResource(int iotDeviceId, UpdateIotDeviceResource resource) =>
-        new(iotDeviceId, resource.VehicleId, resource.ConnectionStatus);
+    public static UpdateIotDeviceCommand ToCommandFromResource(Guid iotDeviceId, UpdateIotDeviceResource resource) =>
+        new(iotDeviceId, resource.VehicleId, resource.IsConnected);
 }

@@ -9,9 +9,8 @@ namespace FlotixPlatform.API.Notifications.Interfaces.Rest.Resources;
 /// <param name="AlertId">The identifier of the related alert, if any.</param>
 /// <param name="Message">The message of the notification. (required)</param>
 public record CreateNotificationResource(
-    [Range(1, int.MaxValue, ErrorMessage = "RangeField")]
-    int UserId,
-    int? AlertId,
+    Guid UserId,
+    Guid? AlertId,
     [Required(ErrorMessage = "RequiredMessage")]
     [StringLength(500, ErrorMessage = "StringLengthField")]
     string Message);

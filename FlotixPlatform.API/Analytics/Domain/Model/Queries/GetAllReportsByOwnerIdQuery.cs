@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Analytics.Domain.Model.Queries;
 ///     Query to get all reports by owner ID
 /// </summary>
 /// <param name="OwnerId">The owner ID to search</param>
-public record GetAllReportsByOwnerIdQuery(int OwnerId);
+public record GetAllReportsByOwnerIdQuery(Guid OwnerId);

@@ -12,22 +12,22 @@ namespace FlotixPlatform.API.Monitoring.Application.Internal.QueryServices;
 ///     This service acts as the query handler for retrieving telemetry records.
 ///     All queries delegate to the repository layer for data access.
 /// </remarks>
-/// <param name="telemetryRecordRepository">Repository for accessing telemetry record data.</param>
-public class TelemetryRecordQueryService(ITelemetryRecordRepository telemetryRecordRepository)
-    : ITelemetryRecordQueryService
+/// <param name="telemetryDataRepository">Repository for accessing telemetry record data.</param>
+public class TelemetryDataQueryService(ITelemetryDataRepository telemetryDataRepository)
+    : ITelemetryDataQueryService
 {
     /// <inheritdoc />
-    public async Task<IEnumerable<TelemetryRecord>> Handle(GetAllTelemetryRecordsQuery query,
+    public async Task<IEnumerable<TelemetryData>> Handle(GetAllTelemetryDataQuery query,
         CancellationToken cancellationToken = default) =>
-        await telemetryRecordRepository.ListAsync(cancellationToken);
+        await telemetryDataRepository.ListAsync(cancellationToken);
 
     /// <inheritdoc />
-    public async Task<TelemetryRecord?> Handle(GetTelemetryRecordByIdQuery query,
+    public async Task<TelemetryData?> Handle(GetTelemetryDataByIdQuery query,
         CancellationToken cancellationToken = default) =>
-        await telemetryRecordRepository.FindByIdAsync(query.Id, cancellationToken);
+        await telemetryDataRepository.FindByIdAsync(query.Id, cancellationToken);
 
     /// <inheritdoc />
-    public async Task<IEnumerable<TelemetryRecord>> Handle(GetAllTelemetryRecordsByDeviceIdQuery query,
+    public async Task<IEnumerable<TelemetryData>> Handle(GetAllTelemetryDataByDeviceIdQuery query,
         CancellationToken cancellationToken = default) =>
-        await telemetryRecordRepository.FindByDeviceIdAsync(query.DeviceId, cancellationToken);
+        await telemetryDataRepository.FindByDeviceIdAsync(query.DeviceId, cancellationToken);
 }

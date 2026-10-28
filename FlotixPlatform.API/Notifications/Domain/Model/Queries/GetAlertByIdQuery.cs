@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Notifications.Domain.Model.Queries;
 ///     Query to get an alert by ID
 /// </summary>
 /// <param name="Id">The alert ID to search</param>
-public record GetAlertByIdQuery(int Id);
+public record GetAlertByIdQuery(Guid Id);

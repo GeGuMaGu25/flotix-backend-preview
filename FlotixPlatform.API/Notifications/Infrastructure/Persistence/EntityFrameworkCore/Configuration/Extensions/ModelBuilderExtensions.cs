@@ -17,16 +17,16 @@ public static class ModelBuilderExtensions
         builder.Entity<Alert>().HasKey(a => a.Id);
         builder.Entity<Alert>().Property(a => a.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Alert>().Property(a => a.VehicleId).IsRequired();
-        builder.Entity<Alert>().Property(a => a.AlertType).IsRequired().HasMaxLength(120);
-        builder.Entity<Alert>().Property(a => a.ActivatedAt).IsRequired();
+        builder.Entity<Alert>().Property(a => a.AlertType).IsRequired().HasMaxLength(50);
+        builder.Entity<Alert>().Property(a => a.TriggerDate).IsRequired();
         builder.Entity<Alert>().HasIndex(a => a.VehicleId);
 
         builder.Entity<Notification>().HasKey(n => n.Id);
         builder.Entity<Notification>().Property(n => n.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Notification>().Property(n => n.UserId).IsRequired();
-        builder.Entity<Notification>().Property(n => n.Message).IsRequired().HasMaxLength(500);
+        builder.Entity<Notification>().Property(n => n.Message).IsRequired();
         builder.Entity<Notification>().Property(n => n.IsRead).IsRequired();
-        builder.Entity<Notification>().Property(n => n.SentAt).IsRequired();
+        builder.Entity<Notification>().Property(n => n.SentDate).IsRequired();
         builder.Entity<Notification>().HasIndex(n => n.UserId);
     }
 }

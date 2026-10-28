@@ -33,6 +33,8 @@ public static class ActionResultFromDeleteIotDeviceResultAssembler
                 {
                     DeleteIotDeviceError.IotDeviceNotFound =>
                         controller.NotFound(localizer["IotDeviceNotFound"].Value),
+                    DeleteIotDeviceError.IotDeviceHasDependents =>
+                        controller.Conflict(localizer["IotDeviceHasDependents"].Value),
                     DeleteIotDeviceError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,

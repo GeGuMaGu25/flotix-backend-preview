@@ -16,5 +16,5 @@ public interface IReportRepository : IBaseRepository<Report>
     /// <returns>
     ///     An Enumerable containing the report objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<Report>> FindByOwnerIdAsync(int ownerId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Report>> FindByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default);
 }

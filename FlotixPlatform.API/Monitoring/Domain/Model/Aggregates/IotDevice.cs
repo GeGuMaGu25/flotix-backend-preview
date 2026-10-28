@@ -4,7 +4,7 @@ using FlotixPlatform.API.Monitoring.Domain.Model.ValueObjects;
 namespace FlotixPlatform.API.Monitoring.Domain.Model.Aggregates;
 
 /// <summary>
-///     Represents an IoT tracking device installed in a vehicle.
+///     Represents an IoT tracking device installed in a vehicle (at most one per vehicle).
 /// </summary>
 /// <remarks>
 ///     This aggregate root is created from a CreateIotDeviceCommand and updated through an UpdateIotDeviceCommand.
@@ -29,23 +29,23 @@ public partial class IotDevice
     public IotDevice(CreateIotDeviceCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ArgumentOutOfRangeException.ThrowIfLessThan(command.VehicleId, 1);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.VehicleId, Guid.Empty);
         ArgumentNullException.ThrowIfNull(command.SerialNumber);
 
         VehicleId = command.VehicleId;
         SerialNumber = command.SerialNumber;
-        ConnectionStatus = command.ConnectionStatus;
+        IsConnected = command.IsConnected;
     }
 
     /// <summary>
     ///     Gets the server-generated identifier for this IoT device.
     /// </summary>
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     /// <summary>
     ///     Gets the identifier of the vehicle.
     /// </summary>
-    public int VehicleId { get; private set; }
+    public Guid VehicleId { get; private set; }
 
     /// <summary>
     ///     Gets the serial number of the IoT device.
@@ -53,9 +53,9 @@ public partial class IotDevice
     public SerialNumber SerialNumber { get; private set; }
 
     /// <summary>
-    ///     Gets the connection status of the IoT device.
+    ///     Gets whether the IoT device is connected.
     /// </summary>
-    public ConnectionStatus ConnectionStatus { get; private set; }
+    public bool IsConnected { get; private set; }
 
     /// <summary>
     ///     Updates the IoT device information from an update command.
@@ -65,9 +65,9 @@ public partial class IotDevice
     public void UpdateInformation(UpdateIotDeviceCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ArgumentOutOfRangeException.ThrowIfLessThan(command.VehicleId, 1);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.VehicleId, Guid.Empty);
 
         VehicleId = command.VehicleId;
-        ConnectionStatus = command.ConnectionStatus;
+        IsConnected = command.IsConnected;
     }
 }

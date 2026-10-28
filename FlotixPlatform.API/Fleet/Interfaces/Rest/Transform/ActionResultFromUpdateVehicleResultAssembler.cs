@@ -35,8 +35,10 @@ public static class ActionResultFromUpdateVehicleResultAssembler
                         controller.NotFound(localizer["VehicleNotFound"].Value),
                     UpdateVehicleError.InvalidVehicle =>
                         controller.BadRequest(localizer["InvalidVehicleRequest"].Value),
-                    UpdateVehicleError.DuplicateVehiclePlate =>
-                        controller.Conflict(localizer["DuplicateVehiclePlate"].Value),
+                    UpdateVehicleError.DuplicateVehicleLicensePlate =>
+                        controller.Conflict(localizer["DuplicateVehicleLicensePlate"].Value),
+                    UpdateVehicleError.ReferencedResourceNotFound =>
+                        controller.NotFound(localizer["VehicleReferencedResourceNotFound"].Value),
                     UpdateVehicleError.MileageCannotDecrease =>
                         controller.BadRequest(localizer["MileageCannotDecrease"].Value),
                     UpdateVehicleError.UnexpectedError =>

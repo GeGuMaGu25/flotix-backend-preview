@@ -1,19 +1,18 @@
-using System.Diagnostics.CodeAnalysis;
 using FlotixPlatform.API.IAM.Domain.Model.Commands;
 using FlotixPlatform.API.IAM.Domain.Model.ValueObjects;
 
 namespace FlotixPlatform.API.IAM.Domain.Model.Aggregates;
 
 /// <summary>
-///     Represents a user account of the platform with its security credentials, role and profile.
+///     Represents a user account of the platform with its credentials and role.
 /// </summary>
 /// <remarks>
-///     This aggregate root is created by signing up and its profile is updated through an UpdateUserProfileCommand.
-///     The email address is unique within the system and the password is only stored as a hash.
-///     A driver must always have a license number.
-///     Audit timestamps (CreatedAt, UpdatedAt) are managed by the persistence layer.
+///     This abstract aggregate root is specialized by <see cref="Owner"/>, <see cref="Driver"/> and
+///     <see cref="Mechanic"/>; all of them are persisted in the <c>users</c> table and told apart by
+///     <see cref="RoleType"/>. The email address is unique within the system and the password is only
+///     stored as a hash. Audit timestamps (CreatedAt, UpdatedAt) are managed by the persistence layer.
 /// </remarks>
-public partial class User
+public abstract partial class User
 {
     /// <summary>
     ///     Protected parameterless constructor for EF Core.
@@ -22,33 +21,37 @@ public partial class User
     {
         Email = null!;
         PasswordHash = string.Empty;
-        FullName = string.Empty;
+        Name = string.Empty;
     }
 
     /// <summary>
-    ///     Creates a new User from a sign-up command.
+    ///     Initializes the common data of a user from a sign-up command.
     /// </summary>
     /// <param name="command">The SignUpCommand command</param>
     /// <param name="passwordHash">The hash of the user password.</param>
-    /// <exception cref="ArgumentNullException">Thrown when the command is null.</exception>
+    /// <param name="roleType">The role of the specialization being created.</param>
     /// <exception cref="ArgumentException">Thrown when the command contains invalid values.</exception>
-    /// <exception cref="InvalidOperationException">Thrown when a driver has no license number.</exception>
-    public User(SignUpCommand command, string passwordHash)
+    protected User(SignUpCommand command, string passwordHash, Role roleType)
     {
         ArgumentNullException.ThrowIfNull(command);
         ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
+        ArgumentException.ThrowIfNullOrWhiteSpace(command.Name);
 
         Email = command.Email;
         PasswordHash = passwordHash;
-        Role = command.Role;
-        ApplyProfile(command.FullName, command.LicenseNumber, command.LicenseExpiry, command.CompanyName,
-            command.WorkshopName);
+        RoleType = roleType;
+        Name = command.Name.Trim();
     }
 
     /// <summary>
     ///     Gets the server-generated identifier for this user.
     /// </summary>
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
+
+    /// <summary>
+    ///     Gets the full name of the user.
+    /// </summary>
+    public string Name { get; private set; }
 
     /// <summary>
     ///     Gets the email address of the user.
@@ -61,60 +64,52 @@ public partial class User
     public string PasswordHash { get; private set; }
 
     /// <summary>
-    ///     Gets the role of the user.
+    ///     Gets the role of the user, which also identifies its specialization.
     /// </summary>
-    public Role Role { get; private set; }
+    public Role RoleType { get; private set; }
 
     /// <summary>
-    ///     Gets the full name of the user.
+    ///     Creates the user specialization that corresponds to the role of the sign-up command (Factory Method).
     /// </summary>
-    public string FullName { get; private set; }
-
-    /// <summary>
-    ///     Gets the driver license number (required for drivers).
-    /// </summary>
-    public string? LicenseNumber { get; private set; }
-
-    /// <summary>
-    ///     Gets the expiry date of the driver license.
-    /// </summary>
-    public DateOnly? LicenseExpiry { get; private set; }
-
-    /// <summary>
-    ///     Gets the company name of a fleet owner.
-    /// </summary>
-    public string? CompanyName { get; private set; }
-
-    /// <summary>
-    ///     Gets the workshop name of a mechanic.
-    /// </summary>
-    public string? WorkshopName { get; private set; }
+    /// <param name="command">The SignUpCommand command</param>
+    /// <param name="passwordHash">The hash of the user password.</param>
+    /// <returns>An <see cref="Owner"/>, a <see cref="Driver"/> or a <see cref="Mechanic"/>.</returns>
+    /// <exception cref="ArgumentException">Thrown when the command contains invalid values.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when a driver has no license number or expiration date.</exception>
+    public static User Create(SignUpCommand command, string passwordHash)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+        return command.RoleType switch
+        {
+            Role.Owner => new Owner(command, passwordHash),
+            Role.Driver => new Driver(command, passwordHash),
+            Role.Mechanic => new Mechanic(command, passwordHash),
+            _ => throw new ArgumentOutOfRangeException(nameof(command), "The role type is not supported.")
+        };
+    }
 
     /// <summary>
     ///     Updates the user profile from an update command.
     /// </summary>
     /// <param name="command">The UpdateUserProfileCommand command</param>
     /// <exception cref="ArgumentException">Thrown when the command contains invalid values.</exception>
-    /// <exception cref="InvalidOperationException">Thrown when a driver has no license number.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when a driver has no license number or expiration date.</exception>
     public void UpdateProfile(UpdateUserProfileCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ApplyProfile(command.FullName, command.LicenseNumber, command.LicenseExpiry, command.CompanyName,
-            command.WorkshopName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(command.Name);
+
+        ApplyRoleProfile(command.LicenseNumber, command.LicenseExpiration, command.CompanyName, command.WorkshopName);
+        Name = command.Name.Trim();
     }
 
-    [MemberNotNull(nameof(FullName))]
-    private void ApplyProfile(string fullName, string? licenseNumber, DateOnly? licenseExpiry, string? companyName,
-        string? workshopName)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
-        if (Role == Role.Driver && string.IsNullOrWhiteSpace(licenseNumber))
-            throw new InvalidOperationException("A driver must have a license number.");
-
-        FullName = fullName.Trim();
-        LicenseNumber = licenseNumber?.Trim();
-        LicenseExpiry = licenseExpiry;
-        CompanyName = companyName?.Trim();
-        WorkshopName = workshopName?.Trim();
-    }
+    /// <summary>
+    ///     Applies the profile data that belongs to the specialization; data of other roles is ignored.
+    /// </summary>
+    /// <param name="licenseNumber">The driver license number.</param>
+    /// <param name="licenseExpiration">The expiration date of the driver license.</param>
+    /// <param name="companyName">The company name of a fleet owner.</param>
+    /// <param name="workshopName">The workshop name of a mechanic.</param>
+    protected abstract void ApplyRoleProfile(string? licenseNumber, DateOnly? licenseExpiration, string? companyName,
+        string? workshopName);
 }

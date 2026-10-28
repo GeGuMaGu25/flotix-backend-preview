@@ -17,7 +17,7 @@ public class IotOrderRepository(AppDbContext context)
     : BaseRepository<IotOrder>(context), IIotOrderRepository
 {
     /// <inheritdoc />
-    public async Task<IEnumerable<IotOrder>> FindByOwnerIdAsync(int ownerId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<IotOrder>> FindByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<IotOrder>()
             .Where(i => i.OwnerId == ownerId)

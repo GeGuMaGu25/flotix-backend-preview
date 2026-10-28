@@ -30,12 +30,12 @@ public interface IUserRepository : IBaseRepository<User>
     Task<bool> ExistsByEmailAsync(EmailAddress email, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Find users by role
+    ///     Find users by role type
     /// </summary>
-    /// <param name="role">The role to search.</param>
+    /// <param name="roleType">The role to search.</param>
     /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
     /// <returns>
     ///     An Enumerable containing the user objects if found, or empty otherwise.
     /// </returns>
-    Task<IEnumerable<User>> FindByRoleAsync(Role role, CancellationToken cancellationToken = default);
+    Task<IEnumerable<User>> FindByRoleTypeAsync(Role roleType, CancellationToken cancellationToken = default);
 }

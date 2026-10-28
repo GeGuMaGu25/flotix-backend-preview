@@ -70,6 +70,7 @@ public static class LocalizedOpenApiAssembler
                 {
                     ["204"] = "Response204",
                     ["404"] = "Response404",
+                    ["409"] = "Response409",
                     ["500"] = "Response500"
                 })
         };

@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.IAM.Domain.Model.Commands;
 ///     Command to delete a user
 /// </summary>
 /// <param name="UserId">The identifier of the user to delete</param>
-public record DeleteUserCommand(int UserId);
+public record DeleteUserCommand(Guid UserId);

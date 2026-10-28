@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Commerce.Domain.Model.Queries;
 ///     Query to get an IoT order by ID
 /// </summary>
 /// <param name="Id">The IoT order ID to search</param>
-public record GetIotOrderByIdQuery(int Id);
+public record GetIotOrderByIdQuery(Guid Id);

@@ -1,5 +1,3 @@
-using FlotixPlatform.API.Monitoring.Domain.Model.ValueObjects;
-
 namespace FlotixPlatform.API.Monitoring.Interfaces.Rest.Resources;
 
 /// <summary>
@@ -8,9 +6,9 @@ namespace FlotixPlatform.API.Monitoring.Interfaces.Rest.Resources;
 /// <param name="Id">The server-generated ID of the IoT device</param>
 /// <param name="VehicleId">The identifier of the vehicle.</param>
 /// <param name="SerialNumber">The serial number of the IoT device.</param>
-/// <param name="ConnectionStatus">The connection status of the IoT device.</param>
+/// <param name="IsConnected">Whether the IoT device is connected.</param>
 public record IotDeviceResource(
-    int Id,
-    int VehicleId,
+    Guid Id,
+    Guid VehicleId,
     string SerialNumber,
-    ConnectionStatus ConnectionStatus);
+    bool IsConnected);

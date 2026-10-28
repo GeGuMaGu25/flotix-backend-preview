@@ -28,33 +28,33 @@ public partial class IotOrder
     public IotOrder(CreateIotOrderCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ArgumentOutOfRangeException.ThrowIfLessThan(command.OwnerId, 1);
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(command.DeviceQuantity);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.DeviceQuantity, 1000);
+        ArgumentOutOfRangeException.ThrowIfEqual(command.OwnerId, Guid.Empty);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(command.Quantity);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(command.Quantity, 1000);
         ArgumentOutOfRangeException.ThrowIfNegative(command.TotalAmount);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(command.TotalAmount, 1000000m);
 
         OwnerId = command.OwnerId;
-        DeviceQuantity = command.DeviceQuantity;
+        Quantity = command.Quantity;
         TotalAmount = command.TotalAmount;
         Status = OrderStatus.PendingPayment;
-        OrderDate = DateOnly.FromDateTime(DateTime.UtcNow);
+        OrderDate = DateTimeOffset.UtcNow;
     }
 
     /// <summary>
     ///     Gets the server-generated identifier for this IoT order.
     /// </summary>
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     /// <summary>
     ///     Gets the identifier of the owner user.
     /// </summary>
-    public int OwnerId { get; private set; }
+    public Guid OwnerId { get; private set; }
 
     /// <summary>
     ///     Gets the number of devices ordered.
     /// </summary>
-    public int DeviceQuantity { get; private set; }
+    public int Quantity { get; private set; }
 
     /// <summary>
     ///     Gets the total amount, priced from the catalog.
@@ -69,7 +69,7 @@ public partial class IotOrder
     /// <summary>
     ///     Gets the date the order was placed.
     /// </summary>
-    public DateOnly OrderDate { get; private set; }
+    public DateTimeOffset OrderDate { get; private set; }
 
     /// <summary>
     ///     Updates the IoT order information from an update command.

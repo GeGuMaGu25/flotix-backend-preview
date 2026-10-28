@@ -19,7 +19,7 @@ public class UserQueryService(IUserRepository userRepository) : IUserQueryServic
     /// <inheritdoc />
     public async Task<IEnumerable<User>> Handle(GetAllUsersByRoleQuery query,
         CancellationToken cancellationToken = default) =>
-        await userRepository.FindByRoleAsync(query.Role, cancellationToken);
+        await userRepository.FindByRoleTypeAsync(query.RoleType, cancellationToken);
 
     /// <inheritdoc />
     public async Task<User?> Handle(GetUserByIdQuery query,

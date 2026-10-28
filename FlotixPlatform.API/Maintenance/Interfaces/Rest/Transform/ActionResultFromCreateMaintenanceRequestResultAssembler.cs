@@ -36,6 +36,8 @@ public static class ActionResultFromCreateMaintenanceRequestResultAssembler
                 {
                     CreateMaintenanceRequestError.InvalidMaintenanceRequest =>
                         controller.BadRequest(localizer["InvalidMaintenanceRequestRequest"].Value),
+                    CreateMaintenanceRequestError.ReferencedResourceNotFound =>
+                        controller.NotFound(localizer["MaintenanceRequestReferencedResourceNotFound"].Value),
                     CreateMaintenanceRequestError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,

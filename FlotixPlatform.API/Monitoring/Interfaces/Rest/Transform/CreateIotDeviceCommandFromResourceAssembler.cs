@@ -18,5 +18,5 @@ public static class CreateIotDeviceCommandFromResourceAssembler
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
     public static CreateIotDeviceCommand ToCommandFromResource(CreateIotDeviceResource resource) =>
-        new(resource.VehicleId, new SerialNumber(resource.SerialNumber), resource.ConnectionStatus);
+        new(resource.VehicleId, new SerialNumber(resource.SerialNumber), resource.IsConnected);
 }

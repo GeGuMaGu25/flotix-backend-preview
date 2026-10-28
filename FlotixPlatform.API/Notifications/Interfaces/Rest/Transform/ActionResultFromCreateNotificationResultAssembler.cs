@@ -36,6 +36,8 @@ public static class ActionResultFromCreateNotificationResultAssembler
                 {
                     CreateNotificationError.InvalidNotification =>
                         controller.BadRequest(localizer["InvalidNotificationRequest"].Value),
+                    CreateNotificationError.ReferencedResourceNotFound =>
+                        controller.NotFound(localizer["NotificationReferencedResourceNotFound"].Value),
                     CreateNotificationError.UnexpectedError =>
                         controller.Problem(
                             title: localizer["UnexpectedServerError"].Value,

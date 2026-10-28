@@ -7,12 +7,12 @@ namespace FlotixPlatform.API.IAM.Interfaces.Rest.Resources;
 /// </summary>
 /// <param name="Id">The server-generated ID of the user</param>
 /// <param name="Email">The email address of the user</param>
-/// <param name="Role">The role of the user</param>
-/// <param name="FullName">The full name of the user</param>
+/// <param name="RoleType">The role of the user</param>
+/// <param name="Name">The full name of the user</param>
 /// <param name="Token">The bearer token to authorize further requests</param>
 public record AuthenticatedUserResource(
-    int Id,
+    Guid Id,
     string Email,
-    Role Role,
-    string FullName,
+    Role RoleType,
+    string Name,
     string Token);

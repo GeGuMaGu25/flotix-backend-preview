@@ -16,7 +16,7 @@ public enum UpdateUserProfileError
 	InvalidUser,
 
 	/// <summary>
-	/// A driver profile was left without a license number.
+	/// A driver profile was left without a license number or its expiration date.
 	/// </summary>
 	DriverLicenseRequired,
 

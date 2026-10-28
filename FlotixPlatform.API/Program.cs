@@ -213,9 +213,9 @@ builder.Services.AddScoped<IIncidentQueryService, IncidentQueryService>();
 builder.Services.AddScoped<IIotDeviceRepository, IotDeviceRepository>();
 builder.Services.AddScoped<IIotDeviceCommandService, IotDeviceCommandService>();
 builder.Services.AddScoped<IIotDeviceQueryService, IotDeviceQueryService>();
-builder.Services.AddScoped<ITelemetryRecordRepository, TelemetryRecordRepository>();
-builder.Services.AddScoped<ITelemetryRecordCommandService, TelemetryRecordCommandService>();
-builder.Services.AddScoped<ITelemetryRecordQueryService, TelemetryRecordQueryService>();
+builder.Services.AddScoped<ITelemetryDataRepository, TelemetryDataRepository>();
+builder.Services.AddScoped<ITelemetryDataCommandService, TelemetryDataCommandService>();
+builder.Services.AddScoped<ITelemetryDataQueryService, TelemetryDataQueryService>();
 
 // Alerts & Notifications Bounded Context Injection Configuration
 builder.Services.AddScoped<IAlertRepository, AlertRepository>();

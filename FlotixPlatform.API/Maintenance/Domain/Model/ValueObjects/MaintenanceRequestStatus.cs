@@ -11,25 +11,25 @@ namespace FlotixPlatform.API.Maintenance.Domain.Model.ValueObjects;
 public enum MaintenanceRequestStatus
 {
     /// <summary>
-    ///     The request is waiting for a quote.
+    ///     The request is waiting for a diagnostic and quote.
     /// </summary>
     [JsonStringEnumMemberName("Pendiente")]
     Pending,
 
     /// <summary>
-    ///     The request has been quoted.
+    ///     The workshop registered a diagnostic and quote.
     /// </summary>
     [JsonStringEnumMemberName("Presupuestado")]
     Quoted,
 
     /// <summary>
-    ///     The quote has been approved.
+    ///     The owner approved the quote.
     /// </summary>
     [JsonStringEnumMemberName("Aprobado")]
     Approved,
 
     /// <summary>
-    ///     The quote has been rejected.
+    ///     The owner rejected the quote.
     /// </summary>
     [JsonStringEnumMemberName("Rechazado")]
     Rejected,

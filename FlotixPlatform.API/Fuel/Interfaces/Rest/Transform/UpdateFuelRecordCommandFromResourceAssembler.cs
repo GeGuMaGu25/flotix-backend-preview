@@ -17,6 +17,6 @@ public static class UpdateFuelRecordCommandFromResourceAssembler
     ///     An UpdateFuelRecordCommand assembled from the UpdateFuelRecordResource
     /// </returns>
     /// <exception cref="ArgumentException">Thrown when a value object cannot be created from the resource.</exception>
-    public static UpdateFuelRecordCommand ToCommandFromResource(int fuelRecordId, UpdateFuelRecordResource resource) =>
-        new(fuelRecordId, resource.Liters, resource.TotalCost, resource.MileageAtRefuel, resource.Date);
+    public static UpdateFuelRecordCommand ToCommandFromResource(Guid fuelRecordId, UpdateFuelRecordResource resource) =>
+        new(fuelRecordId, resource.Liters, resource.Cost, resource.MileageAtRefill, resource.RecordedDate);
 }

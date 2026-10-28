@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Incidents.Domain.Model.Queries;
 ///     Query to get all incidents by vehicle ID
 /// </summary>
 /// <param name="VehicleId">The vehicle ID to search</param>
-public record GetAllIncidentsByVehicleIdQuery(int VehicleId);
+public record GetAllIncidentsByVehicleIdQuery(Guid VehicleId);

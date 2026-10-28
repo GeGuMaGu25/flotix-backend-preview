@@ -47,6 +47,7 @@ public class NotificationsController(
     [HttpPost]
     [ProducesResponseType(typeof(NotificationResource), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> CreateNotification([FromBody] CreateNotificationResource resource,
         CancellationToken cancellationToken)
@@ -90,7 +91,7 @@ public class NotificationsController(
     /// </returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<NotificationResource>), StatusCodes.Status200OK)]
-    public async Task<ActionResult> GetAllNotifications([FromQuery] int? userId = null,
+    public async Task<ActionResult> GetAllNotifications([FromQuery] Guid? userId = null,
         CancellationToken cancellationToken = default)
     {
         var notifications = userId is not null
@@ -108,10 +109,10 @@ public class NotificationsController(
     /// <returns>
     ///     A response as an action result containing the notification, or not found if the notification was not found.
     /// </returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(NotificationResource), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetNotificationById(int id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> GetNotificationById(Guid id, CancellationToken cancellationToken = default)
     {
         var getNotificationByIdQuery = new GetNotificationByIdQuery(id);
         var result = await notificationQueryService.Handle(getNotificationByIdQuery, cancellationToken);
@@ -130,12 +131,12 @@ public class NotificationsController(
     ///     A response as an action result containing the updated notification, or an error response if the notification was
     ///     not updated.
     /// </returns>
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(NotificationResource), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> UpdateNotification(int id, [FromBody] UpdateNotificationResource resource,
+    public async Task<ActionResult> UpdateNotification(Guid id, [FromBody] UpdateNotificationResource resource,
         CancellationToken cancellationToken)
     {
         try
@@ -171,11 +172,11 @@ public class NotificationsController(
     /// <returns>
     ///     A response as an action result with no content, or not found if the notification was not found.
     /// </returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> DeleteNotification(int id, CancellationToken cancellationToken)
+    public async Task<ActionResult> DeleteNotification(Guid id, CancellationToken cancellationToken)
     {
         var deleteNotificationCommand = new DeleteNotificationCommand(id);
         var result = await notificationCommandService.Handle(deleteNotificationCommand, cancellationToken);

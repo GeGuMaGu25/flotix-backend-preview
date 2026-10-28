@@ -4,4 +4,4 @@ namespace FlotixPlatform.API.Fleet.Domain.Model.Commands;
 ///     Command to delete a vehicle
 /// </summary>
 /// <param name="VehicleId">The identifier of the vehicle to delete</param>
-public record DeleteVehicleCommand(int VehicleId);
+public record DeleteVehicleCommand(Guid VehicleId);

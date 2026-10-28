@@ -35,6 +35,8 @@ public static class ActionResultFromUpdateMaintenanceRequestResultAssembler
                         controller.NotFound(localizer["MaintenanceRequestNotFound"].Value),
                     UpdateMaintenanceRequestError.InvalidMaintenanceRequest =>
                         controller.BadRequest(localizer["InvalidMaintenanceRequestRequest"].Value),
+                    UpdateMaintenanceRequestError.ReferencedResourceNotFound =>
+                        controller.NotFound(localizer["MaintenanceRequestReferencedResourceNotFound"].Value),
                     UpdateMaintenanceRequestError.MaintenanceRequestAlreadyClosed =>
                         controller.Conflict(localizer["MaintenanceRequestAlreadyClosed"].Value),
                     UpdateMaintenanceRequestError.UnexpectedError =>

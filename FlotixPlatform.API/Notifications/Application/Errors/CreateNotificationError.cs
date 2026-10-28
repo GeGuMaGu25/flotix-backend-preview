@@ -11,6 +11,11 @@ public enum CreateNotificationError
 	InvalidNotification,
 
 	/// <summary>
+	/// A resource referenced by the command does not exist.
+	/// </summary>
+	ReferencedResourceNotFound,
+
+	/// <summary>
 	/// An unexpected error occurred during the operation.
 	/// </summary>
 	UnexpectedError
