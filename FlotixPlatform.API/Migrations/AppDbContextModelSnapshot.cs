@@ -129,6 +129,61 @@ namespace FlotixPlatform.API.Migrations
                     b.ToTable("vehicles");
                 });
 
+            modelBuilder.Entity("FlotixPlatform.API.Fuel.Domain.Model.Aggregates.FuelRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date")
+                        .HasColumnName("date");
+
+                    b.Property<int>("DriverId")
+                        .HasColumnType("integer")
+                        .HasColumnName("driver_id");
+
+                    b.Property<decimal>("Liters")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("liters");
+
+                    b.Property<int>("MileageAtRefuel")
+                        .HasColumnType("integer")
+                        .HasColumnName("mileage_at_refuel");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("total_cost");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("vehicle_id");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_fuel_records");
+
+                    b.HasIndex("DriverId")
+                        .HasDatabaseName("i_x_fuel_records_driver_id");
+
+                    b.HasIndex("VehicleId")
+                        .HasDatabaseName("i_x_fuel_records_vehicle_id");
+
+                    b.ToTable("fuel_records");
+                });
+
             modelBuilder.Entity("FlotixPlatform.API.IAM.Domain.Model.Aggregates.User", b =>
                 {
                     b.Property<int>("Id")
