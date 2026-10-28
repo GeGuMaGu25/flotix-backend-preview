@@ -36,7 +36,7 @@ public class RequestAuthorizationMiddleware(RequestDelegate next)
         }
 
         var token = GetToken(context.Request);
-        var userId = token is null ? null : tokenService.ValidateToken(token);
+        var userId = token is null ? null : await tokenService.ValidateTokenAsync(token);
         var user = userId is null
             ? null
             : await userQueryService.Handle(new GetUserByIdQuery(userId.Value), context.RequestAborted);
