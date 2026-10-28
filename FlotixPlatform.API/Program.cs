@@ -1,4 +1,9 @@
 using System.Text.Json.Serialization;
+using FlotixPlatform.API.Commerce.Application.Internal.CommandServices;
+using FlotixPlatform.API.Commerce.Application.Internal.QueryServices;
+using FlotixPlatform.API.Commerce.Application.Services;
+using FlotixPlatform.API.Commerce.Domain.Repositories;
+using FlotixPlatform.API.Commerce.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using FlotixPlatform.API.Fleet.Application.Internal.CommandServices;
 using FlotixPlatform.API.Fleet.Application.Internal.QueryServices;
 using FlotixPlatform.API.Fleet.Application.Services;
@@ -57,6 +62,7 @@ using MaintenanceLocalizedOpenApiAssembler = FlotixPlatform.API.Maintenance.Inte
 using IncidentsLocalizedOpenApiAssembler = FlotixPlatform.API.Incidents.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 using MonitoringLocalizedOpenApiAssembler = FlotixPlatform.API.Monitoring.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 using NotificationsLocalizedOpenApiAssembler = FlotixPlatform.API.Notifications.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
+using CommerceLocalizedOpenApiAssembler = FlotixPlatform.API.Commerce.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -127,6 +133,8 @@ builder.Services.AddOpenApi(options =>
     options.AddSchemaTransformer(MonitoringLocalizedOpenApiAssembler.TransformSchemaAsync);
     options.AddOperationTransformer(NotificationsLocalizedOpenApiAssembler.TransformOperationAsync);
     options.AddSchemaTransformer(NotificationsLocalizedOpenApiAssembler.TransformSchemaAsync);
+    options.AddOperationTransformer(CommerceLocalizedOpenApiAssembler.TransformOperationAsync);
+    options.AddSchemaTransformer(CommerceLocalizedOpenApiAssembler.TransformSchemaAsync);
 });
 
 // Real-time communication with SignalR.
@@ -217,6 +225,14 @@ builder.Services.AddScoped<INotificationQueryService, NotificationQueryService>(
 builder.Services.AddScoped<INotificationPreferenceRepository, NotificationPreferenceRepository>();
 builder.Services.AddScoped<INotificationPreferenceCommandService, NotificationPreferenceCommandService>();
 builder.Services.AddScoped<INotificationPreferenceQueryService, NotificationPreferenceQueryService>();
+
+// Digital Experience / IoT Commerce Bounded Context Injection Configuration
+builder.Services.AddScoped<IIotCatalogItemRepository, IotCatalogItemRepository>();
+builder.Services.AddScoped<IIotCatalogItemCommandService, IotCatalogItemCommandService>();
+builder.Services.AddScoped<IIotCatalogItemQueryService, IotCatalogItemQueryService>();
+builder.Services.AddScoped<IIotOrderRepository, IotOrderRepository>();
+builder.Services.AddScoped<IIotOrderCommandService, IotOrderCommandService>();
+builder.Services.AddScoped<IIotOrderQueryService, IotOrderQueryService>();
 
 // IAM token protection keys (persist the key ring in production, e.g. PersistKeysToFileSystem).
 builder.Services.AddDataProtection();

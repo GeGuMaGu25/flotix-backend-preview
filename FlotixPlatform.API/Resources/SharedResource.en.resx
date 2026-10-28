@@ -960,4 +960,160 @@
     <data name="DuplicateNotificationPreferenceUserId" xml:space="preserve">
         <value>A notification preference with this user ID already exists.</value>
     </data>
+    <data name="CreateIotCatalogItemSummary" xml:space="preserve">
+        <value>Create an IoT catalog item</value>
+    </data>
+    <data name="CreateIotCatalogItemDescription" xml:space="preserve">
+        <value>Registers a new IoT catalog item.</value>
+    </data>
+    <data name="GetAllIotCatalogItemsSummary" xml:space="preserve">
+        <value>Get all IoT catalog items</value>
+    </data>
+    <data name="GetAllIotCatalogItemsDescription" xml:space="preserve">
+        <value>Retrieves all IoT catalog items.</value>
+    </data>
+    <data name="GetIotCatalogItemByIdSummary" xml:space="preserve">
+        <value>Get an IoT catalog item by ID</value>
+    </data>
+    <data name="GetIotCatalogItemByIdDescription" xml:space="preserve">
+        <value>Retrieves an IoT catalog item using its identifier.</value>
+    </data>
+    <data name="UpdateIotCatalogItemSummary" xml:space="preserve">
+        <value>Update an IoT catalog item</value>
+    </data>
+    <data name="UpdateIotCatalogItemDescription" xml:space="preserve">
+        <value>Updates the data of an IoT catalog item.</value>
+    </data>
+    <data name="DeleteIotCatalogItemSummary" xml:space="preserve">
+        <value>Delete an IoT catalog item</value>
+    </data>
+    <data name="DeleteIotCatalogItemDescription" xml:space="preserve">
+        <value>Deletes an IoT catalog item using its identifier.</value>
+    </data>
+    <data name="CreateIotOrderSummary" xml:space="preserve">
+        <value>Create an IoT order</value>
+    </data>
+    <data name="CreateIotOrderDescription" xml:space="preserve">
+        <value>Registers a new IoT order.</value>
+    </data>
+    <data name="GetAllIotOrdersSummary" xml:space="preserve">
+        <value>Get all IoT orders</value>
+    </data>
+    <data name="GetAllIotOrdersDescription" xml:space="preserve">
+        <value>Retrieves all IoT orders, optionally filtered by owner ID.</value>
+    </data>
+    <data name="GetIotOrderByIdSummary" xml:space="preserve">
+        <value>Get an IoT order by ID</value>
+    </data>
+    <data name="GetIotOrderByIdDescription" xml:space="preserve">
+        <value>Retrieves an IoT order using its identifier.</value>
+    </data>
+    <data name="UpdateIotOrderSummary" xml:space="preserve">
+        <value>Update an IoT order</value>
+    </data>
+    <data name="UpdateIotOrderDescription" xml:space="preserve">
+        <value>Updates the data of an IoT order.</value>
+    </data>
+    <data name="CreateIotCatalogItemSchema" xml:space="preserve">
+        <value>Request payload for creating an IoT catalog item.</value>
+    </data>
+    <data name="UpdateIotCatalogItemSchema" xml:space="preserve">
+        <value>Request payload for updating an IoT catalog item.</value>
+    </data>
+    <data name="IotCatalogItemSchema" xml:space="preserve">
+        <value>An IoT catalog item returned by the API.</value>
+    </data>
+    <data name="CreateIotOrderSchema" xml:space="preserve">
+        <value>Request payload for creating an IoT order.</value>
+    </data>
+    <data name="UpdateIotOrderSchema" xml:space="preserve">
+        <value>Request payload for updating an IoT order.</value>
+    </data>
+    <data name="IotOrderSchema" xml:space="preserve">
+        <value>An IoT order returned by the API.</value>
+    </data>
+    <data name="IotCatalogItemId" xml:space="preserve">
+        <value>The server-generated identifier of the IoT catalog item.</value>
+    </data>
+    <data name="IotCatalogItemSku" xml:space="preserve">
+        <value>The stock keeping unit of the IoT product.</value>
+    </data>
+    <data name="IotCatalogItemName" xml:space="preserve">
+        <value>The name of the IoT product.</value>
+    </data>
+    <data name="IotCatalogItemUnitPrice" xml:space="preserve">
+        <value>The unit price of the IoT product.</value>
+    </data>
+    <data name="IotCatalogItemIconName" xml:space="preserve">
+        <value>The icon used to display the product.</value>
+    </data>
+    <data name="IotOrderId" xml:space="preserve">
+        <value>The server-generated identifier of the IoT order.</value>
+    </data>
+    <data name="IotOrderOwnerId" xml:space="preserve">
+        <value>The identifier of the owner user.</value>
+    </data>
+    <data name="IotOrderSku" xml:space="preserve">
+        <value>The stock keeping unit of the IoT product.</value>
+    </data>
+    <data name="IotOrderDeviceQuantity" xml:space="preserve">
+        <value>The number of devices ordered.</value>
+    </data>
+    <data name="IotOrderTotalAmount" xml:space="preserve">
+        <value>The total amount, priced from the catalog.</value>
+    </data>
+    <data name="IotOrderStatus" xml:space="preserve">
+        <value>The current status of the IoT order.</value>
+    </data>
+    <data name="IotOrderOrderDate" xml:space="preserve">
+        <value>The date the order was placed.</value>
+    </data>
+    <data name="InvalidIotCatalogItemRequest" xml:space="preserve">
+        <value>The IoT catalog item request contains invalid values.</value>
+    </data>
+    <data name="IotCatalogItemNotFound" xml:space="preserve">
+        <value>The IoT catalog item was not found.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingIotCatalogItem" xml:space="preserve">
+        <value>An unexpected error occurred while creating the IoT catalog item.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingIotCatalogItem" xml:space="preserve">
+        <value>An unexpected error occurred while updating the IoT catalog item.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingIotCatalogItem" xml:space="preserve">
+        <value>An unexpected error occurred while deleting the IoT catalog item.</value>
+    </data>
+    <data name="DuplicateIotCatalogItemSku" xml:space="preserve">
+        <value>An IoT catalog item with this SKU already exists.</value>
+    </data>
+    <data name="RequiredSku" xml:space="preserve">
+        <value>SKU is required.</value>
+    </data>
+    <data name="RequiredName" xml:space="preserve">
+        <value>Name is required.</value>
+    </data>
+    <data name="RequiredIconName" xml:space="preserve">
+        <value>Icon name is required.</value>
+    </data>
+    <data name="InvalidIotOrderRequest" xml:space="preserve">
+        <value>The IoT order request contains invalid values.</value>
+    </data>
+    <data name="IotOrderNotFound" xml:space="preserve">
+        <value>The IoT order was not found.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingIotOrder" xml:space="preserve">
+        <value>An unexpected error occurred while creating the IoT order.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingIotOrder" xml:space="preserve">
+        <value>An unexpected error occurred while updating the IoT order.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingIotOrder" xml:space="preserve">
+        <value>An unexpected error occurred while deleting the IoT order.</value>
+    </data>
+    <data name="IotOrderAlreadyClosed" xml:space="preserve">
+        <value>A delivered or cancelled order cannot change its status.</value>
+    </data>
+    <data name="SkuNotFound" xml:space="preserve">
+        <value>The SKU is not in the IoT catalog.</value>
+    </data>
 </root>
