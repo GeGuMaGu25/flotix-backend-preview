@@ -31,12 +31,12 @@ public class TokenService(IOptions<TokenSettings> tokenSettings) : ITokenService
             Subject = new ClaimsIdentity(
             [
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.RoleType.ToString())
+                new Claim("role", user.RoleType.ToString())
             ]),
             Issuer = _settings.Issuer,
             Audience = _settings.Audience,
             Expires = DateTime.UtcNow.AddHours(_settings.ExpirationHours),
-            SigningCredentials = new SigningCredentials(SigningKey, SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(SigningKey, SecurityAlgorithms.HmacSha256)
         };
         return new JsonWebTokenHandler().CreateToken(tokenDescriptor);
     }
