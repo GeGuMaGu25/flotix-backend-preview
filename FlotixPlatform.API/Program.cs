@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using FlotixPlatform.API.Analytics.Application.Internal.CommandServices;
 using FlotixPlatform.API.Analytics.Application.Internal.QueryServices;
@@ -27,7 +28,8 @@ using FlotixPlatform.API.IAM.Domain.Repositories;
 using FlotixPlatform.API.IAM.Infrastructure.Hashing.AspNetCore.Services;
 using FlotixPlatform.API.IAM.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using FlotixPlatform.API.IAM.Infrastructure.Pipeline.Middleware.Extensions;
-using FlotixPlatform.API.IAM.Infrastructure.Tokens.DataProtection.Services;
+using FlotixPlatform.API.IAM.Infrastructure.Tokens.JWT.Configuration;
+using FlotixPlatform.API.IAM.Infrastructure.Tokens.JWT.Services;
 using FlotixPlatform.API.Incidents.Application.Internal.CommandServices;
 using FlotixPlatform.API.Incidents.Application.Internal.QueryServices;
 using FlotixPlatform.API.Incidents.Application.Services;
@@ -235,8 +237,11 @@ builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IReportCommandService, ReportCommandService>();
 builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 
-// IAM token protection keys (persist the key ring in production, e.g. PersistKeysToFileSystem).
-builder.Services.AddDataProtection();
+// IAM JWT settings (the secret comes from TokenSettings__Secret in production and must have at least 32 bytes).
+builder.Services.AddOptions<TokenSettings>()
+    .Bind(builder.Configuration.GetSection(nameof(TokenSettings)))
+    .Validate(settings => Encoding.UTF8.GetByteCount(settings.Secret) >= 32, "The JWT secret must have at least 32 bytes.")
+    .ValidateOnStart();
 
 var app = builder.Build();
 
