@@ -312,4 +312,79 @@
     <data name="UnexpectedErrorUpdatingFleetPreferences" xml:space="preserve">
         <value>Ocurrió un error inesperado al actualizar las preferencias de flota.</value>
     </data>
+    <data name="CreateFuelRecordSummary" xml:space="preserve">
+        <value>Crear un registro de combustible</value>
+    </data>
+    <data name="CreateFuelRecordDescription" xml:space="preserve">
+        <value>Registra un nuevo registro de combustible.</value>
+    </data>
+    <data name="GetAllFuelRecordsSummary" xml:space="preserve">
+        <value>Obtener todos los registros de combustible</value>
+    </data>
+    <data name="GetAllFuelRecordsDescription" xml:space="preserve">
+        <value>Obtiene todos los registros de combustible, opcionalmente filtrados por ID del vehículo o ID del conductor.</value>
+    </data>
+    <data name="GetFuelRecordByIdSummary" xml:space="preserve">
+        <value>Obtener un registro de combustible por ID</value>
+    </data>
+    <data name="GetFuelRecordByIdDescription" xml:space="preserve">
+        <value>Obtiene un registro de combustible mediante su identificador.</value>
+    </data>
+    <data name="UpdateFuelRecordSummary" xml:space="preserve">
+        <value>Actualizar un registro de combustible</value>
+    </data>
+    <data name="UpdateFuelRecordDescription" xml:space="preserve">
+        <value>Actualiza los datos de un registro de combustible.</value>
+    </data>
+    <data name="DeleteFuelRecordSummary" xml:space="preserve">
+        <value>Eliminar un registro de combustible</value>
+    </data>
+    <data name="DeleteFuelRecordDescription" xml:space="preserve">
+        <value>Elimina un registro de combustible mediante su identificador.</value>
+    </data>
+    <data name="CreateFuelRecordSchema" xml:space="preserve">
+        <value>Datos de la solicitud para crear un registro de combustible.</value>
+    </data>
+    <data name="UpdateFuelRecordSchema" xml:space="preserve">
+        <value>Datos de la solicitud para actualizar un registro de combustible.</value>
+    </data>
+    <data name="FuelRecordSchema" xml:space="preserve">
+        <value>Un registro de combustible devuelto por la API.</value>
+    </data>
+    <data name="FuelRecordId" xml:space="preserve">
+        <value>El identificador del registro de combustible generado por el servidor.</value>
+    </data>
+    <data name="FuelRecordVehicleId" xml:space="preserve">
+        <value>El identificador del vehículo.</value>
+    </data>
+    <data name="FuelRecordDriverId" xml:space="preserve">
+        <value>El identificador del usuario conductor.</value>
+    </data>
+    <data name="FuelRecordLiters" xml:space="preserve">
+        <value>La cantidad cargada en litros.</value>
+    </data>
+    <data name="FuelRecordTotalCost" xml:space="preserve">
+        <value>El costo total de la carga de combustible.</value>
+    </data>
+    <data name="FuelRecordMileageAtRefuel" xml:space="preserve">
+        <value>El kilometraje del vehículo al cargar combustible.</value>
+    </data>
+    <data name="FuelRecordDate" xml:space="preserve">
+        <value>La fecha de la carga de combustible.</value>
+    </data>
+    <data name="InvalidFuelRecordRequest" xml:space="preserve">
+        <value>La solicitud de registro de combustible contiene valores no válidos.</value>
+    </data>
+    <data name="FuelRecordNotFound" xml:space="preserve">
+        <value>No se encontró el registro de combustible.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingFuelRecord" xml:space="preserve">
+        <value>Ocurrió un error inesperado al crear el registro de combustible.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingFuelRecord" xml:space="preserve">
+        <value>Ocurrió un error inesperado al actualizar el registro de combustible.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingFuelRecord" xml:space="preserve">
+        <value>Ocurrió un error inesperado al eliminar el registro de combustible.</value>
+    </data>
 </root>

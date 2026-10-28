@@ -312,4 +312,79 @@
     <data name="UnexpectedErrorUpdatingFleetPreferences" xml:space="preserve">
         <value>An unexpected error occurred while updating the fleet preferences.</value>
     </data>
+    <data name="CreateFuelRecordSummary" xml:space="preserve">
+        <value>Create a fuel record</value>
+    </data>
+    <data name="CreateFuelRecordDescription" xml:space="preserve">
+        <value>Registers a new fuel record.</value>
+    </data>
+    <data name="GetAllFuelRecordsSummary" xml:space="preserve">
+        <value>Get all fuel records</value>
+    </data>
+    <data name="GetAllFuelRecordsDescription" xml:space="preserve">
+        <value>Retrieves all fuel records, optionally filtered by vehicle ID or driver ID.</value>
+    </data>
+    <data name="GetFuelRecordByIdSummary" xml:space="preserve">
+        <value>Get a fuel record by ID</value>
+    </data>
+    <data name="GetFuelRecordByIdDescription" xml:space="preserve">
+        <value>Retrieves a fuel record using its identifier.</value>
+    </data>
+    <data name="UpdateFuelRecordSummary" xml:space="preserve">
+        <value>Update a fuel record</value>
+    </data>
+    <data name="UpdateFuelRecordDescription" xml:space="preserve">
+        <value>Updates the data of a fuel record.</value>
+    </data>
+    <data name="DeleteFuelRecordSummary" xml:space="preserve">
+        <value>Delete a fuel record</value>
+    </data>
+    <data name="DeleteFuelRecordDescription" xml:space="preserve">
+        <value>Deletes a fuel record using its identifier.</value>
+    </data>
+    <data name="CreateFuelRecordSchema" xml:space="preserve">
+        <value>Request payload for creating a fuel record.</value>
+    </data>
+    <data name="UpdateFuelRecordSchema" xml:space="preserve">
+        <value>Request payload for updating a fuel record.</value>
+    </data>
+    <data name="FuelRecordSchema" xml:space="preserve">
+        <value>A fuel record returned by the API.</value>
+    </data>
+    <data name="FuelRecordId" xml:space="preserve">
+        <value>The server-generated identifier of the fuel record.</value>
+    </data>
+    <data name="FuelRecordVehicleId" xml:space="preserve">
+        <value>The identifier of the vehicle.</value>
+    </data>
+    <data name="FuelRecordDriverId" xml:space="preserve">
+        <value>The identifier of the driver user.</value>
+    </data>
+    <data name="FuelRecordLiters" xml:space="preserve">
+        <value>The refueled amount in liters.</value>
+    </data>
+    <data name="FuelRecordTotalCost" xml:space="preserve">
+        <value>The total cost of the refuel.</value>
+    </data>
+    <data name="FuelRecordMileageAtRefuel" xml:space="preserve">
+        <value>The vehicle mileage when refueling.</value>
+    </data>
+    <data name="FuelRecordDate" xml:space="preserve">
+        <value>The date of the refuel.</value>
+    </data>
+    <data name="InvalidFuelRecordRequest" xml:space="preserve">
+        <value>The fuel record request contains invalid values.</value>
+    </data>
+    <data name="FuelRecordNotFound" xml:space="preserve">
+        <value>The fuel record was not found.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingFuelRecord" xml:space="preserve">
+        <value>An unexpected error occurred while creating the fuel record.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingFuelRecord" xml:space="preserve">
+        <value>An unexpected error occurred while updating the fuel record.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingFuelRecord" xml:space="preserve">
+        <value>An unexpected error occurred while deleting the fuel record.</value>
+    </data>
 </root>
