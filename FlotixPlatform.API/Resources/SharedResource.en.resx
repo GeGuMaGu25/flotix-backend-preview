@@ -825,12 +825,6 @@
     <data name="IotOrderReferencedResourceNotFound" xml:space="preserve">
         <value>A vehicle, user or other resource referenced by the IoT order does not exist.</value>
     </data>
-    <data name="CreateReportSummary" xml:space="preserve">
-        <value>Create a report</value>
-    </data>
-    <data name="CreateReportDescription" xml:space="preserve">
-        <value>Registers a new report.</value>
-    </data>
     <data name="GetAllReportsSummary" xml:space="preserve">
         <value>Get all reports</value>
     </data>
@@ -849,9 +843,6 @@
     <data name="DeleteReportDescription" xml:space="preserve">
         <value>Deletes a report using its identifier.</value>
     </data>
-    <data name="CreateReportSchema" xml:space="preserve">
-        <value>Request payload for creating a report.</value>
-    </data>
     <data name="ReportSchema" xml:space="preserve">
         <value>A report returned by the API.</value>
     </data>
@@ -862,7 +853,7 @@
         <value>The identifier of the owner user.</value>
     </data>
     <data name="ReportReportType" xml:space="preserve">
-        <value>The type of the report (e.g. Reporte de incidencias).</value>
+        <value>The type of the report.</value>
     </data>
     <data name="ReportGeneratedDate" xml:space="preserve">
         <value>The moment the report was generated.</value>
@@ -871,22 +862,16 @@
         <value>The filters applied to the report (e.g. date range).</value>
     </data>
     <data name="InvalidReportRequest" xml:space="preserve">
-        <value>The report request contains invalid values.</value>
+        <value>The report type is not supported or the period is invalid.</value>
     </data>
     <data name="ReportNotFound" xml:space="preserve">
         <value>The report was not found.</value>
-    </data>
-    <data name="UnexpectedErrorCreatingReport" xml:space="preserve">
-        <value>An unexpected error occurred while creating the report.</value>
-    </data>
-    <data name="UnexpectedErrorUpdatingReport" xml:space="preserve">
-        <value>An unexpected error occurred while updating the report.</value>
     </data>
     <data name="UnexpectedErrorDeletingReport" xml:space="preserve">
         <value>An unexpected error occurred while deleting the report.</value>
     </data>
     <data name="ReportReferencedResourceNotFound" xml:space="preserve">
-        <value>A vehicle, user or other resource referenced by the report does not exist.</value>
+        <value>The owner of the report does not exist.</value>
     </data>
     <data name="RequiredReportType" xml:space="preserve">
         <value>Report type is required.</value>
@@ -977,5 +962,62 @@
     </data>
     <data name="UnexpectedErrorSubmittingMaintenanceRequest" xml:space="preserve">
         <value>An unexpected error occurred while submitting the maintenance request.</value>
+    </data>
+    <data name="GenerateReportSummary" xml:space="preserve">
+        <value>Generate a report</value>
+    </data>
+    <data name="GenerateReportDescription" xml:space="preserve">
+        <value>Generates a fuel consumption or maintenance cost report of the fleet of an owner within a date range and stores its metadata. When there are no records in the period, the report includes an informative message.</value>
+    </data>
+    <data name="GenerateReportSchema" xml:space="preserve">
+        <value>Request payload for generating a report.</value>
+    </data>
+    <data name="GeneratedReportSchema" xml:space="preserve">
+        <value>A generated report with the figures of each vehicle and the totals of the fleet.</value>
+    </data>
+    <data name="ReportLineSchema" xml:space="preserve">
+        <value>Figures of a vehicle in a generated report.</value>
+    </data>
+    <data name="ReportFrom" xml:space="preserve">
+        <value>The first day of the period (inclusive).</value>
+    </data>
+    <data name="ReportTo" xml:space="preserve">
+        <value>The last day of the period (inclusive).</value>
+    </data>
+    <data name="ReportLines" xml:space="preserve">
+        <value>The figures of each vehicle with records in the period.</value>
+    </data>
+    <data name="ReportTotalRecords" xml:space="preserve">
+        <value>The total number of records of the fleet in the period.</value>
+    </data>
+    <data name="ReportTotalQuantity" xml:space="preserve">
+        <value>The total liters (fuel report) or completed repairs (maintenance report).</value>
+    </data>
+    <data name="ReportTotalCost" xml:space="preserve">
+        <value>The total fuel cost (fuel report) or approved budgets (maintenance report).</value>
+    </data>
+    <data name="ReportMessage" xml:space="preserve">
+        <value>An informative message when there are no records in the period.</value>
+    </data>
+    <data name="ReportLineVehicleId" xml:space="preserve">
+        <value>The identifier of the vehicle.</value>
+    </data>
+    <data name="ReportLineLicensePlate" xml:space="preserve">
+        <value>The license plate of the vehicle.</value>
+    </data>
+    <data name="ReportLineRecords" xml:space="preserve">
+        <value>The number of refuels (fuel report) or maintenance requests (maintenance report) in the period.</value>
+    </data>
+    <data name="ReportLineQuantity" xml:space="preserve">
+        <value>The liters loaded (fuel report) or the completed repairs (maintenance report).</value>
+    </data>
+    <data name="ReportLineTotalCost" xml:space="preserve">
+        <value>The fuel cost (fuel report) or the approved budgets (maintenance report).</value>
+    </data>
+    <data name="NoRecordsForReport" xml:space="preserve">
+        <value>There are no records in the requested period.</value>
+    </data>
+    <data name="UnexpectedErrorGeneratingReport" xml:space="preserve">
+        <value>An unexpected error occurred while generating the report.</value>
     </data>
 </root>

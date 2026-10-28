@@ -17,9 +17,9 @@ public static class LocalizedOpenApiAssembler
         IReadOnlyDictionary<string, string> Responses)> OperationResources =
         new Dictionary<string, (string, string, IReadOnlyDictionary<string, string>)>
         {
-            ["CreateReport"] = (
-                "CreateReportSummary",
-                "CreateReportDescription",
+            ["GenerateReport"] = (
+                "GenerateReportSummary",
+                "GenerateReportDescription",
                 new Dictionary<string, string>
                 {
                     ["201"] = "Response201",
@@ -55,7 +55,9 @@ public static class LocalizedOpenApiAssembler
 
     private static readonly Dictionary<Type, (string Schema, string Owner)> SchemaResources = new()
     {
-            [typeof(CreateReportResource)] = ("CreateReportSchema", "Report"),
+            [typeof(GenerateReportResource)] = ("GenerateReportSchema", "Report"),
+            [typeof(GeneratedReportResource)] = ("GeneratedReportSchema", "Report"),
+            [typeof(ReportLineResource)] = ("ReportLineSchema", "ReportLine"),
             [typeof(ReportResource)] = ("ReportSchema", "Report")
     };
 

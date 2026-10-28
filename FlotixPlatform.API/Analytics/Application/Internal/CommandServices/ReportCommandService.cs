@@ -2,7 +2,11 @@ using FlotixPlatform.API.Analytics.Domain.Model.Aggregates;
 using FlotixPlatform.API.Analytics.Application.Errors;
 using FlotixPlatform.API.Analytics.Application.Services;
 using FlotixPlatform.API.Analytics.Domain.Model.Commands;
+using FlotixPlatform.API.Analytics.Domain.Model.ValueObjects;
 using FlotixPlatform.API.Analytics.Domain.Repositories;
+using FlotixPlatform.API.Fleet.Interfaces.ACL;
+using FlotixPlatform.API.Fuel.Interfaces.ACL;
+using FlotixPlatform.API.Maintenance.Interfaces.ACL;
 using FlotixPlatform.API.Shared.Domain.Repositories;
 using FlotixPlatform.API.Shared.Application.Patterns;
 using Microsoft.EntityFrameworkCore;
@@ -13,12 +17,16 @@ namespace FlotixPlatform.API.Analytics.Application.Internal.CommandServices;
 ///     Application service for handling report commands.
 /// </summary>
 /// <remarks>
-///     This service acts as the command handler for reports.
+///     This service acts as the command handler for reports. It generates fuel and maintenance reports with the
+///     data that the Fleet, Fuel and Maintenance contexts expose through their facades (anti-corruption layer).
 ///     It enforces the application rules, delegates the business rules to the aggregate,
 ///     then coordinates with the unit of work to persist changes.
 ///     Logs warnings for rejected commands and errors for persistence failures.
 /// </remarks>
 /// <param name="reportRepository">Repository for accessing report data.</param>
+/// <param name="fleetContextFacade">Facade of the Vehicle &amp; Fleet Management context (vehicles of the owner).</param>
+/// <param name="fuelContextFacade">Facade of the Fuel Control context (refuels).</param>
+/// <param name="maintenanceContextFacade">Facade of the Maintenance Management context (maintenance requests).</param>
 /// <param name="unitOfWork">Unit of work for managing transaction scope.</param>
 /// <param name="logger">Logger for diagnostic and error reporting.</param>
 /// See
@@ -27,35 +35,39 @@ namespace FlotixPlatform.API.Analytics.Application.Internal.CommandServices;
 /// <see cref="IUnitOfWork">IUnitOfWork</see>
 public class ReportCommandService(
     IReportRepository reportRepository,
+    IFleetContextFacade fleetContextFacade,
+    IFuelContextFacade fuelContextFacade,
+    IMaintenanceContextFacade maintenanceContextFacade,
     IUnitOfWork unitOfWork,
     ILogger<ReportCommandService> logger)
     : IReportCommandService
 {
     /// <inheritdoc />
-    public async Task<Result<Report, CreateReportError>> Handle(CreateReportCommand command,
-        CancellationToken cancellationToken = default)
+    public async Task<Result<(Report Report, IReadOnlyList<ReportLine> Lines), GenerateReportError>> Handle(
+        GenerateReportCommand command, CancellationToken cancellationToken = default)
     {
         try
         {
             var report = new Report(command);
+            var lines = await GenerateLinesAsync(command, cancellationToken);
             await reportRepository.AddAsync(report, cancellationToken);
             await unitOfWork.CompleteAsync(cancellationToken);
-            return new Result<Report, CreateReportError>.Success(report);
+            return new Result<(Report Report, IReadOnlyList<ReportLine> Lines), GenerateReportError>.Success((report, lines));
         }
         catch (ArgumentException ex)
         {
-            logger.LogWarning(ex, "Invalid arguments while creating report");
-            return new Result<Report, CreateReportError>.Failure(CreateReportError.InvalidReport);
+            logger.LogWarning(ex, "Invalid arguments while generating report");
+            return new Result<(Report Report, IReadOnlyList<ReportLine> Lines), GenerateReportError>.Failure(GenerateReportError.InvalidReport);
         }
         catch (DbUpdateException ex) when (IsForeignKeyViolation(ex))
         {
-            logger.LogWarning(ex, "Foreign key violation creating report");
-            return new Result<Report, CreateReportError>.Failure(CreateReportError.ReferencedResourceNotFound);
+            logger.LogWarning(ex, "Foreign key violation generating report");
+            return new Result<(Report Report, IReadOnlyList<ReportLine> Lines), GenerateReportError>.Failure(GenerateReportError.ReferencedResourceNotFound);
         }
         catch (DbUpdateException ex)
         {
-            logger.LogError(ex, "Database update failed creating report");
-            return new Result<Report, CreateReportError>.Failure(CreateReportError.UnexpectedError);
+            logger.LogError(ex, "Database update failed generating report");
+            return new Result<(Report Report, IReadOnlyList<ReportLine> Lines), GenerateReportError>.Failure(GenerateReportError.UnexpectedError);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -63,9 +75,47 @@ public class ReportCommandService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unexpected error creating report");
-            return new Result<Report, CreateReportError>.Failure(CreateReportError.UnexpectedError);
+            logger.LogError(ex, "Unexpected error generating report");
+            return new Result<(Report Report, IReadOnlyList<ReportLine> Lines), GenerateReportError>.Failure(GenerateReportError.UnexpectedError);
         }
+    }
+
+    /// <summary>
+    ///     Consolidates the figures of each vehicle of the owner within the period (ConsolidateFleetData).
+    /// </summary>
+    /// <remarks>
+    ///     Fuel reports add up the refuels, liters and fuel cost; maintenance reports add up the requests, the
+    ///     completed repairs and the approved budgets. Vehicles without records in the period are not listed.
+    /// </remarks>
+    /// <param name="command">The GenerateReportCommand command</param>
+    /// <param name="cancellationToken">Token to cancel the asynchronous operation.</param>
+    /// <returns>The figures of each vehicle ordered by license plate; empty when there are no records.</returns>
+    private async Task<IReadOnlyList<ReportLine>> GenerateLinesAsync(GenerateReportCommand command,
+        CancellationToken cancellationToken)
+    {
+        var licensePlates = await fleetContextFacade.FetchLicensePlatesByOwnerIdAsync(command.OwnerId, cancellationToken);
+        if (licensePlates.Count == 0) return [];
+
+        var vehicleIds = licensePlates.Keys.ToList();
+        var from = new DateTimeOffset(command.From.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+        var to = new DateTimeOffset(command.To.AddDays(1).ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+
+        IEnumerable<ReportLine> lines = command.ReportType switch
+        {
+            ReportType.FuelConsumption =>
+                (await fuelContextFacade.FetchFuelRecordsAsync(vehicleIds, from, to, cancellationToken))
+                .GroupBy(record => record.VehicleId)
+                .Select(records => new ReportLine(records.Key, licensePlates[records.Key], records.Count(),
+                    records.Sum(record => record.Liters), records.Sum(record => record.Cost))),
+            ReportType.MaintenanceCost =>
+                (await maintenanceContextFacade.FetchMaintenanceRequestsAsync(vehicleIds, from, to, cancellationToken))
+                .GroupBy(request => request.VehicleId)
+                .Select(requests => new ReportLine(requests.Key, licensePlates[requests.Key], requests.Count(),
+                    requests.Count(request => request.IsCompleted),
+                    requests.Where(request => request.IsBudgetApproved).Sum(request => request.EstimatedCost))),
+            _ => throw new ArgumentOutOfRangeException(nameof(command), "The report type is not supported.")
+        };
+        return lines.OrderBy(line => line.LicensePlate).ToList();
     }
 
     /// <inheritdoc />

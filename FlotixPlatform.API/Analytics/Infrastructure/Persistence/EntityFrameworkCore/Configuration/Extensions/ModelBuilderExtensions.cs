@@ -23,7 +23,7 @@ public static class ModelBuilderExtensions
         builder.Entity<Report>().HasKey(r => r.Id);
         builder.Entity<Report>().Property(r => r.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Report>().Property(r => r.OwnerId).IsRequired();
-        builder.Entity<Report>().Property(r => r.ReportType).IsRequired().HasMaxLength(50);
+        builder.Entity<Report>().Property(r => r.ReportType).HasConversion<string>().HasMaxLength(50).IsRequired();
         builder.Entity<Report>().Property(r => r.GeneratedDate).IsRequired();
         builder.Entity<Report>().Property(r => r.FilterParams).IsRequired();
         builder.Entity<Report>()
