@@ -186,4 +186,130 @@
     <data name="UnexpectedErrorDeletingUser" xml:space="preserve">
         <value>An unexpected error occurred while deleting the user.</value>
     </data>
+    <data name="GetFleetPreferencesSummary" xml:space="preserve">
+        <value>Get the fleet preferences</value>
+    </data>
+    <data name="GetFleetPreferencesDescription" xml:space="preserve">
+        <value>Retrieves the fleet-wide thresholds.</value>
+    </data>
+    <data name="UpdateFleetPreferencesSummary" xml:space="preserve">
+        <value>Update the fleet preferences</value>
+    </data>
+    <data name="UpdateFleetPreferencesDescription" xml:space="preserve">
+        <value>Updates the fleet-wide thresholds.</value>
+    </data>
+    <data name="CreateVehicleSummary" xml:space="preserve">
+        <value>Create a vehicle</value>
+    </data>
+    <data name="CreateVehicleDescription" xml:space="preserve">
+        <value>Registers a new vehicle.</value>
+    </data>
+    <data name="GetAllVehiclesSummary" xml:space="preserve">
+        <value>Get all vehicles</value>
+    </data>
+    <data name="GetAllVehiclesDescription" xml:space="preserve">
+        <value>Retrieves all vehicles, optionally filtered by owner ID or driver ID.</value>
+    </data>
+    <data name="GetVehicleByIdSummary" xml:space="preserve">
+        <value>Get a vehicle by ID</value>
+    </data>
+    <data name="GetVehicleByIdDescription" xml:space="preserve">
+        <value>Retrieves a vehicle using its identifier.</value>
+    </data>
+    <data name="UpdateVehicleSummary" xml:space="preserve">
+        <value>Update a vehicle</value>
+    </data>
+    <data name="UpdateVehicleDescription" xml:space="preserve">
+        <value>Updates the data of a vehicle.</value>
+    </data>
+    <data name="DeleteVehicleSummary" xml:space="preserve">
+        <value>Delete a vehicle</value>
+    </data>
+    <data name="DeleteVehicleDescription" xml:space="preserve">
+        <value>Deletes a vehicle using its identifier.</value>
+    </data>
+    <data name="FleetPreferencesSchema" xml:space="preserve">
+        <value>The fleet preferences returned by the API.</value>
+    </data>
+    <data name="UpdateFleetPreferencesSchema" xml:space="preserve">
+        <value>Request payload for updating the fleet preferences.</value>
+    </data>
+    <data name="CreateVehicleSchema" xml:space="preserve">
+        <value>Request payload for creating a vehicle.</value>
+    </data>
+    <data name="UpdateVehicleSchema" xml:space="preserve">
+        <value>Request payload for updating a vehicle.</value>
+    </data>
+    <data name="VehicleSchema" xml:space="preserve">
+        <value>A vehicle returned by the API.</value>
+    </data>
+    <data name="FleetPreferencesId" xml:space="preserve">
+        <value>The server-generated identifier of the fleet preferences.</value>
+    </data>
+    <data name="FleetPreferencesSpeedLimitKmh" xml:space="preserve">
+        <value>The speed limit that triggers speeding alerts.</value>
+    </data>
+    <data name="FleetPreferencesMaintenanceIntervalKm" xml:space="preserve">
+        <value>The mileage interval between preventive maintenances.</value>
+    </data>
+    <data name="FleetPreferencesFuelAnomalyDropPct" xml:space="preserve">
+        <value>The fuel level drop percentage considered an anomaly.</value>
+    </data>
+    <data name="VehicleId" xml:space="preserve">
+        <value>The server-generated identifier of the vehicle.</value>
+    </data>
+    <data name="VehicleOwnerId" xml:space="preserve">
+        <value>The identifier of the owner user.</value>
+    </data>
+    <data name="VehicleDriverId" xml:space="preserve">
+        <value>The identifier of the driver user.</value>
+    </data>
+    <data name="VehiclePlate" xml:space="preserve">
+        <value>The license plate of the vehicle.</value>
+    </data>
+    <data name="VehicleVehicleType" xml:space="preserve">
+        <value>The type of the vehicle (e.g. Camión de carga).</value>
+    </data>
+    <data name="VehicleCurrentMileage" xml:space="preserve">
+        <value>The current mileage of the vehicle in kilometers.</value>
+    </data>
+    <data name="VehicleStatus" xml:space="preserve">
+        <value>The current status of the vehicle.</value>
+    </data>
+    <data name="InvalidVehicleRequest" xml:space="preserve">
+        <value>The vehicle request contains invalid values.</value>
+    </data>
+    <data name="VehicleNotFound" xml:space="preserve">
+        <value>The vehicle was not found.</value>
+    </data>
+    <data name="UnexpectedErrorCreatingVehicle" xml:space="preserve">
+        <value>An unexpected error occurred while creating the vehicle.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingVehicle" xml:space="preserve">
+        <value>An unexpected error occurred while updating the vehicle.</value>
+    </data>
+    <data name="UnexpectedErrorDeletingVehicle" xml:space="preserve">
+        <value>An unexpected error occurred while deleting the vehicle.</value>
+    </data>
+    <data name="DuplicateVehiclePlate" xml:space="preserve">
+        <value>A vehicle with this plate already exists.</value>
+    </data>
+    <data name="MileageCannotDecrease" xml:space="preserve">
+        <value>The mileage of a vehicle cannot decrease.</value>
+    </data>
+    <data name="RequiredPlate" xml:space="preserve">
+        <value>Plate is required.</value>
+    </data>
+    <data name="RequiredVehicleType" xml:space="preserve">
+        <value>Vehicle type is required.</value>
+    </data>
+    <data name="FleetPreferencesNotFound" xml:space="preserve">
+        <value>The fleet preferences were not found.</value>
+    </data>
+    <data name="InvalidFleetPreferencesRequest" xml:space="preserve">
+        <value>The fleet preferences request contains invalid values.</value>
+    </data>
+    <data name="UnexpectedErrorUpdatingFleetPreferences" xml:space="preserve">
+        <value>An unexpected error occurred while updating the fleet preferences.</value>
+    </data>
 </root>
