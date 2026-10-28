@@ -1,4 +1,13 @@
 using System.Text.Json.Serialization;
+using FlotixPlatform.API.IAM.Application.Internal.CommandServices;
+using FlotixPlatform.API.IAM.Application.Internal.OutboundServices;
+using FlotixPlatform.API.IAM.Application.Internal.QueryServices;
+using FlotixPlatform.API.IAM.Application.Services;
+using FlotixPlatform.API.IAM.Domain.Repositories;
+using FlotixPlatform.API.IAM.Infrastructure.Hashing.AspNetCore.Services;
+using FlotixPlatform.API.IAM.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using FlotixPlatform.API.IAM.Infrastructure.Pipeline.Middleware.Extensions;
+using FlotixPlatform.API.IAM.Infrastructure.Tokens.DataProtection.Services;
 using FlotixPlatform.API.Resources;
 using FlotixPlatform.API.Shared.Domain.Repositories;
 using FlotixPlatform.API.Shared.Infrastructure.Interfaces.Asp.Configuration;
@@ -9,6 +18,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Scalar.AspNetCore;
+using IAMLocalizedOpenApiAssembler = FlotixPlatform.API.IAM.Interfaces.Rest.Transform.LocalizedOpenApiAssembler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,7 +73,11 @@ builder.Services.AddProblemDetails(options =>
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 // Generate the OpenAPI document with ASP.NET Core's built-in support.
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddOperationTransformer(IAMLocalizedOpenApiAssembler.TransformOperationAsync);
+    options.AddSchemaTransformer(IAMLocalizedOpenApiAssembler.TransformSchemaAsync);
+});
 
 // Real-time communication with SignalR.
 builder.Services.AddSignalR()
@@ -102,6 +116,16 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 // Shared Bounded Context Injection Configuration
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// Identity, Profiles & Security Bounded Context Injection Configuration
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserCommandService, UserCommandService>();
+builder.Services.AddScoped<IUserQueryService, UserQueryService>();
+builder.Services.AddScoped<IHashingService, HashingService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+// IAM token protection keys (persist the key ring in production, e.g. PersistKeysToFileSystem).
+builder.Services.AddDataProtection();
+
 var app = builder.Build();
 
 // Apply pending migrations on startup (safe to call even when schema is up to date)
@@ -128,11 +152,16 @@ app.UseHttpsRedirection();
 
 app.UseCors();
 
+// IAM request authorization (disconnected): uncomment to require a bearer token from
+// POST /api/v1/authentication/sign-in on every endpoint not marked [AllowAnonymous],
+// and to enforce [Authorize(Role...)]. SignalR hubs read the token from ?access_token=.
+// app.UseRequestAuthorization();
+
 app.UseAuthorization();
 
 // OpenAPI and Scalar are kept available in all environments to preserve the existing API explorer behavior.
-app.MapOpenApi();
-app.MapScalarApiReference();
+app.MapOpenApi().AllowAnonymous();
+app.MapScalarApiReference().AllowAnonymous();
 app.MapControllers();
 
 app.Run();
