@@ -258,6 +258,59 @@ namespace FlotixPlatform.API.Migrations
                     b.ToTable("users");
                 });
 
+            modelBuilder.Entity("FlotixPlatform.API.Incidents.Domain.Model.Aggregates.Incident", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<int>("DriverId")
+                        .HasColumnType("integer")
+                        .HasColumnName("driver_id");
+
+                    b.Property<DateTimeOffset>("ReportedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("reported_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("vehicle_id");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_incidents");
+
+                    b.HasIndex("DriverId")
+                        .HasDatabaseName("i_x_incidents_driver_id");
+
+                    b.HasIndex("VehicleId")
+                        .HasDatabaseName("i_x_incidents_vehicle_id");
+
+                    b.ToTable("incidents");
+                });
+
             modelBuilder.Entity("FlotixPlatform.API.Maintenance.Domain.Model.Aggregates.MaintenanceRequest", b =>
                 {
                     b.Property<int>("Id")
